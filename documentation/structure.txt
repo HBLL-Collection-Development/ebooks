@@ -1,0 +1,149 @@
+SQL:
+====
+-- phpMyAdmin SQL Dump
+-- version 3.5.1
+-- http://www.phpmyadmin.net
+--
+-- Host: localhost
+-- Generation Time: May 13, 2013 at 09:23 PM
+-- Server version: 5.5.20
+-- PHP Version: 5.4.3
+
+SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
+SET time_zone = "+00:00";
+
+--
+-- Database: `book_usage`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `books`
+--
+
+CREATE TABLE `books` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `title` text NOT NULL,
+  `author` text,
+  `publisher` text,
+  `doi` text,
+  `oclc` text,
+  `isbn` text,
+  `issn` text,
+  `call_num` text,
+  `response_code` int(3) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  FULLTEXT KEY `title` (`title`),
+  FULLTEXT KEY `doi` (`doi`),
+  FULLTEXT KEY `oclc` (`oclc`),
+  FULLTEXT KEY `isbn` (`isbn`),
+  FULLTEXT KEY `issn` (`issn`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `counter_br2`
+--
+
+CREATE TABLE `counter_br2` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `book_id` int(11) NOT NULL,
+  `vendor_id` int(11) NOT NULL,
+  `platform_id` int(11) NOT NULL,
+  `year` int(11) NOT NULL,
+  `counter_br2` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `book_id` (`book_id`,`vendor_id`,`platform_id`,`year`),
+  KEY `book_id_2` (`book_id`),
+  KEY `vendor_id` (`vendor_id`),
+  KEY `platform_id` (`platform_id`),
+  KEY `year` (`year`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `platforms`
+--
+
+CREATE TABLE `platforms` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `vendor_id` int(11) NOT NULL,
+  `platform` text NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `vendor_id` (`vendor_id`),
+  KEY `vendor_id_2` (`vendor_id`),
+  KEY `vendor_id_3` (`vendor_id`),
+  FULLTEXT KEY `platform` (`platform`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `temp_counter_br2`
+--
+
+CREATE TABLE `temp_counter_br2` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `title` text NOT NULL,
+  `publisher` text,
+  `platform` text,
+  `doi` text,
+  `proprietary_identifier` text,
+  `isbn` text,
+  `issn` text,
+  `counter_br2` int(11) DEFAULT NULL,
+  `year` int(4) DEFAULT NULL,
+  `vendor` text,
+  PRIMARY KEY (`id`),
+  FULLTEXT KEY `title` (`title`),
+  FULLTEXT KEY `doi` (`doi`),
+  FULLTEXT KEY `isbn` (`isbn`),
+  FULLTEXT KEY `issn` (`issn`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `vendors`
+--
+
+CREATE TABLE `vendors` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `vendor` text NOT NULL,
+  PRIMARY KEY (`id`),
+  FULLTEXT KEY `vendor` (`vendor`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+
+INGEST:
+=======
+ingest_counter_rpt2
+	R4
+	--------
+  title
+  publisher
+  platform
+  doi
+  proprietary identifier
+  isbn
+  issn
+  counter usage
+	year
+	vendor
+	
+	R1
+	--------
+	title
+  publisher
+  platform
+  isbn
+  issn
+  counter usage
+	year
+	vendor
+	
+ingest_counter_rpt1
+	

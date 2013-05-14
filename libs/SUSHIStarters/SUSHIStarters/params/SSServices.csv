@@ -1,0 +1,2 @@
+Category, Service Provider,Reports,Service URL,WSDL URL,RequestorID,RequestorName,RequestorEmail,CustomerID,CustomerName,Security,Login,Password,Instructions
+Test,SushiStarters,BR1;DB3;JR1;JR1a,http://cclibweb-4.dmz.cranfield.ac.uk/projects/sushistarters/software/testserver/,COUNTER,test,Your name,Your email address,test,Your reference,None,,,Freely accessible test service. Try it!!
