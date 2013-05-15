@@ -12,6 +12,6 @@ require_once 'config.php';
 $html = <<<HTML
 
 HTML;
-
-template::display('html.tmpl', $html);
+$html = array('title' => 'Home', 'html' => $html);
+template::display('generic.tmpl', $html);
 ?>

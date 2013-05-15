@@ -3,25 +3,15 @@
 	<div class='container'>
 		<ul>
 		  {% if title == 'Home' %}
-  			<li class="active"><a href="{{ app_url }}/">Active</a></li>
+  			<li class="active"><a href="{{ app_url }}/">Home</a></li>
   		{% else %}
-  		  <li><a href="{{ app_url }}/">Active</a></li>
+  		  <li><a href="{{ app_url }}/">Home</a></li>
   		{% endif %}
-  		{% if title == 'Inactive' %}
-  			<li class="active"><a href="{{ app_url }}/inactive.php">Inactive</a></li>
+  		{% if title == 'Admin' %}
+  			<li class="active"><a href="{{ app_url }}/admin.php">Admin</a></li>
   		{% else %}
-  		  <li><a href="{{ app_url }}/inactive.php">Inactive</a></li>
+  		  <li><a href="{{ app_url }}/admin.php">Admin</a></li>
   		{% endif %}
-  		{% if title == 'All' %}
-  			<li class="active"><a href="{{ app_url }}/all.php">All</a></li>
-  		{% else %}
-  		  <li><a href="{{ app_url }}/all.php">All</a></li>
-  		{% endif %}
-			{% if title == 'Add a Resource' %}
-        <li class="active"><a href="{{ app_url }}/add.php">Add a Resource</a></li>
-      {% else %}
-        <li><a href="{{ app_url }}/add.php">Add a Resource</a></li>
-      {% endif %}
 		</ul>
 	</div>
 </nav>
