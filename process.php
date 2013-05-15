@@ -16,11 +16,13 @@ function microtime_float() {
 
 $time_start = microtime_float();
 
-$process = new parse();
+$process_br1 = new process_counter_rpt1();
+$process_br2 = new process_counter_rpt2();
 
 $time_end = microtime_float();
 $seconds = round(($time_end - $time_start), 2);
 $minutes = round(($seconds / 60), 2);
 
 echo 'Success! Processing took ' . $seconds . ' seconds (' . $minutes . ' minutes).';
+
 ?>
