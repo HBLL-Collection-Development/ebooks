@@ -20,8 +20,7 @@ switch ($report) {
     break;
   
   default:
-    $html = 'Error. You may only upload Project COUNTER Book Reports #1 and #2. Please go back and try again.';
-    template::display('generic.tmpl', $html);
+    error::trigger('Error. You may only upload Project COUNTER Book Reports #1 and #2. Please go back and try again.');
     break;
 }
 

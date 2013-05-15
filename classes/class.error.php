@@ -26,7 +26,9 @@ class error {
     $callee = debug_backtrace();
     $callee = next($callee);
     // Trigger appropriate error
-    trigger_error($message . ' in <strong>' . $callee['file'] . '</strong> on line <strong>' . $callee['line'] . '</strong>', $level);
+    $message = $message . ' in <strong>' . $callee['file'] . '</strong> on line <strong>' . $callee['line'] . '</strong>';
+    template::display('generic.tmpl', $message);
+    trigger_error($message, $level);
   }
   
   public static function error_handler($level, $message, $file, $line, $context) {

@@ -57,8 +57,7 @@ class ingest {
   
   protected function valid_file($file) {
     if ( $file['uploadedfile']['type'] != "text/csv" ) {
-      $error = new error;
-      $error->trigger('Only plain text .CSV files may be uploaded');
+      error::trigger('Only plain text .CSV files may be uploaded');
       return FALSE;
     } else {
       return TRUE;
