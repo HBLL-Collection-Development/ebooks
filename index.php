@@ -9,7 +9,9 @@
   */
 require_once 'config.php';
 
-$display = new display;
-$html    = $display->html('active');
+$html = <<<HTML
+
+HTML;
+
 template::display('html.tmpl', $html);
 ?>

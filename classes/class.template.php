@@ -3,7 +3,7 @@
   * Class to easily access Twig templating engine
   *
   * @author Jared Howland <book.usage@jaredhowland.com>
-  * @version 2012-12-08
+  * @version 2013-05-15
   * @since 2012-12-06
   *
   */
@@ -18,11 +18,15 @@ class template {
    * @return Displays content in the requested template
    */
   public static function display($template_name, $content) {
+    // Allow generic HTML to be placed into templates by converting strings to arrays
+    if(!is_array($content)) {
+      $content = array('html' => $content);
+    }
     echo self::templatize($template_name, $content);
   }
 
   private static function templatize($template_name, $content) {
-    require_once './lib/Twig/Autoloader.php';
+    require_once './libs/Twig/Autoloader.php';
     // Inject format into content array
     $format = array('format' => $format);
     $content = array_merge($format, $content);
@@ -36,7 +40,7 @@ class template {
     } else {
       $twig = new Twig_Environment($loader, array('cache' => './tmp/cache'));
     }
-    // Needed for pluralization of verse and word counts
+    // Needed for pluralization of variables
     $twig->addExtension(new Twig_Extensions_Extension_I18n());
     $template = $twig->loadTemplate($template_name);
     return $template->render($content);

@@ -1,6 +1,6 @@
 <?php
 /**
-  * Process and parse the temp_counter tables into individual tables
+  * Process and parse the temp_counter_br2 table into individual tables
   *
   * @author Jared Howland <book.usage@jaredhowland.com>
   * @version 2013-05-14
