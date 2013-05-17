@@ -31,10 +31,10 @@ class ingest {
   }
   
   protected function clean_nulls($string) {
-    if(strtoupper($string) == 'NULL' || strtoupper($string) == 'N/A') {
+    if(strtoupper($string) == 'NULL' || strtoupper($string) == 'N/A' || $string == '') {
       return NULL;
     } else {
-      return $string;
+      return trim($string);
     }
   }
   

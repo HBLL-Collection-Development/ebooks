@@ -104,3 +104,55 @@ ul li {
 .chartlist li:hover {
   background: #efefef;
 }
+
+/*Table styles*/
+table {
+    border-collapse: collapse;
+    border: none;
+    font-size: 0.9em;
+    padding: 0;
+    margin: 0;
+}
+table strong {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+ul {
+    font-size: 0.75em;
+    font-weight: normal;
+    color: #999;
+    padding: 0.5em 0;
+}
+ul li {
+    padding-left: 0.25em;
+}
+th, td {
+    padding: 0.2em 0.4em;
+    vertical-align: top;
+    text-align: center;
+}
+th {
+    font-weight: bold;
+    font-size: 1.25em;
+    vertical-align: bottom;
+    border-bottom: 2px solid #eee;
+}
+th span {
+    font-size: 0.75em;
+    color: #999;
+}
+/* Every-other-row syling */
+tr:nth-child(even) {
+    background: #eee;
+}
+/* Style first column */
+tr > td:first-child {
+    width: 35em;
+    text-align:right;
+}
+table.detail tr > td:first-child {
+    width: inherit;
+}
+table .small_column {
+    width: 7em;
+}
