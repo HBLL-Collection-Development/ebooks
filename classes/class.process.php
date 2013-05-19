@@ -194,6 +194,47 @@ class process {
     return $vendor_id;
   }
   
+  protected function update_books_vendors($book_id, $vendor_id) {
+    $book_vendor_id = $this->search_by_book_vendor_id($book_id, $vendor_id);
+    if(is_null($book_vendor_id)) {
+      $book_vendor_id = $this->create_book_vendor($book_id, $vendor_id);
+    }
+    return $book_vendor_id;
+  }
+  
+  protected function search_by_book_vendor_id($book_id, $vendor_id) {
+    // Connect to database
+    $database = new db;
+    $db    = $database->connect();
+    $sql   = 'SELECT id, vendor_id, book_id FROM books_vendors WHERE vendor_id = :vendor_id AND book_id = :book_id LIMIT 1';
+    $query = $db->prepare($sql);
+    $query->bindParam(':vendor_id', $vendor_id);
+    $query->bindParam(':book_id', $book_id);
+    $query->execute();
+    $results = $query->fetchAll(PDO::FETCH_ASSOC);
+    $db = NULL;
+    // Return id if it exists in the database
+    if(count($results) > 0) {
+      return $results[0]['id'];
+    } else {
+      return NULL;
+    }
+  }
+  
+  protected function create_book_vendor($book_id, $vendor_id) {
+    // Connect to database
+    $database = new db;
+    $db    = $database->connect();
+    $sql   = 'INSERT INTO books_vendors (book_id, vendor_id) VALUES (:book_id, :vendor_id)';
+    $query = $db->prepare($sql);
+    $query->bindParam(':book_id', $book_id);
+    $query->bindParam(':vendor_id', $vendor_id);
+    $query->execute();
+    $book_vendor_id = $db->lastInsertId();
+    $db = NULL;
+    return $book_vendor_id;
+  }
+  
   // Platform table methods
   protected function update_platforms($vendor_id) {
     $platform_id = $this->search_by_platform($vendor_id);
@@ -241,6 +282,47 @@ class process {
     $platform_id = $db->lastInsertId();
     $db = NULL;
     return $platform_id;
+  }
+  
+  protected function update_books_platforms($book_id, $platform_id) {
+    $book_platform_id = $this->search_by_book_platform_id($book_id, $platform_id);
+    if(is_null($book_platform_id)) {
+      $book_platform_id = $this->create_book_platform($book_id, $platform_id);
+    }
+    return $book_platform_id;
+  }
+  
+  protected function search_by_book_platform_id($book_id, $platform_id) {
+    // Connect to database
+    $database = new db;
+    $db    = $database->connect();
+    $sql   = 'SELECT id, platform_id, book_id FROM books_platforms WHERE platform_id = :platform_id AND book_id = :book_id LIMIT 1';
+    $query = $db->prepare($sql);
+    $query->bindParam(':platform_id', $platform_id);
+    $query->bindParam(':book_id', $book_id);
+    $query->execute();
+    $results = $query->fetchAll(PDO::FETCH_ASSOC);
+    $db = NULL;
+    // Return id if it exists in the database
+    if(count($results) > 0) {
+      return $results[0]['id'];
+    } else {
+      return NULL;
+    }
+  }
+  
+  protected function create_book_platform($book_id, $platform_id) {
+    // Connect to database
+    $database = new db;
+    $db    = $database->connect();
+    $sql   = 'INSERT INTO books_platforms (book_id, platform_id) VALUES (:book_id, :platform_id)';
+    $query = $db->prepare($sql);
+    $query->bindParam(':book_id', $book_id);
+    $query->bindParam(':platform_id', $platform_id);
+    $query->execute();
+    $book_vendor_id = $db->lastInsertId();
+    $db = NULL;
+    return $book_platform_id;
   }
   
 }

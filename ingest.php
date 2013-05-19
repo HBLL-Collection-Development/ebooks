@@ -13,10 +13,16 @@ $report = $_POST['report'];
 switch ($report) {
   case '1':
     $ingest = new ingest_counter_rpt1($_FILES);
+    if($ingest) {
+      template::display('generic.tmpl', '<p>File successfully loaded!</p>');
+    }
     break;
     
   case '2':
     $ingest = new ingest_counter_rpt2($_FILES);
+    if($ingest) {
+      template::display('generic.tmpl', '<p>File successfully loaded!</p>');
+    }
     break;
   
   default:

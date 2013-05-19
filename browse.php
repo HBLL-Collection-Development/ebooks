@@ -13,8 +13,13 @@ $vendor_id   = $_GET['vendor'];
 $platform_id = $_GET['platform'];
 
 $browse = new browse;
-$results = $browse->vendor($vendor_id);
-// echo '<pre>';print_r($results);echo '</pre>';die();
+
+if($vendor_id) {
+  $results = $browse->vendor($vendor_id);
+} else {
+  $results = $browse->platform($platform_id);
+}
+
 $html = array('title' => 'Home', 'html' => $results);
 
 template::display('results.tmpl', $html);

@@ -60,6 +60,10 @@ ul li {
 .w15 {
   min-width: 15em;
 }
+.h2 {
+  padding-top: 2em;
+}
+
 /* CHART LISTS */
 .chartlist {
   font-size: 1.5em;
@@ -107,52 +111,56 @@ ul li {
 
 /*Table styles*/
 table {
-    border-collapse: collapse;
-    border: none;
-    font-size: 0.9em;
-    padding: 0;
-    margin: 0;
+  border-collapse: collapse;
+  border: none;
+  font-size: 0.9em;
+  padding: 0;
+  margin: 0;
 }
 table strong {
-    font-size: 1.2em;
-    font-weight: bold;
+  font-size: 1.2em;
+  font-weight: bold;
 }
-ul {
-    font-size: 0.75em;
-    font-weight: normal;
-    color: #999;
-    padding: 0.5em 0;
+table ul {
+  font-size: 0.75em;
+  font-weight: normal;
+  color: #999;
+  padding: 0.5em 0;
 }
-ul li {
-    padding-left: 0.25em;
+table ul li {
+  padding-left: 0.25em;
 }
 th, td {
-    padding: 0.2em 0.4em;
-    vertical-align: top;
-    text-align: center;
+  padding: 0.2em 0.4em;
+  vertical-align: top;
+  text-align: center;
 }
 th {
-    font-weight: bold;
-    font-size: 1.25em;
-    vertical-align: bottom;
-    border-bottom: 2px solid #eee;
+	font-weight: bold;
+  font-size: 1.25em;
 }
-th span {
-    font-size: 0.75em;
-    color: #999;
+th.title {
+	text-align: right;
+	min-width: 40em;
+}
+th.usage {
+	min-width: 7em;
+}
+.last {
+	border-left: 1px solid #bbb;
 }
 /* Every-other-row syling */
 tr:nth-child(even) {
-    background: #eee;
+  background: #eee;
 }
 /* Style first column */
 tr > td:first-child {
-    width: 35em;
-    text-align:right;
+  width: 35em;
+  text-align:right;
 }
 table.detail tr > td:first-child {
-    width: inherit;
+  width: inherit;
 }
 table .small_column {
-    width: 7em;
+  width: 7em;
 }

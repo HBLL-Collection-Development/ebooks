@@ -14,11 +14,13 @@ class process_counter_rpt2 extends process {
   public function __construct() {
     $results = $this->get_data();
     foreach($results as $result) {
-      $this->result     = $result;
-      $book_id          = $this->update_books();
-      $vendor_id        = $this->update_vendors();
-      $platform_id      = $this->update_platforms($vendor_id);
-      $counter_br2_id   = $this->update_counter_br2($book_id, $vendor_id, $platform_id);
+      $this->result       = $result;
+      $book_id            = $this->update_books();
+      $vendor_id          = $this->update_vendors();
+      $books_vendors_id   = $this->update_books_vendors($book_id, $vendor_id);
+      $platform_id        = $this->update_platforms($vendor_id);
+      $books_platforms_id = $this->update_books_platforms($book_id, $platform_id);
+      $counter_br2_id     = $this->update_counter_br2($book_id, $vendor_id, $platform_id);
       if($book_id && $vendor_id && $platform_id && $counter_br2_id) {
         $this->clean_temp_counter_br2();
       }

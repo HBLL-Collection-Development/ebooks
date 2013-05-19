@@ -5,7 +5,7 @@ SQL:
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: May 16, 2013 at 09:25 PM
+-- Generation Time: May 18, 2013 at 02:15 PM
 -- Server version: 5.5.20
 -- PHP Version: 5.4.3
 
@@ -24,17 +24,17 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `books` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `title` text NOT NULL,
-  `author` text,
-  `publisher` text,
-  `doi` text,
-  `oclc` text,
-  `isbn` text,
-  `issn` text,
-  `call_num` text,
+  `title` text CHARACTER SET latin1 NOT NULL,
+  `author` text CHARACTER SET latin1,
+  `publisher` text CHARACTER SET latin1,
+  `doi` text CHARACTER SET latin1,
+  `oclc` text CHARACTER SET latin1,
+  `isbn` text CHARACTER SET latin1,
+  `issn` text CHARACTER SET latin1,
+  `call_num` text CHARACTER SET latin1,
   `response_code` tinyint(3) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1983 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -49,7 +49,7 @@ CREATE TABLE `books_platforms` (
   PRIMARY KEY (`id`),
   KEY `book_id` (`book_id`),
   KEY `platform_id` (`platform_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1996 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -64,7 +64,7 @@ CREATE TABLE `books_vendors` (
   PRIMARY KEY (`id`),
   KEY `book_id` (`book_id`,`vendor_id`),
   KEY `vendor_id` (`vendor_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1996 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -84,7 +84,7 @@ CREATE TABLE `counter_br1` (
   KEY `vendor_id` (`vendor_id`),
   KEY `platform_id` (`platform_id`),
   KEY `year` (`usage_year`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1149 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -104,7 +104,7 @@ CREATE TABLE `counter_br2` (
   KEY `vendor_id` (`vendor_id`),
   KEY `platform_id` (`platform_id`),
   KEY `year` (`usage_year`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1730 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -128,10 +128,10 @@ CREATE TABLE `counter_usage` (
 CREATE TABLE `platforms` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `vendor_id` int(11) NOT NULL,
-  `platform` text NOT NULL,
+  `platform` text CHARACTER SET latin1 NOT NULL,
   PRIMARY KEY (`id`),
   KEY `vendor_id` (`vendor_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=5 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -161,18 +161,18 @@ CREATE TABLE `platforms_browse` (
 
 CREATE TABLE `temp_counter_br1` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `title` text NOT NULL,
-  `publisher` text,
-  `platform` text,
-  `doi` text,
-  `proprietary_identifier` text,
-  `isbn` text,
-  `issn` text,
+  `title` text CHARACTER SET latin1 NOT NULL,
+  `publisher` text CHARACTER SET latin1,
+  `platform` text CHARACTER SET latin1,
+  `doi` text CHARACTER SET latin1,
+  `proprietary_identifier` text CHARACTER SET latin1,
+  `isbn` text CHARACTER SET latin1,
+  `issn` text CHARACTER SET latin1,
   `counter_br1` int(11) DEFAULT NULL,
   `usage_year` int(4) DEFAULT NULL,
-  `vendor` text,
+  `vendor` text CHARACTER SET latin1,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -182,18 +182,18 @@ CREATE TABLE `temp_counter_br1` (
 
 CREATE TABLE `temp_counter_br2` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `title` text NOT NULL,
-  `publisher` text,
-  `platform` text,
-  `doi` text,
-  `proprietary_identifier` text,
-  `isbn` text,
-  `issn` text,
+  `title` text CHARACTER SET latin1 NOT NULL,
+  `publisher` text CHARACTER SET latin1,
+  `platform` text CHARACTER SET latin1,
+  `doi` text CHARACTER SET latin1,
+  `proprietary_identifier` text CHARACTER SET latin1,
+  `isbn` text CHARACTER SET latin1,
+  `issn` text CHARACTER SET latin1,
   `counter_br2` int(11) DEFAULT NULL,
   `usage_year` int(4) DEFAULT NULL,
-  `vendor` text,
+  `vendor` text CHARACTER SET latin1,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -203,9 +203,9 @@ CREATE TABLE `temp_counter_br2` (
 
 CREATE TABLE `vendors` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `vendor` text NOT NULL,
+  `vendor` text CHARACTER SET latin1 NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=5 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -220,7 +220,6 @@ CREATE TABLE `vendors_browse` (
 ,`isbn` text
 ,`call_num` text
 ,`vendor_id` int(11)
-,`vendor` text
 ,`counter_usage` int(11)
 ,`usage_year` int(11)
 ,`usage_type` varchar(3)
@@ -250,7 +249,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `vendors_browse`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `vendors_browse` AS select `bv`.`book_id` AS `book_id`,`b`.`title` AS `title`,`b`.`author` AS `author`,`b`.`publisher` AS `publisher`,`b`.`isbn` AS `isbn`,`b`.`call_num` AS `call_num`,`bv`.`vendor_id` AS `vendor_id`,`v`.`vendor` AS `vendor`,`cu`.`counter_usage` AS `counter_usage`,`cu`.`usage_year` AS `usage_year`,`cu`.`usage_type` AS `usage_type` from (((`books_vendors` `bv` left join `counter_usage` `cu` on((`bv`.`book_id` = `cu`.`book_id`))) left join `books` `b` on((`bv`.`book_id` = `b`.`id`))) left join `vendors` `v` on((`bv`.`vendor_id` = `v`.`id`)));
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `vendors_browse` AS select `bv`.`book_id` AS `book_id`,`b`.`title` AS `title`,`b`.`author` AS `author`,`b`.`publisher` AS `publisher`,`b`.`isbn` AS `isbn`,`b`.`call_num` AS `call_num`,`bv`.`vendor_id` AS `vendor_id`,`cu`.`counter_usage` AS `counter_usage`,`cu`.`usage_year` AS `usage_year`,`cu`.`usage_type` AS `usage_type` from ((`books_vendors` `bv` left join `counter_usage` `cu` on((`bv`.`book_id` = `cu`.`book_id`))) left join `books` `b` on((`bv`.`book_id` = `b`.`id`)));
 
 --
 -- Constraints for dumped tables
