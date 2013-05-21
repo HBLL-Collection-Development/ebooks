@@ -41,9 +41,9 @@ class process {
     $isbn = $this->result['isbn'];
     $issn = $this->result['issn'];
     // Normalize NULL data to search database
-    if(is_null($doi))      { $doi  = 'N/A'; }
-    if(is_null($isbn))     { $isbn = 'N/A'; }
-    if(is_null($issn))     { $issn = 'N/A'; }
+    if(is_null($doi))  { $doi  = 'N/A'; }
+    if(is_null($isbn)) { $isbn = 'N/A'; }
+    if(is_null($issn)) { $issn = 'N/A'; }
     // Connect to database
     $database = new db;
     $db    = $database->connect();

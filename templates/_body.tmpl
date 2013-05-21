@@ -10,7 +10,7 @@
   </thead>
   <tbody>
   {% for result in html.results %}
-    <tr><td><strong><a href="book.php?book_id={{ result.book_id|e('html') }}">{{ result.title }}</a></strong><br/><ul class="inline_list">{% if result.author %}<li>{{ result.author }}</li>{% endif %}{% if result.publisher %}<li>{{ result.publisher }}</li>{% endif %}{% if result.isbn %}<li>{{ result.isbn }}</li>{% endif %}{% if result.call_num %}<li>{{ result.call_num }}</li>{% endif %}</ul></td><td>{{ result.latest_br1 }}</td><td>{{ result.previous_br1 }}</td><td class="last">{{ result.latest_br2 }}</td><td>{{ result.previous_br2 }}</td></tr>
+    <tr><td><strong><a href="book.php?book_id={{ result.book_id|e('html') }}">{{ result.title }}</a></strong><br/><ul class="inline_list">{% if result.author %}<li>{{ result.author }}</li>{% endif %}{% if result.publisher %}<li>{{ result.publisher }}</li>{% endif %}{% if result.isbn %}<li>{{ result.isbn }}</li>{% endif %}{% if result.call_num %}<li>{{ result.call_num }}</li>{% endif %}</ul></td><td>{{ result.latest_br1 }}</td><td>{{ result.latest_br2 }}</td><td class="last">{{ result.previous_br1 }}</td><td>{{ result.previous_br2 }}</td></tr>
   {% endfor %}
   </tbody>
 </table>
