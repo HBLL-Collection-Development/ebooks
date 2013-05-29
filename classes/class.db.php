@@ -22,7 +22,7 @@ class db {
 
   private function db_connect() {
     try {
-      $db = new PDO('mysql:host=' . config::DB_HOST . ';port=' . config::DB_PORT . ';dbname=' . config::DB_NAME . ';charset=utf8', config::DB_USERNAME, config::DB_PASSWORD);
+      $db = new PDO('mysql:host=' . config::DB_HOST . ';port=' . config::DB_PORT . ';dbname=' . config::DB_NAME . ';charset=utf8', config::DB_USERNAME, config::DB_PASSWORD, array(PDO::ATTR_PERSISTENT => false));
       $db->exec("SET NAMES 'utf8';");
       $db->exec('SET CHARACTER SET utf8;');
       // Enable PDO error messages if in development

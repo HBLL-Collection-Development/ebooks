@@ -24,18 +24,18 @@ function get_titles() {
 }
 
 function format_titles() {
-  $html = NULL;
+  $html = '<table><tr><th>Original Encoding</th><th>ISO-8859-1 to UTF-8</th><th>ISO-8859-15 to UTF-8</th></tr>';
   foreach(get_titles() as $title) {
     $id    = $title['id'];
     $title = $title['title'];
-    // $title = mysql_real_escape_string(mb_convert_encoding($title, 'ISO-8859-1', 'UTF-8'));
-    // $title = mysql_real_escape_string(mb_convert_encoding($title, 'ISO-8859-15', 'UTF-8'));
+    $title = str_replace('\\', '', $title);
+    $latin1 = mysql_real_escape_string(mb_convert_encoding($title, 'ISO-8859-1', 'UTF-8'));
+    $latin9 = mysql_real_escape_string(mb_convert_encoding($title, 'ISO-8859-15', 'UTF-8'));
     // Remove escape from single quotes before using SQL
     // $title = str_replace('\\', '', $title);
-    // $title   = 'UPDATE books SET title="' . $title . '" WHERE id=' . $id . ';';
-    $html   .= '<p>' . $title . '</p>';
+    $html   .= '<tr><td>' . $title . '</td><td>' . $latin1 . '</td><td>' . $latin9 . '</td></tr>';
   }
-  // $html .= mb_convert_encoding('InglÃ©s-EspaÃ±ol', 'ISO-8859-15', 'UTF-8');
+  $html .= '</table>';
   return $html;
 }
 

@@ -16,11 +16,13 @@ $browse = new browse;
 
 if($vendor_id) {
   $results = $browse->vendor($vendor_id);
+  $heading = template::get_vendor($vendor_id);
 } else {
   $results = $browse->platform($platform_id);
+  $heading = template::get_platform($platform_id);
 }
 
-$html = array('title' => 'Home', 'html' => $results);
+$html = array('title' => 'Browse Usage', 'heading' => $heading, 'html' => $results);
 
 template::display('results.tmpl', $html);
 ?>

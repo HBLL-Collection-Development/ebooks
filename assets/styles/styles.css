@@ -154,7 +154,7 @@ tr:nth-child(even) {
   background: #eee;
 }
 /* Style first column */
-tr > td:first-child {
+.results tr > td:first-child {
   width: 35em;
   text-align:right;
 }
@@ -163,4 +163,13 @@ table.detail tr > td:first-child {
 }
 table .small_column {
   width: 7em;
+}
+table th {
+	border-bottom: 1px solid #bbb;
+}
+#details h1 {
+	font-size: 1.5em;
+}
+#details .inline_list {
+	font-size: 1.2em;
 }
