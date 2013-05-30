@@ -4,7 +4,7 @@
   * http://classify.oclc.org/classify2/api_docs/classify.html
   *
   * @author Jared Howland <book.usage@jaredhowland.com>
-  * @version 2013-05-15
+  * @version 2013-05-29
   * @since 2013-05-15
   *
   */
@@ -22,55 +22,15 @@ class browse {
    * @return array Array of title, author, isbn, call_num for all search terms
    */
   public function vendor($vendor_id) {
-    $results = $this->get_vendor_usage($vendor_id);
-    foreach($results as $key => $result) {
-      // Reset variables
-      $title        = NULL;
-      $author       = NULL;
-      $publisher    = NULL;
-      $isbn         = NULL;
-      $call_num     = NULL;
-      $usage_year   = NULL;
-      $usage_type   = NULL;
-      $total_usage  = NULL;
-      $latest_br1   = NULL;
-      $previous_br1 = NULL;
-      $latest_br2   = NULL;
-      $previous_br2 = NULL;
-      $book_id   = $key;
-      $title     = $result[0]['title'];
-      $author    = $result[0]['author'];
-      $publisher = $result[0]['publisher'];
-      $isbn      = $result[0]['isbn'];
-      $call_num  = $result[0]['call_num'];
-      foreach($result as $usage) {
-        $usage_year  = $usage['usage_year'];
-        $usage_type  = $usage['usage_type'];
-        $total_usage = $usage['total_usage'];
-        // Current usage
-        if($usage_year == $this->current_year) {
-          if($usage_type == 'br1') {
-            $latest_br1 = $total_usage;
-          } else {
-            $latest_br2 = $total_usage;
-          }
-        // Previous usage
-        } else {
-          if($usage_type == 'br1') {
-            $previous_br1 = $total_usage;
-          } else {
-            $previous_br2 = $total_usage;
-          }
-        }
-      }
-      $usages[] = array('book_id' => $book_id, 'title' => $title, 'author' => $author, 'publisher' => $publisher, 'isbn' => $isbn, 'call_num' => $call_num, 'latest_br1' => $latest_br1, 'previous_br1' => $previous_br1, 'latest_br2' => $latest_br2, 'previous_br2' => $previous_br2);
-    }
-    return array('current_year' => $this->current_year, 'previous_year' => $this->previous_year, 'results' => $usages);
+    return $this->get_vendor_usage($vendor_id);
   }
 
   public function platform($platform_id) {
-    $results = $this->get_platform_usage($platform_id);
-    foreach($results as $key => $result) {
+    return $this->get_platform_usage($platform_id);
+  }
+  
+  private function format_usage($usage) {
+    foreach($usage as $key => $result) {
       // Reset variables
       $title        = NULL;
       $author       = NULL;
@@ -130,7 +90,7 @@ class browse {
     $query->execute();
     $results = $query->fetchAll(PDO::FETCH_GROUP|PDO::FETCH_ASSOC);
     $db = NULL;
-    return $results;
+    return $this->format_usage($results);
   }
   
   private function get_platform_usage($platform_id) {
@@ -139,7 +99,7 @@ class browse {
     // Connect to database
     $database = new db;
     $db       = $database->connect();
-    // Query the vendors_browse view table
+    // Query the platforms_browse view table
     $sql      = 'SELECT book_id, title, author, publisher, isbn, call_num, vendor_id, SUM(counter_usage) AS total_usage, usage_year, usage_type FROM platforms_browse WHERE platform_id = :platform_id AND usage_year BETWEEN :previous_year AND :current_year GROUP BY book_id, usage_type, usage_year ORDER BY title';
     $query    = $db->prepare($sql);
     $query->bindParam(':platform_id', $platform_id);
@@ -148,7 +108,7 @@ class browse {
     $query->execute();
     $results = $query->fetchAll(PDO::FETCH_GROUP|PDO::FETCH_ASSOC);
     $db = NULL;
-    return $results;
+    return $this->format_usage($results);
   }
   
   private function get_current_year() {

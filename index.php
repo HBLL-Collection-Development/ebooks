@@ -9,6 +9,12 @@
   */
 require_once 'config.php';
 
+// TODO: Incorporate XISBN
+// http://xisbn.worldcat.org/webservices/xid/isbn/9783527283132?method=getMetadata&fl=*&format=json&ai=jared_howland
+// http://www.oclc.org/developer/services/xisbn
+
+// TODO: Fix search buttons that do not work on mouse press
+
 $vendors   = format_vendors();
 $platforms = format_platforms();
 
@@ -22,7 +28,7 @@ $html = <<<HTML
         <form action="search.php" method="get" accept-charset="utf-8" class="search_form linear">
           <h2>Title Search</h2>
           <div class="search_wrapper">
-            <input type="text" name="title" value="" id="title" placeholder="Title"/>
+            <input type="text" name="q" value="" id="title" placeholder="Title"/>
             <input type="hidden" name="type" value="title" id="type">
             <div class="search_btn">
               <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18" height="20">
@@ -57,7 +63,7 @@ $html = <<<HTML
         <form action="search.php" method="get" accept-charset="utf-8" class="search_form linear">
           <h2>ISBN Search</h2>
           <div class="search_wrapper">
-            <input type="text" name="isbn" value="" id="isbn" placeholder="ISBN (with or without dashes)"/>
+            <input type="text" name="q" value="" id="isbn" placeholder="ISBN (with or without dashes)"/>
             <input type="hidden" name="type" value="isbn" id="type">
             <div class="search_btn">
               <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18" height="20">

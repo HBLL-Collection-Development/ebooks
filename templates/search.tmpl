@@ -1,0 +1,53 @@
+{% spaceless %}
+{% autoescape false %}
+
+{% include '_html_head.tmpl' %}
+
+{% set app_url = constant('config::URL') %}
+{% spaceless %}
+{% autoescape false %}
+
+{% set num_results = html.results | length %}
+
+<h2>Search for: {{ html.search_term }}</h2>
+<h3>{{ num_results|number_format }} results</h3><br/>
+<div class="span-7">
+  <section>
+    <form action="search.php" method="get" accept-charset="utf-8" class="search_form linear">
+      <div class="search_wrapper">
+        <input type="text" name="q" value="{{ html.search_term }}" id="q" placeholder="{{ type|upper }}"/>
+        <input type="hidden" name="type" value="{{ type }}" id="type">
+        <div class="search_btn">
+          <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18" height="20">
+            <g transform="rotate(-45 10 10)" ;="">
+              <circle cx="8" cy="8" r="4.5" stroke-width="2" stroke="#fff" fill="none"></circle>
+              <line x1="8" y1="14" x2="8" y2="18" stroke="#fff" stroke-width="2" stroke-linecap="round"></line>
+            </g>
+          </svg>
+        </div>
+      </div>
+      <input type="submit" class="button small" value="Search" />
+    </form>
+  </section>
+</div>
+
+<table class="results">
+  <thead>
+    <tr><th class="title">Title<br/><ul class="inline_list"><li>Author</li><li>Publisher</li><li>ISBN</li><li>Call number</li></ul></th><th colspan="2" class="usage">{{ html.current_year }} Usage</th><th colspan="2" class="usage last">{{ html.previous_year }} Usage</th></tr>
+    <tr><th></th><th>BR1</th><th>BR2</th><th class="last">BR1</th><th>BR2</th></tr>
+  </thead>
+  <tbody>
+  {% for result in html.results %}
+    <tr><td><strong><a href="book.php?book_id={{ result.book_id|e('html') }}">{{ result.title }}</a></strong><br/><ul class="inline_list">{% if result.author %}<li>{{ result.author }}</li>{% endif %}{% if result.publisher %}<li>{{ result.publisher }}</li>{% endif %}{% if result.isbn %}<li>{{ result.isbn }}</li>{% endif %}{% if result.call_num %}<li>{{ result.call_num }}</li>{% endif %}</ul></td><td>{{ result.latest_br1|number_format }}</td><td>{{ result.latest_br2|number_format }}</td><td class="last">{{ result.previous_br1|number_format }}</td><td>{{ result.previous_br2|number_format }}</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+{% endautoescape %}
+{% endspaceless %}
+
+
+{% include '_html_foot.tmpl' %}
+
+{% endautoescape %}
+{% endspaceless %}
