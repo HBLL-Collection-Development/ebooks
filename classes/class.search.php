@@ -44,21 +44,31 @@ class search {
   }
 
   public function isbn() {
-    $isbn = $this->validate_standard_number($this->term);
+    $isbn          = $this->validate_standard_number($this->term);
+    $in            = $this->get_related($isbn);
     $previous_year = $this->get_previous_year();
     $current_year  = $this->get_current_year();
     // Connect to database
     $database = new db;
     $db       = $database->connect();
-    $sql      = 'SELECT b.id, b.title, b.author, b.publisher, b.isbn, b.call_num, SUM(cu.counter_usage) AS total_usage, cu.usage_type, cu.usage_year FROM books AS b INNER JOIN counter_usage AS cu ON b.id = cu.book_id WHERE b.isbn = :isbn AND cu.usage_year BETWEEN :previous_year AND :current_year GROUP BY b.id, cu.usage_type, cu.usage_year ORDER BY b.title';
+    $sql      = 'SELECT b.id, b.title, b.author, b.publisher, b.isbn, b.call_num, SUM(cu.counter_usage) AS total_usage, cu.usage_type, cu.usage_year FROM books AS b INNER JOIN counter_usage AS cu ON b.id = cu.book_id WHERE b.isbn IN (' . $in . ') AND cu.usage_year BETWEEN :previous_year AND :current_year GROUP BY b.id, cu.usage_type, cu.usage_year ORDER BY b.title';
     $query    = $db->prepare($sql);
-    $query->bindParam(':isbn', $isbn);
     $query->bindParam(':previous_year', $previous_year);
     $query->bindParam(':current_year', $current_year);
     $query->execute();
     $results = $query->fetchAll(PDO::FETCH_GROUP|PDO::FETCH_ASSOC);
     $db = NULL;
     return $this->format_usage($results);
+  }
+  
+  private function get_related($isbn) {
+    return $this->format_xisbn($isbn);
+  }
+  
+  private function format_xisbn($isbn) {
+    $xisbn = new xisbn;
+    $related_isbns = $xisbn->get_isbns($isbn);
+    return implode(',',$related_isbns);
   }
   
   private function format_usage($usage) {

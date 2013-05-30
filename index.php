@@ -9,10 +9,6 @@
   */
 require_once 'config.php';
 
-// TODO: Incorporate XISBN
-// http://xisbn.worldcat.org/webservices/xid/isbn/9783527283132?method=getMetadata&fl=*&format=json&ai=jared_howland
-// http://www.oclc.org/developer/services/xisbn
-
 // TODO: Provide list of what platforms have usage and for what years
 
 // TODO: Allow export to CSV for custom sorting
