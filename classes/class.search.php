@@ -46,6 +46,9 @@ class search {
   public function isbn() {
     $isbn          = $this->validate_standard_number($this->term);
     $in            = $this->get_related($isbn);
+    if($in == 'invalidId') {
+      $in = '0000000000';
+    }
     $previous_year = $this->get_previous_year();
     $current_year  = $this->get_current_year();
     // Connect to database

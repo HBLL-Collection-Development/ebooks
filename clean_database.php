@@ -13,13 +13,13 @@ require_once 'config.php';
 class clean {
 
   public function database() {
-    // $this->drop_tables();
-    $this->add_tables();
+    $this->drop_tables();
+    // $this->add_tables();
     // $this->insert_data('documentation/example_data.sql');
     // Load exported file from phpMyAdmin
-    $this->insert_data('documentation/book_usage.sql');
+    $this->insert_data('documentation/matacq_book_usage.sql');
     // Constraints must be added after the data because of Foreign Key PDO errors that occur otherwise
-    $this->add_constraints();
+    // $this->add_constraints();
   }
   
   private function drop_tables() {
@@ -27,28 +27,10 @@ class clean {
     $database = new db;
     $db    = $database->connect();
     // $sql   = 'DROP DATABASE IF EXISTS `book_usage`';
-    $sql   = 'SET foreign_key_checks = 0;DROP TABLE `books`, `books_platforms`, `books_vendors`, `counter_br1`, `counter_br2`, `platforms`, `temp_counter_br1`, `temp_counter_br2`, `vendors`;SET foreign_key_checks = 1;';
+    $sql   = 'SET foreign_key_checks = 0;TRUNCATE TABLE `books`, `books_platforms`, `books_search`, `books_vendors`, `counter_br1`, `counter_br2`, `platforms`, `temp_counter_br1`, `temp_counter_br2`, `vendors`;SET foreign_key_checks = 1;';
     $query = $db->prepare($sql);
     $query->execute();
     $db = NULL;
-    // CREATE database
-    try {
-      $db = new PDO('mysql:host=' . config::DB_HOST . ';port=' . config::DB_PORT . ';charset=utf8', config::DB_USERNAME, config::DB_PASSWORD);
-      $db->exec("SET NAMES 'utf8';");
-      $db->exec('SET CHARACTER SET utf8;');
-      // Enable PDO error messages if in development
-      if(config::DEVELOPMENT) {
-        $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-      }
-      $sql = 'CREATE DATABASE `' . config::DB_NAME . '` DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci';
-      $query = $db->prepare($sql);
-      $query->execute();
-      $db = NULL;
-    // Throw an error and kill script if cannot connect
-    } catch ( PDOException $e ) {
-      $e->getMessage();
-      die();
-    }
   }
   
   private function add_tables() {
