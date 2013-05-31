@@ -31,7 +31,7 @@
         <h2>Vendor Browse</h2>
         <form action="browse.php" method="get" accept-charset="utf-8">
           <select name="vendor" id="vendor">
-            $vendors
+            {{ vendors }}
           </select>
           <input class="button small" type="submit" name="submit" value="Browse" />
         </form>
@@ -70,7 +70,7 @@
         <h2>Platform Browse</h2>
         <form action="browse.php" method="get" accept-charset="utf-8">
           <select name="platform" id="platform">
-            $platforms
+            {{ platforms }}
           </select>
           <input class="button small" type="submit" name="submit" value="Browse" />
         </form>

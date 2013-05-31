@@ -239,5 +239,50 @@ class search {
     return TRUE;
   }
   
+  function get_vendors() {
+    // Connect to database
+    $database = new db;
+    $db    = $database->connect();
+    $sql   = 'SELECT id, vendor FROM vendors ORDER BY vendor ASC';
+    $query = $db->prepare($sql);
+    $query->execute();
+    $results = $query->fetchAll(PDO::FETCH_ASSOC);
+    $db = NULL;
+    return $results;
+  }
+
+  public function get_platforms() {
+    // Connect to database
+    $database = new db;
+    $db    = $database->connect();
+    $sql   = 'SELECT platforms.id AS platform_id, vendors.vendor AS vendor, platforms.platform AS platform FROM platforms, vendors WHERE platforms.vendor_id = vendors.id ORDER BY platform ASC';
+    $query = $db->prepare($sql);
+    $query->execute();
+    $results = $query->fetchAll(PDO::FETCH_ASSOC);
+    $db = NULL;
+    return $results;
+  }
+
+  public function format_vendors() {
+    $html = NULL;
+    foreach($this->get_vendors() as $vendor) {
+      $vendor_id = $vendor['id'];
+      $vendor    = $vendor['vendor'];
+      $html     .= '<option value="' . $vendor_id . '">' . $vendor . '</option>';
+    }
+    return $html;
+  }
+
+  public function format_platforms() {
+    $html = NULL;
+    foreach($this->get_platforms() as $platform) {
+      $platform_id = $platform['platform_id'];
+      $vendor      = $platform['vendor'];
+      $platform    = $platform['platform'];
+      $html       .= '<option value="' . $platform_id . '">' . $platform . ' (' . $vendor . ')</option>';
+    }
+    return $html;
+  }
+  
 }
 ?>

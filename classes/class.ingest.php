@@ -40,6 +40,7 @@ class ingest {
   }
   
   protected function clean_platform($platform) {
+    $platform = trim($platform);
     switch ($platform) {
       case 'EBRARY':
         return 'ebrary';
@@ -49,6 +50,15 @@ class ingest {
         break;
       case 'EBL- Ebook Library':
         return 'Ebook Library';
+        break;
+      case 'MetaPress':
+        return 'SpringerLink';
+        break;
+      case 'SPL':
+        return 'SpringerLink';
+        break;
+      case 'GOLD':
+        return 'Gale Virtual Reference Library';
         break;
       default:
         return $this->clean_nulls($platform);
