@@ -20,12 +20,16 @@ $vendors   = $search->format_vendors();
 if($vendor_id) {
   $results = $browse->vendor($vendor_id);
   $heading = template::get_vendor($vendor_id);
+  $term    = $vendor_id;
+  $type    = 'vendor';
 } else {
   $results = $browse->platform($platform_id);
   $heading = template::get_platform($platform_id);
+  $term    = $platform_id;
+  $type    = 'platform';
 }
 
-$html = array('title' => 'Browse Usage', 'heading' => $heading, 'platforms' => $platforms, 'vendors' => $vendors, 'html' => $results);
+$html = array('title' => 'Browse Usage', 'heading' => $heading, 'platforms' => $platforms, 'vendors' => $vendors, 'term' => $term, 'type' => $type, 'html' => $results);
 
 template::display('results.tmpl', $html);
 ?>

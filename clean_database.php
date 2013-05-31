@@ -26,7 +26,6 @@ class clean {
     // DROP database
     $database = new db;
     $db    = $database->connect();
-    // $sql   = 'DROP DATABASE IF EXISTS `book_usage`';
     $sql   = 'SET foreign_key_checks = 0;TRUNCATE TABLE `books`, `books_platforms`, `books_search`, `books_vendors`, `counter_br1`, `counter_br2`, `platforms`, `temp_counter_br1`, `temp_counter_br2`, `vendors`;SET foreign_key_checks = 1;';
     $query = $db->prepare($sql);
     $query->execute();

@@ -19,19 +19,24 @@ $vendors   = $search->format_vendors();
 switch ($type) {
   case 'title':
     $results = $search->title();
+    $term    = $query;
+    $type    = 'title';
     break;
   
   case 'isbn':
     $results = $search->isbn();
+    $term    = $query;
+    $type    = 'isbn';
     break;
   
   default:
     $results = $search->title();
+    $term    = $query;
     $type    = 'title';
     break;
 }
 
-$html = array('title' => 'Search Usage', 'heading' => $heading, 'type' => $type, 'platforms' => $platforms, 'vendors' => $vendors, 'html' => $results);
+$html = array('title' => 'Search Usage', 'heading' => $heading, 'type' => $type, 'term' => $term, 'platforms' => $platforms, 'vendors' => $vendors, 'html' => $results);
 
 template::display('search.tmpl', $html);
 ?>
