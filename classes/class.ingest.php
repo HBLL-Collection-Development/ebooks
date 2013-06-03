@@ -130,43 +130,24 @@ class ingest {
     $isbn = (string) $isbn;
     // ISBN-10
     if(strlen($isbn) == 10) {
-      // Sum
-      $sum    = 0;
-      for ($i = 0; $i < 9; $i++) {
-        $sum += (10 - $i) * $isbn;
-      }
-      // Checksum
-      $checksum = 11 - ($sum % 11);
-      if ($checksum == 11) {
-        $checksum = '0';
-      } elseif ($checksum == 10) {
-        $checksum = 'X';
-      }
-    // ISBN-13
-    } elseif(strlen($isbn) == 13) {
-      // Sum
-      $sum    = 0;
-      for ($i = 0; $i < 12; $i++) {
-        if ($i % 2 == 0) {
-          $sum += $isbn;
-        } else {
-          $sum += 3 * $isbn;
+      $a = 0;
+      for($i = 0; $i < 10; $i++){
+        if($isbn[$i] == "X"){
+          $a += 10*intval(10-$i);
+        } else {//running the loop
+        $a += intval($isbn[$i]) * intval(10-$i);
         }
       }
-      // Checksum
-      $checksum = 10 - ($sum % 10);
-      if ($checksum == 10) {
-        $checksum = '0';
-      }
-    // Invalid ISBN
+      return ($a % 11 == 0);
+    // ISBN-13
+    } elseif(strlen($isbn) == 13) {
+      $check = 0;
+      for($i = 0; $i < 13; $i+=2) $check += substr($isbn, $i, 1);
+      for($i = 1; $i < 12; $i+=2) $check += 3 * substr($isbn, $i, 1);
+      return $check % 10 == 0;
     } else {
       return FALSE;
     }
-    // Validate
-    if (substr($isbn, -1) != $checksum) {
-      return FALSE;
-    }
-    return TRUE;
   }
   
 }
