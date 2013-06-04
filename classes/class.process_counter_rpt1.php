@@ -3,7 +3,7 @@
   * Process and parse the temp_counter_br1 table into individual tables
   *
   * @author Jared Howland <book.usage@jaredhowland.com>
-  * @version 2013-05-29
+  * @version 2013-06-04
   * @since 2013-05-14
   *
   */
@@ -12,18 +12,38 @@ class process_counter_rpt1 extends process {
   protected $result;
   
   public function __construct() {
-    $results = $this->get_data();
-    foreach($results as $result) {
-      $this->result     = $result;
-      $book_id          = $this->update_books();
-      $vendor_id        = $this->update_vendors();
-      $books_vendors_id   = $this->update_books_vendors($book_id, $vendor_id);
-      $platform_id      = $this->update_platforms($vendor_id);
-      $books_platforms_id = $this->update_books_platforms($book_id, $platform_id);
-      $counter_br1_id   = $this->update_counter_br1($book_id, $vendor_id, $platform_id);
-      if($book_id && $vendor_id && $platform_id && $counter_br1_id) {
-        $this->clean_temp_counter_br1();
+    // Connect to database
+    $database = new db;
+    $db       = $database->connect();
+    $db->beginTransaction();
+    try {
+      // Limit to config::PROCESS_LIMIT so that system is not overwhelmed
+      $sql      = 'SELECT id AS temp_id, title, publisher, platform, doi, proprietary_identifier, isbn, issn, counter_br1, usage_year, vendor FROM temp_counter_br1 LIMIT ' . config::PROCESS_LIMIT . ' FOR UPDATE';
+      $query    = $db->prepare($sql);
+      $query->execute();
+      $results = $query->fetchAll(PDO::FETCH_ASSOC);
+      foreach($results as $result) {
+        $this->result     = $result;
+        $book_id          = $this->update_books();
+        $vendor_id        = $this->update_vendors();
+        $books_vendors_id   = $this->update_books_vendors($book_id, $vendor_id);
+        $platform_id      = $this->update_platforms($vendor_id);
+        $books_platforms_id = $this->update_books_platforms($book_id, $platform_id);
+        $counter_br1_id   = $this->update_counter_br1($book_id, $vendor_id, $platform_id);
+        if($book_id && $vendor_id && $platform_id && $counter_br1_id) {
+          $this->clean_temp_counter_br1($db);
+        } else {
+          $error = 'There was a mistake in processing the loaded data. Contact the administrator to determine the exact problem.<br/>book_id: ' . $book_id . '<br/>vendor_id: ' . $vendor_id . '<br/>platform_id: ' . $platform_id . '<br/>counter_br2_id: ' . $counter_br2_id;
+          throw new Exception($error);
+        }
       }
+    $db->commit();
+    $db = NULL;
+    } catch (Exception $e) {
+      echo 'Caught exception: ',  $e->getMessage(), "\n";
+      $db->rollback();
+      $db = NULL;
+      exit;
     }
   }
   
@@ -146,17 +166,12 @@ class process_counter_rpt1 extends process {
   }
   
   // temp_counter_br1 table cleanup
-  private function clean_temp_counter_br1() {
-    $id = $this->result['temp_id'];
-    // Connect to database
-    $database = new db;
-    $db    = $database->connect();
+  private function clean_temp_counter_br1($db) {
+    $id    = $this->result['temp_id'];
     $sql   = 'DELETE FROM temp_counter_br1 WHERE id = :id';
     $query = $db->prepare($sql);
     $query->bindParam(':id', $id);
     $query->execute();
-    $db = NULL;
-    return NULL;
   }
   
 }
