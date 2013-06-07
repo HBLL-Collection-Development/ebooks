@@ -23,13 +23,13 @@ class process_counter_rpt1 extends process {
       $query->execute();
       $results = $query->fetchAll(PDO::FETCH_ASSOC);
       foreach($results as $result) {
-        $this->result     = $result;
-        $book_id          = $this->update_books();
-        $vendor_id        = $this->update_vendors();
+        $this->result       = $result;
+        $book_id            = $this->update_books();
+        $vendor_id          = $this->update_vendors();
         $books_vendors_id   = $this->update_books_vendors($book_id, $vendor_id);
-        $platform_id      = $this->update_platforms($vendor_id);
+        $platform_id        = $this->update_platforms($vendor_id);
         $books_platforms_id = $this->update_books_platforms($book_id, $platform_id);
-        $counter_br1_id   = $this->update_counter_br1($book_id, $vendor_id, $platform_id);
+        $counter_br1_id     = $this->update_counter_br1($book_id, $vendor_id, $platform_id);
         if($book_id && $vendor_id && $platform_id && $counter_br1_id) {
           $this->clean_temp_counter_br1($db);
         } else {

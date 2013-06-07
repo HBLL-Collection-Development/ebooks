@@ -158,6 +158,10 @@ tr:nth-child(even) {
   width: 35em;
   text-align:right;
 }
+.results tr > td:nth-child(2) {
+	text-align: left;
+	padding-left: 2em;
+}
 table.detail tr > td:first-child {
   width: inherit;
 }

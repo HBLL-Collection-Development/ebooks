@@ -16,11 +16,17 @@ $html .= '<h2>What are the advanced search options for title searches?</h2><p><t
 
 $html .= '<h2>What should I know about ISBN searching?</h2><p>ISBNs are unique to a single edition of a book. Thus, print and electronic editions of the same book have two different ISBNs. This makes it difficult to know definitively whether or not we have an electronic copy because some vendors will list the print ISBN while others will list the electronic ISBN. This database will look up all related ISBNs for an ISBN search and look for those for you so that you do not need to perform several searches for different editions of a book. If we have an electronic edition of any ISBN, it should show up here (assuming the vendor has included the correct ISBN in their usage statistics).</p>';
 
-$html .= '<h2>What is Project COUNTER?</h2><p>The <a href="http://www.projectcounter.org/">Project COUNTER</a> Code of Practice is a standard by which vendors collect usage statistics allowing you to make fair usage comparisons across different platforms.</p>';
+$html .= '<h2>What is Project COUNTER?</h2><p>The <a href="http://www.projectcounter.org/">Project COUNTER</a> Code of Practice is a standard by which vendors collect usage statistics allowing you to make fair usage comparisons across different platforms. This database currently tracks only two types of COUNTER reports: Book Report #1 and Book Report #2.</p>';
 
 $html .= '<h2>What is COUNTER Book Report #1?</h2><p>Book Report #1 is the number of successful title requests by title.</p>';
 
 $html .= '<h2>What is COUNTER Book Report #2?</h2><p>Book Report #2 is the number of successful section requests by title.</p>';
+
+$html .= '<h2>Why are there gaps in usage data for some titles?</h2><p>COUNTER reports do not require vendors to report titles that received no use. Therefore, if a title received no uses in a year, it will not show up on a COUNTER report. If a book receives uses in every year but one, there will appear to be a gap in the usage data. In most cases, you can assume that this means the book received no uses in the missing year.</p>';
+
+$html .= '<h2>How long does it take to process usage data</h2><p>When usage data is loaded into the database, there are lots of things that happen on the backend to improve the data (getting call numbers and authors from OCLC for example). About ' . config::PROCESS_LIMIT . ' books are processed every two minutes.</p>';
+
+$html .= '<h2>So, is the database processing files still or is all usage listed in question #1 actually in the database?</h2><p>' . get_status() . '</p>';
 
 
 function get_included_usage() {
@@ -46,6 +52,44 @@ function get_included_usage() {
     }
   }
   return $html;
+}
+
+function get_status() {
+  if(get_num_to_process() > 0) {
+    $estimate = ceil((get_num_to_process() / config::PROCESS_LIMIT / 30)*60*60);
+    $date = date('M j, Y, g:i A', time()+$estimate);
+    return 'All usage will be processed by approximately ' . $date . '.';
+  } else {
+    return 'The database is done processing all usage files.';
+  }
+}
+
+function get_temp_br1() {
+  // Connect to database
+  $database = new db;
+  $db    = $database->connect();
+  $sql   = 'SELECT COUNT(*) AS total FROM temp_counter_br1';
+  $query = $db->prepare($sql);
+  $query->execute();
+  $results = $query->fetchAll();
+  $db = NULL;
+  return $results[0]['total'];
+}
+
+function get_temp_br2() {
+  // Connect to database
+  $database = new db;
+  $db    = $database->connect();
+  $sql   = 'SELECT COUNT(*) AS total FROM temp_counter_br2';
+  $query = $db->prepare($sql);
+  $query->execute();
+  $results = $query->fetchAll();
+  $db = NULL;
+  return $results[0]['total'];
+}
+
+function get_num_to_process() {
+  return get_temp_br1() + get_temp_br2();
 }
 
 function get_vendors() {

@@ -10,9 +10,6 @@
   */
 
 class browse {
-  private $current_year;
-  private $previous_year;
-  
   /**
    * Passes the content into the specified Twig template
    *
@@ -32,30 +29,36 @@ class browse {
   private function format_usage($usage) {
     foreach($usage as $key => $result) {
       // Reset variables
-      $title        = NULL;
-      $author       = NULL;
-      $publisher    = NULL;
-      $isbn         = NULL;
-      $call_num     = NULL;
-      $usage_year   = NULL;
-      $usage_type   = NULL;
-      $total_usage  = NULL;
-      $latest_br1   = NULL;
-      $previous_br1 = NULL;
-      $latest_br2   = NULL;
-      $previous_br2 = NULL;
-      $book_id   = $key;
-      $title     = $result[0]['title'];
-      $author    = $result[0]['author'];
-      $publisher = $result[0]['publisher'];
-      $isbn      = $result[0]['isbn'];
-      $call_num  = $result[0]['call_num'];
+      $title         = NULL;
+      $author        = NULL;
+      $publisher     = NULL;
+      $isbn          = NULL;
+      $call_num      = NULL;
+      $platform_list = NULL;
+      $usage_year    = NULL;
+      $usage_type    = NULL;
+      $total_usage   = NULL;
+      $latest_br1    = NULL;
+      $previous_br1  = NULL;
+      $latest_br2    = NULL;
+      $previous_br2  = NULL;
+      // Define variables
+      $book_id       = $key;
+      $title         = $result[0]['title'];
+      $author        = $result[0]['author'];
+      $publisher     = $result[0]['publisher'];
+      $isbn          = $result[0]['isbn'];
+      $call_num      = $result[0]['call_num'];
+      $platforms     = explode('|', $result[0]['platforms']);
+      foreach($platforms as $platform) {
+        $platform_list .= '<li>' . $platform . '</li>';
+      }
       foreach($result as $usage) {
         $usage_year  = $usage['usage_year'];
         $usage_type  = $usage['usage_type'];
         $total_usage = $usage['total_usage'];
         // Current usage
-        if($usage_year == $this->current_year) {
+        if($usage_year == config::$current_year) {
           if($usage_type == 'br1') {
             $latest_br1 = $total_usage;
           } else {
@@ -70,23 +73,20 @@ class browse {
           }
         }
       }
-      $usages[] = array('book_id' => $book_id, 'title' => $title, 'author' => $author, 'publisher' => $publisher, 'isbn' => $isbn, 'call_num' => $call_num, 'latest_br1' => $latest_br1, 'previous_br1' => $previous_br1, 'latest_br2' => $latest_br2, 'previous_br2' => $previous_br2);
+      $usages[] = array('book_id' => $book_id, 'title' => $title, 'author' => $author, 'publisher' => $publisher, 'isbn' => $isbn, 'call_num' => $call_num, 'platforms' => $platform_list, 'latest_br1' => $latest_br1, 'previous_br1' => $previous_br1, 'latest_br2' => $latest_br2, 'previous_br2' => $previous_br2);
     }
-    return array('current_year' => $this->current_year, 'previous_year' => $this->previous_year, 'results' => $usages);
+    return array('current_year' => config::$current_year, 'previous_year' => config::$previous_year, 'results' => $usages);
   }
   
   private function get_vendor_usage($vendor_id) {
-    $current_year  = $this->get_current_year();
-    $previous_year = $this->get_previous_year();
+    $current_year  = config::$current_year;
+    $previous_year = config::$previous_year;
     // Connect to database
     $database = new db;
     $db       = $database->connect();
-    // Query the vendors_browse view table
-    $sql      = 'SELECT book_id, title, author, publisher, isbn, call_num, vendor_id, SUM(counter_usage) AS total_usage, usage_year, usage_type FROM vendors_browse WHERE vendor_id = :vendor_id AND usage_year BETWEEN :previous_year AND :current_year GROUP BY book_id, usage_type, usage_year ORDER BY title';
+    $sql      = "SELECT bv.book_id, b.title, b.author, b.publisher, b.isbn, b.call_num, CAST(GROUP_CONCAT(DISTINCT o.platforms ORDER BY o.platforms SEPARATOR '|') AS CHAR CHARSET UTF8) AS platforms, SUM(cbr1.counter_br1) AS current_br1, SUM(pbr1.counter_br1) AS previous_br1, SUM(cbr2.counter_br2) AS current_br2, SUM(pbr2.counter_br2) AS previous_br2 FROM books_vendors bv LEFT JOIN current_br1 cbr1 ON bv.book_id = cbr1.book_id LEFT JOIN previous_br1 pbr1 ON bv.book_id = pbr1.book_id LEFT JOIN current_br2 cbr2 ON bv.book_id = cbr2.book_id LEFT JOIN previous_br2 pbr2 ON bv.book_id = pbr2.book_id LEFT JOIN books b ON bv.book_id = b.id LEFT JOIN overlap o ON bv.book_id = o.book_id WHERE bv.vendor_id = :vendor_id GROUP BY bv.book_id";
     $query    = $db->prepare($sql);
     $query->bindParam(':vendor_id', $vendor_id);
-    $query->bindParam(':current_year', $current_year);
-    $query->bindParam(':previous_year', $previous_year);
     $query->execute();
     $results = $query->fetchAll(PDO::FETCH_GROUP|PDO::FETCH_ASSOC);
     $db = NULL;
@@ -94,41 +94,19 @@ class browse {
   }
   
   private function get_platform_usage($platform_id) {
-    $current_year  = $this->get_current_year();
-    $previous_year = $this->get_previous_year();
+    $current_year  = config::$current_year;
+    $previous_year = config::$previous_year;
     // Connect to database
     $database = new db;
     $db       = $database->connect();
     // Query the platforms_browse view table
-    $sql      = 'SELECT book_id, title, author, publisher, isbn, call_num, vendor_id, SUM(counter_usage) AS total_usage, usage_year, usage_type FROM platforms_browse WHERE platform_id = :platform_id AND usage_year BETWEEN :previous_year AND :current_year GROUP BY book_id, usage_type, usage_year ORDER BY title';
+    $sql      = "SELECT bp.book_id, b.title, b.author, b.publisher, b.isbn, b.call_num, CAST(GROUP_CONCAT(DISTINCT o.platforms ORDER BY o.platforms SEPARATOR '|') AS CHAR CHARSET UTF8) AS platforms, SUM(cbr1.counter_br1) AS current_br1, SUM(pbr1.counter_br1) AS previous_br1, SUM(cbr2.counter_br2) AS current_br2, SUM(pbr2.counter_br2) AS previous_br2 FROM books_platforms bp LEFT JOIN current_br1 cbr1 ON bp.book_id = cbr1.book_id LEFT JOIN previous_br1 pbr1 ON bp.book_id = pbr1.book_id LEFT JOIN current_br2 cbr2 ON bp.book_id = cbr2.book_id LEFT JOIN previous_br2 pbr2 ON bp.book_id = pbr2.book_id LEFT JOIN books b ON bp.book_id = b.id LEFT JOIN overlap o ON bp.book_id = o.book_id WHERE bp.platform_id = :platform_id GROUP BY bp.book_id";
     $query    = $db->prepare($sql);
     $query->bindParam(':platform_id', $platform_id);
-    $query->bindParam(':current_year', $current_year);
-    $query->bindParam(':previous_year', $previous_year);
     $query->execute();
     $results = $query->fetchAll(PDO::FETCH_GROUP|PDO::FETCH_ASSOC);
     $db = NULL;
     return $this->format_usage($results);
   }
-  
-  private function get_current_year() {
-    // Connect to database
-    $database = new db;
-    $db       = $database->connect();
-    $sql      = 'SELECT MAX(usage_year) AS current_year FROM counter_usage';
-    $query    = $db->prepare($sql);
-    $query->bindParam(':vendor_id', $vendor_id);
-    $query->execute();
-    $current_year = $query->fetchAll(PDO::FETCH_ASSOC);
-    $db = NULL;
-    $this->current_year = $current_year[0]['current_year'];
-    return $this->current_year;
-  }
-  
-  private function get_previous_year() {
-    $this->previous_year = $this->current_year - 1;
-    return $this->previous_year;
-  }
-  
 }
 ?>

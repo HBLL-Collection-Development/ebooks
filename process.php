@@ -20,15 +20,25 @@ $process_br1 = new process_counter_rpt1();
 $process_br2 = new process_counter_rpt2();
 
 // Connect to database
-$database = new db;
-$db       = $database->connect();
+$database      = new db;
+$db            = $database->connect();
+$current_year  = config::$current_year;
+$previous_year = config::$previous_year;
 $sql      = <<<SQL
   DROP TABLE IF EXISTS books_search;
   CREATE TABLE books_search LIKE books;
   ALTER TABLE books_search ENGINE=MYISAM, ADD FULLTEXT (title), ADD FULLTEXT (isbn);
   INSERT INTO books_search SELECT * FROM books;
+  DROP VIEW IF EXISTS current_br1;
+  CREATE VIEW current_br1 AS SELECT counter_br1.book_id AS book_id, counter_br1.counter_br1 AS counter_br1 FROM counter_br1 WHERE (counter_br1.usage_year = $current_year);
+  DROP VIEW IF EXISTS current_br2;
+  CREATE VIEW current_br2 AS SELECT counter_br2.book_id AS book_id, counter_br2.counter_br2 AS counter_br2 FROM counter_br2 WHERE (counter_br2.usage_year = $current_year);
+  DROP VIEW IF EXISTS previous_br1;
+  CREATE VIEW previous_br1 AS SELECT counter_br1.book_id AS book_id, counter_br1.counter_br1 AS counter_br1 FROM counter_br1 WHERE (counter_br1.usage_year = $previous_year);
+  DROP VIEW IF EXISTS previous_br2;
+  CREATE VIEW previous_br2 AS SELECT counter_br2.book_id AS book_id, counter_br2.counter_br2 AS counter_br2 FROM counter_br2 WHERE (counter_br2.usage_year = $previous_year);
 SQL;
-$query    = $db->prepare($sql);
+$query = $db->prepare($sql);
 $query->execute();
 $db = NULL;
 

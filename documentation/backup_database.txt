@@ -1,0 +1,42 @@
+http://wiki.site5.com/Backup/Restore_MySQL_via_SSH
+
+Creating a dump of your Database via SSH
+
+If you have not already done so, first enable SSH. For this tutorial we used Putty.
+
+Login into the server via SSH using your FTP username/password. This information will be located in your Welcome email as well as the IP address to login with. If you no longer have your welcome email you can view your IP address and username on the main page of SiteAdmin.
+
+Once you are logged in, change to the public_html directory:
+
+cd public_html
+
+Now you are ready to create your Backup (dump file), type:
+
+mysqldump --opt -u dbuser -p dbname > filename.back.dump
+
+ie:
+
+mysqldump --opt -u site5com_Laurey -p site5com_forums > 03-Jun-2008-Forums.back.dump
+
+Note: All usernames and databases on Site5 are prefixed with your account username_, this information is required or your backup will fail.
+
+It will then ask you for your database password, provide it and your backup should now be created inside your public_html directory for you to either FTP to your home computer or access via the web (ie: http://yourdomain.tld/03-Jun-2008-Forums.back.dump). Please note, this dump file is accessible to any when located in your public_html directory - it is highly suggested you immediately download this backup and then delete the instance on the server.
+
+Note: Using the date in the filename will enable you to quickly see which is your most recent dump file.
+
+The --opt switch states to optimize the dump file for use during restore , -u specifies user, - p requests a prompt for password.
+Restoring your Database via SSH
+
+Restoring your database is also a simple task, log into your server via SSH and switch to the public_html directory (where your dump file is located):
+
+cd public_html
+
+Once you are in the directory your dump file is located in, you will then type:
+
+mysql -u username -p dbname < filename.back.dump
+
+ie:
+
+mysql -u site5com_Laurey -p site5com_forums < 03-Jun-2008-Forums.back.dump
+
+This command will log into the database named "site5com_forums" using username site5com_Laurey and restore the information from 03-Jun-2008-Forums.back.dump to it once you have entered the database password that will be requested.

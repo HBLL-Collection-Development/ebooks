@@ -15,8 +15,8 @@ class csv {
   private $previous_year;
 
   public function download($array) {
-    $this->current_year  = $array['current_year'];
-    $this->previous_year = $array['previous_year'];
+    $this->current_year  = config::$current_year;
+    $this->previous_year = config::$previous_year;
     $array = $this->format_array($array['results']);
     $this->download_send_headers("data_export_" . date("Y-m-d") . ".csv");
     return $this->array2csv($array);
@@ -53,12 +53,13 @@ class csv {
       $publisher    = $this->clean($book['publisher']);
       $isbn         = $this->clean_isbn($book['isbn']);
       $call_num     = $this->clean($book['call_num']);
+      $platforms    = $this->clean_platforms($book['platforms']);
       $latest_br1   = $this->clean($book['latest_br1']);
       $previous_br1 = $this->clean($book['previous_br1']);
       $latest_br2   = $this->clean($book['latest_br2']);
       $previous_br2 = $this->clean($book['previous_br2']);
 
-      $books[]      = array('Title' => $title, 'Author' => $author, 'Publisher' => $publisher, 'ISBN' => $isbn, 'Call Number' => $call_num, $this->current_year . ' Title-level Usage' => $latest_br1, $this->previous_year . ' Title-level Usage' => $previous_br1, $this->current_year . ' Chapter-level Usage' => $latest_br2, $this->previous_year . ' Chapter-level Usage' => $previous_br2);
+      $books[]      = array('Title' => $title, 'Author' => $author, 'Publisher' => $publisher, 'ISBN' => $isbn, 'Call Number' => $call_num, 'Platform(s)' => $platforms, $this->current_year . ' Title-level Usage' => $latest_br1, $this->previous_year . ' Title-level Usage' => $previous_br1, $this->current_year . ' Chapter-level Usage' => $latest_br2, $this->previous_year . ' Chapter-level Usage' => $previous_br2);
     }
     return $books;
   }
@@ -74,6 +75,13 @@ class csv {
   private function clean_isbn($isbn) {
     $isbn = $this->clean($isbn);
     return '="' . $isbn . '"';
+  }
+  
+  private function clean_platforms($platforms) {
+    $platforms = $this->clean($platforms);
+    $platforms = str_replace('</li><li>', '|', $platforms);
+    $platforms = str_replace('<li>', '', $platforms);
+    return str_replace('</li>', '', $platforms);
   }
 
 }

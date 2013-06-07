@@ -28,7 +28,7 @@ function format_titles() {
   foreach(get_titles() as $title) {
     $id    = $title['id'];
     $title = $title['title'];
-    $title = str_replace('\\', '', $title);
+    // $title = str_replace('\\', '', $title);
     $latin1 = mysql_real_escape_string(mb_convert_encoding($title, 'ISO-8859-1', 'UTF-8'));
     $latin9 = mysql_real_escape_string(mb_convert_encoding($title, 'ISO-8859-15', 'UTF-8'));
     // Remove escape from single quotes before using SQL
