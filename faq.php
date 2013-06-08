@@ -24,7 +24,7 @@ $html .= '<h2>What is COUNTER Book Report #2?</h2><p>Book Report #2 is the numbe
 
 $html .= '<h2>Why are there gaps in usage data for some titles?</h2><p>COUNTER reports do not require vendors to report titles that received no use. Therefore, if a title received no uses in a year, it will not show up on a COUNTER report. If a book receives uses in every year but one, there will appear to be a gap in the usage data. In most cases, you can assume that this means the book received no uses in the missing year.</p>';
 
-$html .= '<h2>How long does it take to process usage data</h2><p>When usage data is loaded into the database, there are lots of things that happen on the backend to improve the data (getting call numbers and authors from OCLC for example). About ' . config::PROCESS_LIMIT . ' books are processed every two minutes.</p>';
+$html .= '<h2>How long does it take to process usage data?</h2><p>When usage data is loaded into the database, there are lots of things that happen on the backend to improve the data (getting call numbers and authors from OCLC for example). About ' . config::PROCESS_LIMIT . ' books are processed every two minutes.</p>';
 
 $html .= '<h2>So, is the database processing files still or is all usage listed in question #1 actually in the database?</h2><p>' . get_status() . '</p>';
 

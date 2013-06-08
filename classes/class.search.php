@@ -23,16 +23,12 @@ class search {
   }
   
   public function title() {
-    $previous_year = config::$previous_year;
-    $current_year  = config::$current_year;
     // Connect to database
     $database = new db;
     $db       = $database->connect();
     $term     = $db->quote($this->term);
-    $sql      = "SELECT b.id, b.title, b.author, b.publisher, b.isbn, b.call_num, CAST(GROUP_CONCAT(DISTINCT o.platforms ORDER BY o.platforms SEPARATOR '|') AS CHAR CHARSET UTF8) AS platforms, SUM(cbr1.counter_br1) AS current_br1, SUM(pbr1.counter_br1) AS previous_br1, SUM(cbr2.counter_br2) AS current_br2, SUM(pbr2.counter_br2) AS previous_br2 FROM books AS b LEFT JOIN current_br1 cbr1 ON b.id = cbr1.book_id LEFT JOIN previous_br1 pbr1 ON b.id = pbr1.book_id LEFT JOIN current_br2 cbr2 ON b.id = cbr2.book_id LEFT JOIN previous_br2 pbr2 ON b.id = pbr2.book_id LEFT JOIN overlap o ON b.id = o.book_id WHERE id IN (SELECT id FROM books_search WHERE MATCH (title) AGAINST (" . $term . " IN BOOLEAN MODE) ORDER BY title) GROUP BY b.id ORDER BY b.title";
+    $sql      = "SELECT b.id, b.title, b.author, b.publisher, b.isbn, b.call_num, CAST(GROUP_CONCAT(DISTINCT o.platforms ORDER BY o.platforms SEPARATOR '|') AS CHAR CHARSET UTF8) AS platforms, (SELECT SUM(cbr2.counter_br2) FROM current_br2 cbr2 WHERE cbr2.book_id = b.id) AS current_br2, (SELECT SUM(pbr2.counter_br2) FROM previous_br2 pbr2 WHERE pbr2.book_id = b.id) AS previous_br2, (SELECT SUM(cbr1.counter_br1) FROM current_br1 cbr1 WHERE cbr1.book_id = b.id) AS current_br1, (SELECT SUM(pbr1.counter_br1) FROM previous_br1 pbr1 WHERE pbr1.book_id = b.id) AS previous_br1 FROM books AS b LEFT JOIN overlap o ON b.id = o.book_id WHERE id IN (SELECT id FROM books_search WHERE MATCH (title) AGAINST (" . $term . " IN BOOLEAN MODE) ORDER BY title) GROUP BY b.id ORDER BY b.title";
     $query    = $db->prepare($sql);
-    $query->bindParam(':previous_year', $previous_year);
-    $query->bindParam(':current_year', $current_year);
     $query->execute();
     $results = $query->fetchAll(PDO::FETCH_GROUP|PDO::FETCH_ASSOC);
     $db = NULL;
@@ -45,15 +41,11 @@ class search {
     if($in == 'invalidId') {
       $in = '0000000000';
     }
-    $previous_year = config::$previous_year;
-    $current_year  = config::$current_year;
     // Connect to database
     $database = new db;
     $db       = $database->connect();
-    $sql      = "SELECT b.id, b.title, b.author, b.publisher, b.isbn, b.call_num, CAST(GROUP_CONCAT(DISTINCT o.platforms ORDER BY o.platforms SEPARATOR '|') AS CHAR CHARSET UTF8) AS platforms, SUM(cu.counter_usage) AS total_usage, cu.usage_type, cu.usage_year FROM books AS b INNER JOIN counter_usage AS cu ON b.id = cu.book_id LEFT JOIN overlap o ON b.id = o.book_id WHERE b.isbn IN (" . $in . ") AND cu.usage_year BETWEEN :previous_year AND :current_year GROUP BY b.id, cu.usage_type, cu.usage_year ORDER BY b.title";
+    $sql      = "SELECT b.id, b.title, b.author, b.publisher, b.isbn, b.call_num, CAST(GROUP_CONCAT(DISTINCT o.platforms ORDER BY o.platforms SEPARATOR '|') AS CHAR CHARSET UTF8) AS platforms, (SELECT SUM(cbr2.counter_br2) FROM current_br2 cbr2 WHERE cbr2.book_id = b.id) AS current_br2, (SELECT SUM(pbr2.counter_br2) FROM previous_br2 pbr2 WHERE pbr2.book_id = b.id) AS previous_br2, (SELECT SUM(cbr1.counter_br1) FROM current_br1 cbr1 WHERE cbr1.book_id = b.id) AS current_br1, (SELECT SUM(pbr1.counter_br1) FROM previous_br1 pbr1 WHERE pbr1.book_id = b.id) AS previous_br1 FROM books AS b LEFT JOIN overlap o ON b.id = o.book_id WHERE b.isbn IN (" . $in . ") GROUP BY b.id ORDER BY b.title";
     $query    = $db->prepare($sql);
-    $query->bindParam(':previous_year', $previous_year);
-    $query->bindParam(':current_year', $current_year);
     $query->execute();
     $results = $query->fetchAll(PDO::FETCH_GROUP|PDO::FETCH_ASSOC);
     $db = NULL;
@@ -80,44 +72,29 @@ class search {
       $call_num      = NULL;
       $platforms     = NULL;
       $platform_list = NULL;
-      $usage_year    = NULL;
-      $usage_type    = NULL;
-      $total_usage   = NULL;
-      $latest_br1    = NULL;
+      $current_br1    = NULL;
       $previous_br1  = NULL;
-      $latest_br2    = NULL;
+      $current_br2    = NULL;
       $previous_br2  = NULL;
-      $book_id   = $key;
-      $title     = $result[0]['title'];
-      $author    = $result[0]['author'];
-      $publisher = $result[0]['publisher'];
-      $isbn      = $result[0]['isbn'];
-      $call_num  = $result[0]['call_num'];
+      $book_id       = $key;
+      $title         = $result[0]['title'];
+      $author        = $result[0]['author'];
+      $publisher     = $result[0]['publisher'];
+      $isbn          = $result[0]['isbn'];
+      $call_num      = $result[0]['call_num'];
       $platforms     = explode('|', $result[0]['platforms']);
       foreach($platforms as $platform) {
         $platform_list .= '<li>' . $platform . '</li>';
       }
-      foreach($result as $usage) {
-        $usage_year  = $usage['usage_year'];
-        $usage_type  = $usage['usage_type'];
-        $total_usage = $usage['total_usage'];
-        // Current usage
-        if($usage_year == $this->current_year) {
-          if($usage_type == 'br1') {
-            $latest_br1 = $total_usage;
-          } else {
-            $latest_br2 = $total_usage;
-          }
-        // Previous usage
-        } else {
-          if($usage_type == 'br1') {
-            $previous_br1 = $total_usage;
-          } else {
-            $previous_br2 = $total_usage;
-          }
-        }
+      $current_br1   = $result[0]['current_br1'];
+      $previous_br1 = $result[0]['previous_br1'];
+      $current_br2   = $result[0]['current_br2'];
+      $previous_br2 = $result[0]['previous_br2'];
+      if(is_null($current_br1) AND is_null($current_br2) AND is_null($previous_br1) AND is_null($previous_br2)) {
+        // Do not add to $usages array if there is no usage in the past 2 years
+      } else {
+      $usages[] = array('book_id' => $book_id, 'title' => $title, 'author' => $author, 'publisher' => $publisher, 'isbn' => $isbn, 'call_num' => $call_num, 'platforms' => $platform_list, 'latest_br1' => $current_br1, 'previous_br1' => $previous_br1, 'latest_br2' => $current_br2, 'previous_br2' => $previous_br2);
       }
-      $usages[] = array('book_id' => $book_id, 'title' => $title, 'author' => $author, 'publisher' => $publisher, 'isbn' => $isbn, 'call_num' => $call_num, 'platforms' => $platform_list, 'latest_br1' => $latest_br1, 'previous_br1' => $previous_br1, 'latest_br2' => $latest_br2, 'previous_br2' => $previous_br2);
     }
     return array('current_year' => config::$current_year, 'previous_year' => config::$previous_year, 'search_term' => htmlspecialchars($this->term), 'results' => $usages);
   }
