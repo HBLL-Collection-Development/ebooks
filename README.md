@@ -8,8 +8,8 @@ This is a database that can ingest [Project COUNTER][] Book Report #1 and Book R
 2. Untar files to desired location on your server.
 3. Create a MySQL database called `book_usage` and give a user access to this new database.
 4. Run the SQL commands found [here](documentation/schema.sql) to create tables and views needed for this application.
-5. Change name of config_example.php to config.php
-6. Enter your database credentials in the config.php file
+5. Change name of `config_example.php` to `config.php`.
+6. Enter your database credentials in `config.php`.
 7. Set up a cron job to regularly run the following command (every other minute is the suggested default):
         ```php -q /path/to/process.php >/dev/null 2>&1```
 8. Adjust the [Twig templates][] in the [templates directory](templates) to your liking.
