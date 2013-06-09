@@ -15,5 +15,5 @@ This is a database that can ingest [Project COUNTER][] Book Report #1 and Book R
 8. Adjust [Twig templates][] in the templates directory for desired HTML output.
 
 [Project COUNTER]: http://www.projectcounter.org/
-[source files]: https://github.com/jaredhowland/Ebook-Usage-Database/archive/v1.0.tar.gz
+[source files]: https://github.com/jaredhowland/Ebook-Usage-Database/archive/v1.1.tar.gz
 [Twig templates]: http://twig.sensiolabs.org/
