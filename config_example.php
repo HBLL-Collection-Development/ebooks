@@ -16,9 +16,10 @@ class config {
   const DB_PASSWORD      = 'PASSWORD';
   // App settings
   const TIME_ZONE        = 'America/Denver'; // Needed for date calculations in PHP
-  const DEVELOPMENT      = TRUE; // Changes the app behavior (error reporting, template caching, which database to use, etc.)
-  const URL              = 'http://localhost/books';
+  const DEVELOPMENT      = TRUE; // Changes the app behavior (error reporting, template caching, which database to use, etc.); FALSE if in production.
+  const URL              = 'http://localhost/books'; // Base URL of your application
   const PROCESS_LIMIT    = 50; // Number of rows to process at one time when parsing from temp table to permanent tables
+  const WORLDCAT_ID      = FALSE; // WorldCat Affiliate ID; FALSE if you do not have one
 
   /****************************************************************************/
   /*                       DO NOT EDIT BELOW THIS LINE                        */
