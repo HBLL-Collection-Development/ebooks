@@ -11,9 +11,7 @@ This is a database that can ingest [Project COUNTER][] Book Report #1 and Book R
 5. Change name of config_example.php to config.php
 6. Enter your database credentials in the config.php file
 7. Set up a cron job on your server to the following command at desired interval (every other minute or so is usually a good start):
-
-php -q /path/to/process.php >/dev/null 2>&1
-
+    php -q /path/to/process.php >/dev/null 2>&1
 8. Adjust [Twig templates][] in the templates directory for desired HTML output.
 
 [Project COUNTER]: http://www.projectcounter.org/

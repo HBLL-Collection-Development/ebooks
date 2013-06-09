@@ -23,7 +23,6 @@ CREATE  TABLE IF NOT EXISTS `book_usage`.`books` (
   `valid_utf8` ENUM('Y','N','Unknown') CHARACTER SET 'utf8' COLLATE 'utf8_unicode_ci' NOT NULL DEFAULT 'Unknown' ,
   PRIMARY KEY (`id`) )
 ENGINE = InnoDB
-AUTO_INCREMENT = 49303
 DEFAULT CHARACTER SET = utf8
 COLLATE = utf8_unicode_ci;
 
@@ -36,7 +35,6 @@ CREATE  TABLE IF NOT EXISTS `book_usage`.`vendors` (
   `vendor` TEXT CHARACTER SET 'utf8' COLLATE 'utf8_unicode_ci' NOT NULL ,
   PRIMARY KEY (`id`) )
 ENGINE = InnoDB
-AUTO_INCREMENT = 6
 DEFAULT CHARACTER SET = utf8
 COLLATE = utf8_unicode_ci;
 
@@ -56,7 +54,6 @@ CREATE  TABLE IF NOT EXISTS `book_usage`.`platforms` (
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB
-AUTO_INCREMENT = 6
 DEFAULT CHARACTER SET = utf8
 COLLATE = utf8_unicode_ci;
 
@@ -82,7 +79,6 @@ CREATE  TABLE IF NOT EXISTS `book_usage`.`books_platforms` (
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB
-AUTO_INCREMENT = 50730
 DEFAULT CHARACTER SET = utf8
 COLLATE = utf8_unicode_ci;
 
@@ -106,7 +102,6 @@ CREATE  TABLE IF NOT EXISTS `book_usage`.`books_search` (
   FULLTEXT INDEX `title` (`title` ASC) ,
   FULLTEXT INDEX `isbn` (`isbn` ASC) )
 ENGINE = MyISAM
-AUTO_INCREMENT = 49303
 DEFAULT CHARACTER SET = utf8
 COLLATE = utf8_unicode_ci;
 
@@ -132,7 +127,6 @@ CREATE  TABLE IF NOT EXISTS `book_usage`.`books_vendors` (
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB
-AUTO_INCREMENT = 50730
 DEFAULT CHARACTER SET = utf8
 COLLATE = utf8_unicode_ci;
 
@@ -168,7 +162,6 @@ CREATE  TABLE IF NOT EXISTS `book_usage`.`counter_br1` (
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB
-AUTO_INCREMENT = 1142
 DEFAULT CHARACTER SET = utf8
 COLLATE = utf8_unicode_ci;
 
@@ -204,7 +197,6 @@ CREATE  TABLE IF NOT EXISTS `book_usage`.`counter_br2` (
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB
-AUTO_INCREMENT = 97012
 DEFAULT CHARACTER SET = utf8
 COLLATE = utf8_unicode_ci;
 
@@ -302,63 +294,63 @@ CREATE TABLE IF NOT EXISTS `book_usage`.`unicode` (`id` INT, `title` INT, `valid
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `book_usage`.`all_usage`;
 USE `book_usage`;
-CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `book_usage`.`all_usage` AS select `b`.`id` AS `id`,`cbr1`.`counter_br1` AS `current_br1`,`cbr2`.`counter_br2` AS `current_br2`,`pbr1`.`counter_br1` AS `previous_br1`,`pbr2`.`counter_br2` AS `previous_br2` from ((((`book_usage`.`books` `b` left join `book_usage`.`current_br1` `cbr1` on((`b`.`id` = `cbr1`.`book_id`))) left join `book_usage`.`current_br2` `cbr2` on((`b`.`id` = `cbr2`.`book_id`))) left join `book_usage`.`previous_br1` `pbr1` on((`b`.`id` = `pbr1`.`book_id`))) left join `book_usage`.`previous_br2` `pbr2` on((`b`.`id` = `pbr2`.`book_id`)));
+CREATE  OR REPLACE VIEW `book_usage`.`all_usage` AS select `b`.`id` AS `id`,`cbr1`.`counter_br1` AS `current_br1`,`cbr2`.`counter_br2` AS `current_br2`,`pbr1`.`counter_br1` AS `previous_br1`,`pbr2`.`counter_br2` AS `previous_br2` from ((((`book_usage`.`books` `b` left join `book_usage`.`current_br1` `cbr1` on((`b`.`id` = `cbr1`.`book_id`))) left join `book_usage`.`current_br2` `cbr2` on((`b`.`id` = `cbr2`.`book_id`))) left join `book_usage`.`previous_br1` `pbr1` on((`b`.`id` = `pbr1`.`book_id`))) left join `book_usage`.`previous_br2` `pbr2` on((`b`.`id` = `pbr2`.`book_id`)));
 
 -- -----------------------------------------------------
 -- View `book_usage`.`counter_usage`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `book_usage`.`counter_usage`;
 USE `book_usage`;
-CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `book_usage`.`counter_usage` AS (select `book_usage`.`counter_br1`.`book_id` AS `book_id`,`book_usage`.`counter_br1`.`vendor_id` AS `vendor_id`,`book_usage`.`counter_br1`.`platform_id` AS `platform_id`,`book_usage`.`counter_br1`.`usage_year` AS `usage_year`,`book_usage`.`counter_br1`.`counter_br1` AS `counter_usage`,'br1' AS `usage_type` from `book_usage`.`counter_br1`) union all (select `book_usage`.`counter_br2`.`book_id` AS `book_id`,`book_usage`.`counter_br2`.`vendor_id` AS `vendor_id`,`book_usage`.`counter_br2`.`platform_id` AS `platform_id`,`book_usage`.`counter_br2`.`usage_year` AS `usage_year`,`book_usage`.`counter_br2`.`counter_br2` AS `counter_usage`,'br2' AS `usage_type` from `book_usage`.`counter_br2`);
+CREATE  OR REPLACE VIEW `book_usage`.`counter_usage` AS (select `book_usage`.`counter_br1`.`book_id` AS `book_id`,`book_usage`.`counter_br1`.`vendor_id` AS `vendor_id`,`book_usage`.`counter_br1`.`platform_id` AS `platform_id`,`book_usage`.`counter_br1`.`usage_year` AS `usage_year`,`book_usage`.`counter_br1`.`counter_br1` AS `counter_usage`,'br1' AS `usage_type` from `book_usage`.`counter_br1`) union all (select `book_usage`.`counter_br2`.`book_id` AS `book_id`,`book_usage`.`counter_br2`.`vendor_id` AS `vendor_id`,`book_usage`.`counter_br2`.`platform_id` AS `platform_id`,`book_usage`.`counter_br2`.`usage_year` AS `usage_year`,`book_usage`.`counter_br2`.`counter_br2` AS `counter_usage`,'br2' AS `usage_type` from `book_usage`.`counter_br2`);
 
 -- -----------------------------------------------------
 -- View `book_usage`.`current_br1`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `book_usage`.`current_br1`;
 USE `book_usage`;
-CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `book_usage`.`current_br1` AS select `book_usage`.`counter_br1`.`book_id` AS `book_id`,`book_usage`.`counter_br1`.`counter_br1` AS `counter_br1` from `book_usage`.`counter_br1` where (`book_usage`.`counter_br1`.`usage_year` = 2012);
+CREATE  OR REPLACE VIEW `book_usage`.`current_br1` AS select `book_usage`.`counter_br1`.`book_id` AS `book_id`,`book_usage`.`counter_br1`.`counter_br1` AS `counter_br1` from `book_usage`.`counter_br1` where (`book_usage`.`counter_br1`.`usage_year` = 2012);
 
 -- -----------------------------------------------------
 -- View `book_usage`.`current_br2`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `book_usage`.`current_br2`;
 USE `book_usage`;
-CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `book_usage`.`current_br2` AS select `book_usage`.`counter_br2`.`book_id` AS `book_id`,`book_usage`.`counter_br2`.`counter_br2` AS `counter_br2` from `book_usage`.`counter_br2` where (`book_usage`.`counter_br2`.`usage_year` = 2012);
+CREATE  OR REPLACE VIEW `book_usage`.`current_br2` AS select `book_usage`.`counter_br2`.`book_id` AS `book_id`,`book_usage`.`counter_br2`.`counter_br2` AS `counter_br2` from `book_usage`.`counter_br2` where (`book_usage`.`counter_br2`.`usage_year` = 2012);
 
 -- -----------------------------------------------------
 -- View `book_usage`.`overlap`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `book_usage`.`overlap`;
 USE `book_usage`;
-CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `book_usage`.`overlap` AS select `bp`.`book_id` AS `book_id`,concat(`p`.`platform`,' (',`v`.`vendor`,')') AS `platforms` from ((`book_usage`.`books_platforms` `bp` left join `book_usage`.`platforms` `p` on((`bp`.`platform_id` = `p`.`id`))) left join `book_usage`.`vendors` `v` on((`p`.`vendor_id` = `v`.`id`)));
+CREATE  OR REPLACE VIEW `book_usage`.`overlap` AS select `bp`.`book_id` AS `book_id`,concat(`p`.`platform`,' (',`v`.`vendor`,')') AS `platforms` from ((`book_usage`.`books_platforms` `bp` left join `book_usage`.`platforms` `p` on((`bp`.`platform_id` = `p`.`id`))) left join `book_usage`.`vendors` `v` on((`p`.`vendor_id` = `v`.`id`)));
 
 -- -----------------------------------------------------
 -- View `book_usage`.`platforms_vendors`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `book_usage`.`platforms_vendors`;
 USE `book_usage`;
-CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `book_usage`.`platforms_vendors` AS (select `p`.`id` AS `id`,concat(`p`.`platform`,' (',`v`.`vendor`,')') AS `platform_vendor` from (`book_usage`.`platforms` `p` left join `book_usage`.`vendors` `v` on((`p`.`vendor_id` = `v`.`id`))));
+CREATE  OR REPLACE VIEW `book_usage`.`platforms_vendors` AS (select `p`.`id` AS `id`,concat(`p`.`platform`,' (',`v`.`vendor`,')') AS `platform_vendor` from (`book_usage`.`platforms` `p` left join `book_usage`.`vendors` `v` on((`p`.`vendor_id` = `v`.`id`))));
 
 -- -----------------------------------------------------
 -- View `book_usage`.`previous_br1`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `book_usage`.`previous_br1`;
 USE `book_usage`;
-CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `book_usage`.`previous_br1` AS select `book_usage`.`counter_br1`.`book_id` AS `book_id`,`book_usage`.`counter_br1`.`counter_br1` AS `counter_br1` from `book_usage`.`counter_br1` where (`book_usage`.`counter_br1`.`usage_year` = 2011);
+CREATE  OR REPLACE VIEW `book_usage`.`previous_br1` AS select `book_usage`.`counter_br1`.`book_id` AS `book_id`,`book_usage`.`counter_br1`.`counter_br1` AS `counter_br1` from `book_usage`.`counter_br1` where (`book_usage`.`counter_br1`.`usage_year` = 2011);
 
 -- -----------------------------------------------------
 -- View `book_usage`.`previous_br2`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `book_usage`.`previous_br2`;
 USE `book_usage`;
-CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `book_usage`.`previous_br2` AS select `book_usage`.`counter_br2`.`book_id` AS `book_id`,`book_usage`.`counter_br2`.`counter_br2` AS `counter_br2` from `book_usage`.`counter_br2` where (`book_usage`.`counter_br2`.`usage_year` = 2011);
+CREATE  OR REPLACE VIEW `book_usage`.`previous_br2` AS select `book_usage`.`counter_br2`.`book_id` AS `book_id`,`book_usage`.`counter_br2`.`counter_br2` AS `counter_br2` from `book_usage`.`counter_br2` where (`book_usage`.`counter_br2`.`usage_year` = 2011);
 
 -- -----------------------------------------------------
 -- View `book_usage`.`unicode`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `book_usage`.`unicode`;
 USE `book_usage`;
-CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `book_usage`.`unicode` AS select `book_usage`.`books`.`id` AS `id`,`book_usage`.`books`.`title` AS `title`,`book_usage`.`books`.`valid_utf8` AS `valid_utf8` from `book_usage`.`books` where ((length(`book_usage`.`books`.`title`) <> char_length(`book_usage`.`books`.`title`)) and ((`book_usage`.`books`.`valid_utf8` = 'N') or (`book_usage`.`books`.`valid_utf8` = 'Unknown')));
+CREATE  OR REPLACE VIEW `book_usage`.`unicode` AS select `book_usage`.`books`.`id` AS `id`,`book_usage`.`books`.`title` AS `title`,`book_usage`.`books`.`valid_utf8` AS `valid_utf8` from `book_usage`.`books` where ((length(`book_usage`.`books`.`title`) <> char_length(`book_usage`.`books`.`title`)) and ((`book_usage`.`books`.`valid_utf8` = 'N') or (`book_usage`.`books`.`valid_utf8` = 'Unknown')));
 
 
 SET SQL_MODE=@OLD_SQL_MODE;
