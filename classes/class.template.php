@@ -46,6 +46,14 @@ class template {
     return $template->render($content);
   }
   
+  /**
+    * Gets specific vendor name
+    *
+    * @access public
+    * @param int vendor_id
+    * @return string Vendor name
+    *
+    */
   public static function get_vendor($vendor_id) {
     // Connect to database
     $database = new db;
@@ -60,6 +68,14 @@ class template {
     return $vendor[0]['vendor'];
   }
   
+  /**
+    * Gets specific platform name
+    *
+    * @access public
+    * @param int platform_id
+    * @return string Platform name
+    *
+    */
   public static function get_platform($platform_id) {
     // Connect to database
     $database = new db;

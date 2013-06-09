@@ -3,7 +3,7 @@
   * Admin page to add usage to database
   *
   * @author Jared Howland <book.usage@jaredhowland.com>
-  * @version 2013-05-18
+  * @version 2013-06-05
   * @since 2013-05-15
   *
   */

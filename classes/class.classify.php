@@ -4,7 +4,7 @@
   * http://classify.oclc.org/classify2/api_docs/classify.html
   *
   * @author Jared Howland <book.usage@jaredhowland.com>
-  * @version 2013-04-30
+  * @version 2013-06-08
   * @since 2013-04-30
   *
   */
@@ -29,6 +29,14 @@ class classify {
     return $this->get_results();
   }
 
+  /**
+    * Determine and set the type of search to run on Classify service
+    *
+    * @access private
+    * @param string title or standard_number are only acceptable values
+    * @return NULL
+    *
+    */
   private function set_type($type) {
     if($type == 'title') {
       $this->type = 'title';
@@ -37,10 +45,26 @@ class classify {
     }
   }
   
+  /**
+    * Retrieve $type variable
+    *
+    * @access private
+    * @param NULL
+    * @return string title or standard_number
+    *
+    */
   private function get_type() {
     return $this->type;
   }
   
+  /**
+    * Set the query string—should always be array so set it as array if it is not one
+    *
+    * @access private
+    * @param string Search term(s) passed to class
+    * @return NULL
+    *
+    */
   private function set_terms($terms) {
     if(is_array($terms)) {
       $this->terms = $terms;
@@ -49,10 +73,26 @@ class classify {
     }
   }
   
+  /**
+    * Set the $terms variable
+    *
+    * @access private
+    * @param NULL
+    * @return string Search term(s) passed to class
+    *
+    */
   private function get_terms() {
     return $this->terms;
   }
   
+  /**
+    * Sets base URL depending on type of search being performed
+    *
+    * @access private
+    * @param NULL
+    * @return NULL
+    *
+    */
   private function set_base_url() {
     if($this->get_type() == 'title') {
       $this->base_url = 'http://classify.oclc.org/classify2/Classify?title=';
@@ -61,10 +101,26 @@ class classify {
     }
   }
   
+  /**
+    * Retrieves the $base_url variable
+    *
+    * @access private
+    * @param NULL
+    * @return string Base URL for classify service depending on type of search being performed
+    *
+    */
   private function get_base_url() {
     return $this->base_url;
   }
   
+  /**
+    * Loop through $terms array to perform search on Classify service
+    *
+    * @access private
+    * @param NULL
+    * @return array Response from Classify service (Title, Author, OCLC Number, Call Number, Response Code)
+    *
+    */
   private function get_results() {
     $titles = array();
     foreach($this->get_terms() as $term) {
@@ -93,7 +149,6 @@ class classify {
       } else {
         $titles[] = array('title' => null, 'author' => null, 'oclc' => null, 'call_num' => null, 'response_code' => $response_code);
       }
-      // http://stackoverflow.com/questions/14805548/update-database-if-post-value-is-not-null
     }
     return $titles;
   }

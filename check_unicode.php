@@ -1,6 +1,10 @@
 <?php
 /**
-  * Displays search screen for book usage database
+  * Shows titles from database with non-ASCII characters that may be mangled UTF8
+  * Fix incorrect titles in the database (no GUI for this yet)
+  * If all are correct, run the following SQL on the book_usage database:
+  * UPDATE `books` SET `valid_utf8` = 'Y'
+  * TODO: This should probably be cleaned up and a GUI created for correcting incorrectly encoded titles
   *
   * @author Jared Howland <book.usage@jaredhowland.com>
   * @version 2013-05-20

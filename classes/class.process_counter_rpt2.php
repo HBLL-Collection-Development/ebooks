@@ -12,6 +12,14 @@
 class process_counter_rpt2 extends process {
   protected $result;
   
+  /**
+    * Constructor; Wraps everything in a transaction so that rows are not deleted until they are properly parsed into correct tables
+    *
+    * @access public
+    * @param NULL
+    * @return NULL
+    *
+    */
   public function __construct() {
     // Connect to database
     $database = new db;
@@ -48,6 +56,15 @@ class process_counter_rpt2 extends process {
     }
   }
   
+  /**
+    * Get data from the temp_counter_br2 table
+    * Limit to number of records specified in config
+    *
+    * @access private
+    * @param NULL
+    * @return array Results of database query
+    *
+    */
   private function get_data(){
     // Connect to database
     $database = new db;
@@ -61,6 +78,15 @@ class process_counter_rpt2 extends process {
     return $results;
   }
   
+  /**
+    * Enhance the data if it is not already in the database using OCLC’s Classify service
+    * Places the enhanced data into the $this->result variable for future use
+    *
+    * @access protected
+    * @param NULL
+    * @return NULL
+    *
+    */
   protected function enhance_data() {
     $temp_id                = $this->result['temp_id'];
     $title                  = $this->result['title'];
@@ -93,7 +119,16 @@ class process_counter_rpt2 extends process {
     return NULL;
   }
 
-  // Counter usage table methods
+  /**
+    * Update the `counter_br2` table
+    *
+    * @access private
+    * @param int book_id
+    * @param int vendor_id
+    * @param int platform_id
+    * @return int Newly created or updated counter_br2_id
+    *
+    */
   private function update_counter_br2($book_id, $vendor_id, $platform_id) {
     $counter_br2_id = $this->search_by_counter_br2($book_id, $vendor_id, $platform_id);
     if(is_null($counter_br2_id)) {
@@ -106,7 +141,16 @@ class process_counter_rpt2 extends process {
     return $counter_br2_id;
   }
 
-  // Return int or NULL
+  /**
+    * Search to find if usage data has already been loaded for this platform and year
+    *
+    * @access private
+    * @param int book_id
+    * @param int vendor_id
+    * @param int platform_id
+    * @return mixed counter_br2_id if exists; NULL otherwise
+    *
+    */
   private function search_by_counter_br2($book_id, $vendor_id, $platform_id) {
     // Define variables
     $usage_year = $this->result['usage_year'];
@@ -130,7 +174,16 @@ class process_counter_rpt2 extends process {
     }
   }
   
-  // Return int
+  /**
+    * Create usage entry if it does not already exist
+    *
+    * @access private
+    * @param int book_id
+    * @param int vendor_id
+    * @param int platform_id
+    * @return int counter_br2_id
+    *
+    */
   private function create_counter_br2($book_id, $vendor_id, $platform_id) {
     // Define variables
     $counter_br2 = $this->result['counter_br2'];
@@ -151,6 +204,14 @@ class process_counter_rpt2 extends process {
     return $counter_br2_id;
   }
   
+  /**
+    * If usage data has already been loaded for this platform and year, overwrite it with this new, presumably, updated data
+    *
+    * @access private
+    * @param int counter_br2_id
+    * @return int counter_br2_id
+    *
+    */
   private function overwrite_counter_br2($counter_br2_id) {
     // Define variables
     $counter_br2 = $this->result['counter_br2'];
@@ -166,7 +227,14 @@ class process_counter_rpt2 extends process {
     return $counter_br2_id;
   }
   
-  // temp_counter_br2 table cleanup
+  /**
+    * Delete row from temp table once all data has properly parsed and been placed in individual tables
+    *
+    * @access private
+    * @param object Database connection details
+    * @return NULL
+    *
+    */
   private function clean_temp_counter_br2($db) {
     $id    = $this->result['temp_id'];
     $sql   = 'DELETE FROM temp_counter_br2 WHERE id = :id';

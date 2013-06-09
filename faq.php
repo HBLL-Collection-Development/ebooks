@@ -1,9 +1,10 @@
 <?php
 /**
   * Displays frequently asked questions
+  * TODO: Clean this up and make it easier to read; maybe move some of the functions to a class
   *
   * @author Jared Howland <book.usage@jaredhowland.com>
-  * @version 2013-05-30
+  * @version 2013-06-08
   * @since 2013-05-30
   *
   */
@@ -28,7 +29,13 @@ $html .= '<h2>How long does it take to process usage data?</h2><p>When usage dat
 
 $html .= '<h2>So, is the database processing files still or is all usage listed in question #1 actually in the database?</h2><p>' . get_status() . '</p>';
 
-
+/**
+  * Get a list of all vendors and platforms, along with years of data
+  *
+  * @param NULL
+  * @return string HTML to show list of vendors and platforms
+  *
+  */
 function get_included_usage() {
   $html = NULL;
   $vendors = get_vendors();
@@ -54,6 +61,13 @@ function get_included_usage() {
   return $html;
 }
 
+/**
+  * Find out if there is any usage to process in the database and estimate completion time
+  *
+  * @param NULL
+  * @return string Text explaining status of data to process
+  *
+  */
 function get_status() {
   if(get_num_to_process() > 0) {
     $estimate = ceil((get_num_to_process() / config::PROCESS_LIMIT / 30)*60*60);
@@ -64,6 +78,13 @@ function get_status() {
   }
 }
 
+/**
+  * Find the number of books that need to be processed from temp_counter_br1 table
+  *
+  * @param NULL
+  * @return int Number of books to be processed
+  *
+  */
 function get_temp_br1() {
   // Connect to database
   $database = new db;
@@ -76,6 +97,13 @@ function get_temp_br1() {
   return $results[0]['total'];
 }
 
+/**
+  * Find the number of books that need to be processed from temp_counter_br2 table
+  *
+  * @param NULL
+  * @return int Number of books to be processed
+  *
+  */
 function get_temp_br2() {
   // Connect to database
   $database = new db;
@@ -88,10 +116,25 @@ function get_temp_br2() {
   return $results[0]['total'];
 }
 
+/**
+  * Total number of books to process from temp_counter_br1 and temp_counter_br2 tables
+  *
+  * @access public|protected|private
+  * @param 
+  * @return 
+  *
+  */
 function get_num_to_process() {
   return get_temp_br1() + get_temp_br2();
 }
 
+/**
+  * List of vendors
+  *
+  * @param NULL
+  * @return array List of vendors
+  *
+  */
 function get_vendors() {
   // Connect to database
   $database = new db;
@@ -104,6 +147,13 @@ function get_vendors() {
   return $results;
 }
 
+/**
+  * List of platforms
+  *
+  * @param int vendor_id
+  * @return array List of platforms for specified vendor
+  *
+  */
 function get_platforms($vendor_id) {
   // Connect to database
   $database = new db;
@@ -117,6 +167,13 @@ function get_platforms($vendor_id) {
   return $results;
 }
 
+/**
+  * List of years usage is available for given platform
+  *
+  * @param int platform_id
+  * @return array First and last years usage is available for given platform
+  *
+  */
 function get_years($platform_id) {
   // Connect to database
   $database = new db;

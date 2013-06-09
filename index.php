@@ -1,6 +1,7 @@
 <?php
 /**
   * Displays search screen for book usage database
+  * TODO: Allow dynamic sorting of columns
   *
   * @author Jared Howland <book.usage@jaredhowland.com>
   * @version 2013-05-15
@@ -8,10 +9,6 @@
   *
   */
 require_once 'config.php';
-
-// TODO: Provide list of what platforms have usage and for what years
-
-// TODO: Allow export to CSV for custom sorting
 
 $vendors   = format_vendors();
 $platforms = format_platforms();
@@ -92,6 +89,13 @@ $html = <<<HTML
 </div>
 HTML;
 
+/**
+  * List of vendors in database
+  *
+  * @param NULL
+  * @return array List of vendors in database
+  *
+  */
 function get_vendors() {
   // Connect to database
   $database = new db;
@@ -104,6 +108,13 @@ function get_vendors() {
   return $results;
 }
 
+/**
+  * List of platforms
+  *
+  * @param NULL
+  * @return array List of platforms in database
+  *
+  */
 function get_platforms() {
   // Connect to database
   $database = new db;
@@ -116,6 +127,13 @@ function get_platforms() {
   return $results;
 }
 
+/**
+  * Format vendors for HTML form
+  *
+  * @param NULL
+  * @return string HTML for drop-down form of all vendors
+  *
+  */
 function format_vendors() {
   $html = NULL;
   foreach(get_vendors() as $vendor) {
@@ -126,6 +144,13 @@ function format_vendors() {
   return $html;
 }
 
+/**
+  * Format platforms for HTML form
+  *
+  * @param NULL
+  * @return string HTML for drop-down form of all platforms
+  *
+  */
 function format_platforms() {
   $html = NULL;
   foreach(get_platforms() as $platform) {

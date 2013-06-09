@@ -1,9 +1,9 @@
 <?php
 /**
-  * Database class to connect to an SQLite database
+  * Database class to connect to a MySQL database
   *
   * @author Jared Howland <book.usage@jaredhowland.com>
-  * @version 2012-12-06
+  * @version 2013-06-08
   * @since 2012-12-05
   *
   */

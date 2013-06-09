@@ -12,16 +12,24 @@ class search {
   private $term;
   
   /**
-   * Constructor
+   * Constructor; Sets $this->term variable for term to search for in database
    *
    * @access public
-   * @param int book_id
+   * @param string Search terms to search for
    * @return null
    */
   public function __construct($term) {
     $this->term = $term;
   }
   
+  /**
+    * Search by title
+    *
+    * @access public
+    * @param NULL
+    * @return array Formatted usage data for results
+    *
+    */
   public function title() {
     // Connect to database
     $database = new db;
@@ -35,6 +43,14 @@ class search {
     return $this->format_usage($results);
   }
 
+  /**
+    * Search by ISBN
+    *
+    * @access public
+    * @param NULL
+    * @return array Formatted usage data for results
+    *
+    */
   public function isbn() {
     $isbn          = $this->validate_standard_number($this->term);
     $in            = $this->get_related($isbn);
@@ -52,16 +68,40 @@ class search {
     return $this->format_usage($results);
   }
   
+  /**
+    * Get all related ISBNs from OCLC’s XISBN service
+    *
+    * @access private
+    * @param string ISBN
+    * @return array All ISBNs returned by XISBN service
+    *
+    */
   private function get_related($isbn) {
     return $this->format_xisbn($isbn);
   }
   
+  /**
+    * Format XISBN search results into an array
+    *
+    * @access private
+    * @param string ISBN
+    * @return array ALL ISBNs returned by XISBN service
+    *
+    */
   private function format_xisbn($isbn) {
     $xisbn = new xisbn;
     $related_isbns = $xisbn->get_isbns($isbn);
     return implode(',',$related_isbns);
   }
   
+  /**
+    * Format usage data array for consumption in Twig template
+    *
+    * @access private
+    * @param array Usage data
+    * @return array Formatted usage data
+    *
+    */
   private function format_usage($usage) {
     foreach($usage as $key => $result) {
       // Reset variables
@@ -72,9 +112,9 @@ class search {
       $call_num      = NULL;
       $platforms     = NULL;
       $platform_list = NULL;
-      $current_br1    = NULL;
+      $current_br1   = NULL;
       $previous_br1  = NULL;
-      $current_br2    = NULL;
+      $current_br2   = NULL;
       $previous_br2  = NULL;
       $book_id       = $key;
       $title         = $result[0]['title'];
@@ -99,6 +139,14 @@ class search {
     return array('current_year' => config::$current_year, 'previous_year' => config::$previous_year, 'search_term' => htmlspecialchars($this->term), 'results' => $usages);
   }
   
+  /**
+    * Validate ISBN-10s, ISBN-13s, and ISSNs
+    *
+    * @access protected
+    * @param string Standard number (ISBN-10s, ISBN-13s, or ISSNs)
+    * @return mixed ISBN-10, ISBN-13, or ISSN if valid; NULL otherwise
+    *
+    */
   protected function validate_standard_number($standard_number) {
     // Clean up number to make sure it is formatted correctly
     $standard_number = $this->strip_non_numeric($standard_number);
@@ -125,12 +173,20 @@ class search {
    * Converts lowercase 'x' to uppercase 'X'
    * 
    * @param string $string
-   * @return string
+   * @return string Cleaned string
    */
   protected function strip_non_numeric($string) {
     return preg_replace('{[^0-9X]}', '', strtoupper($string));
   }
   
+  /**
+    * Validates ISSNs
+    *
+    * @access protected
+    * @param string ISSN
+    * @return mixed ISSN if valid; NULL otherwise
+    *
+    */
   protected function is_issn_valid($issn) {
     $length = strlen($issn);
     // Get checksum
@@ -147,6 +203,14 @@ class search {
     return FALSE;
   }
   
+  /**
+    * Validates ISBN-10s and ISBN-13s
+    *
+    * @access protected
+    * @param string ISBN
+    * @return mixed ISBN if valid; NULL otherwise
+    *
+    */
   protected function is_isbn_valid($isbn) {
     if (!is_string($isbn) && !is_int($isbn)) {
       return false;
@@ -174,7 +238,15 @@ class search {
     }
   }
   
-  function get_vendors() {
+  /**
+    * List of all vendors in database
+    *
+    * @access public
+    * @param NULL
+    * @return array List of all vendors in database
+    *
+    */
+  public function get_vendors() {
     // Connect to database
     $database = new db;
     $db    = $database->connect();
@@ -186,6 +258,14 @@ class search {
     return $results;
   }
 
+  /**
+    * List of all platforms in database
+    *
+    * @access public
+    * @param NULL
+    * @return array List of all platforms in database
+    *
+    */
   public function get_platforms() {
     // Connect to database
     $database = new db;
@@ -198,6 +278,14 @@ class search {
     return $results;
   }
 
+  /**
+    * Format vendors array for use in HTML form in Twig template
+    *
+    * @access public
+    * @param NULL
+    * @return string HTML for form in Twig template
+    *
+    */
   public function format_vendors() {
     $html = NULL;
     foreach($this->get_vendors() as $vendor) {
@@ -208,6 +296,14 @@ class search {
     return $html;
   }
 
+  /**
+    * Format platforms for use in HTML form in Twig template
+    *
+    * @access public
+    * @param NULL
+    * @return string HTML for form in Twig template
+    *
+    */
   public function format_platforms() {
     $html = NULL;
     foreach($this->get_platforms() as $platform) {

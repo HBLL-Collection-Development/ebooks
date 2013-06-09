@@ -9,8 +9,17 @@
   */
   
 class process {
-  // Book table methods
-  // Return int
+  /***********************************/
+  /* `book` table methods            */
+  /***********************************/
+  /**
+    * Update the books table if necessary; return book_id from existing book otherwise
+    *
+    * @access protected
+    * @param NULL
+    * @return int book_id
+    *
+    */
   protected function update_books() {
     $book_id = $this->find_book_id();
     if(is_null($book_id)) {
@@ -19,7 +28,14 @@ class process {
     return $book_id;
   }
   
-  // Return int or NULL
+  /**
+    * Find the book_id if it already exists in the database; NULL if not there yet
+    *
+    * @access protected
+    * @param NULL
+    * @return mixed book_id int if exists in database; NULL otherwise
+    *
+    */
   protected function find_book_id() {
     // Search by DOI, ISBN, and ISSN
     $book_id = $this->search_by_standard_number();
@@ -34,7 +50,14 @@ class process {
     return $book_id;
   }
   
-  // Return int or NULL
+  /**
+    * Search by standard numbers to see if book is already in database
+    *
+    * @access protected
+    * @param NULL
+    * @return mixed book_id int if it exists; NULL otherwise
+    *
+    */
   protected function search_by_standard_number() {
     // Define variables
     $doi  = $this->result['doi'];
@@ -63,7 +86,14 @@ class process {
     }
   }
   
-  // Return int or NULL
+  /**
+    * Search by OCLC number to see if book already exists in the database
+    *
+    * @access protected
+    * @param NULL
+    * @return mixed book_id int if it exists; NULL otherwise
+    *
+    */
   protected function search_by_oclc_number() {
     // Only enhance data if we cannot find the book by DOI, ISBN, or ISSN
     $this->enhance_data();
@@ -88,7 +118,14 @@ class process {
     }
   }
   
-  // Return int or NULL
+  /**
+    * Search by exact title to see if book already exists in the database
+    *
+    * @access protected
+    * @param NULL
+    * @return mixed book_id int if it exists; NULL otherwise
+    *
+    */
   protected function search_by_title() {
     // Define variables
     $title      = $this->result['title'];
@@ -114,7 +151,14 @@ class process {
     }
   }
   
-  // Return int
+  /**
+    * Create the book in the `books` table if it is not already there
+    *
+    * @access protected
+    * @param NULL
+    * @return int book_id
+    *
+    */
   protected function create_book() {
     $title         = $this->result['title'];
     $author        = $this->result['oclc_author'];
@@ -147,7 +191,17 @@ class process {
     return $book_id;
   }
   
-  // Vendor table methods
+  /***********************************/
+  /* `vendor` table methods          */
+  /***********************************/
+  /**
+    * Update the `vendors` table if necessary; Create vendor otherwise
+    *
+    * @access protected
+    * @param NULL
+    * @return int vendor_id of existing or newly created vendor
+    *
+    */
   protected function update_vendors() {
     $vendor_id = $this->search_by_vendor();
     if(is_null($vendor_id)) {
@@ -156,7 +210,14 @@ class process {
     return $vendor_id;
   }
   
-  // Return int or NULL
+  /**
+    * Search by vendor name to see if already exists in database
+    *
+    * @access protected
+    * @param NULL
+    * @return mixed vendor_id int if exists; NULL otherwise
+    *
+    */
   protected function search_by_vendor() {
     // Define variables
     $vendor = $this->result['vendor'];
@@ -179,7 +240,14 @@ class process {
     }
   }
   
-  // Return int
+  /**
+    * Create vendor if it is not already in the `vendors` table
+    *
+    * @access protected
+    * @param NULL
+    * @return int vendor_id
+    *
+    */
   protected function create_vendor() {
     $vendor = $this->result['vendor'];
     // Connect to database
@@ -194,6 +262,15 @@ class process {
     return $vendor_id;
   }
   
+  /**
+    * Update the `books_vendors` table
+    *
+    * @access protected
+    * @param int book_id
+    * @param int vendor_id
+    * @return int book_vendor_id
+    *
+    */
   protected function update_books_vendors($book_id, $vendor_id) {
     $book_vendor_id = $this->search_by_book_vendor_id($book_id, $vendor_id);
     if(is_null($book_vendor_id)) {
@@ -202,6 +279,15 @@ class process {
     return $book_vendor_id;
   }
   
+  /**
+    * Search for existing book_vendor_id
+    *
+    * @access protected
+    * @param int book_id
+    * @param int vendor_id
+    * @return mixed book_vendor_id if exists; NULL otherwise
+    *
+    */
   protected function search_by_book_vendor_id($book_id, $vendor_id) {
     // Connect to database
     $database = new db;
@@ -221,6 +307,15 @@ class process {
     }
   }
   
+  /**
+    * Create book_vendor if not already there
+    *
+    * @access protected
+    * @param int book_id
+    * @param int vendor_id
+    * @return int book_vendor_id
+    *
+    */
   protected function create_book_vendor($book_id, $vendor_id) {
     // Connect to database
     $database = new db;
@@ -235,7 +330,17 @@ class process {
     return $book_vendor_id;
   }
   
-  // Platform table methods
+  /***********************************/
+  /* `platforms` table methods       */
+  /***********************************/
+  /**
+    * Update the `platforms` table if necessary
+    *
+    * @access protected
+    * @param int vendor_id
+    * @return int platform_id
+    *
+    */
   protected function update_platforms($vendor_id) {
     $platform_id = $this->search_by_platform($vendor_id);
     if(is_null($platform_id)) {
@@ -244,7 +349,14 @@ class process {
     return $platform_id;
   }
   
-  // Return int or NULL
+  /**
+    * Search by platform name
+    *
+    * @access protected
+    * @param int vendor_id
+    * @return mixed platform_id int if exists; NULL otherwise
+    *
+    */
   protected function search_by_platform($vendor_id) {
     // Define variables
     $platform = $this->result['platform'];
@@ -268,7 +380,14 @@ class process {
     }
   }
   
-  // Return int
+  /**
+    * Create the platform if it does not already exist in the database
+    *
+    * @access protected
+    * @param int vendor_id
+    * @return int platform_id
+    *
+    */
   protected function create_platform($vendor_id) {
     $platform = $this->result['platform'];
     // Connect to database
@@ -284,6 +403,15 @@ class process {
     return $platform_id;
   }
   
+  /**
+    * Update `books_platforms` table
+    *
+    * @access protected
+    * @param int book_id
+    * @param int platform_id
+    * @return int book_platform_id
+    *
+    */
   protected function update_books_platforms($book_id, $platform_id) {
     $book_platform_id = $this->search_by_book_platform_id($book_id, $platform_id);
     if(is_null($book_platform_id)) {
@@ -292,6 +420,15 @@ class process {
     return $book_platform_id;
   }
   
+  /**
+    * Search for existing book_platform_id
+    *
+    * @access protected
+    * @param int book_id
+    * @param int platform_id
+    * @return mixed book_platform_id if exists; NULL otherwise
+    *
+    */
   protected function search_by_book_platform_id($book_id, $platform_id) {
     // Connect to database
     $database = new db;
@@ -311,6 +448,15 @@ class process {
     }
   }
   
+  /**
+    * Create books_platforms entry if not already in database
+    *
+    * @access protected
+    * @param int book_id
+    * @param int platform_id
+    * @return int platform_id
+    *
+    */
   protected function create_book_platform($book_id, $platform_id) {
     // Connect to database
     $database = new db;

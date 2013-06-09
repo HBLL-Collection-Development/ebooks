@@ -1,6 +1,6 @@
 <?php
 /**
-  * Kicks off background processing of usage data
+  * Kicks off processing of usage data
   *
   * @author Jared Howland <book.usage@jaredhowland.com>
   * @version 2013-05-08
@@ -24,7 +24,9 @@ $database      = new db;
 $db            = $database->connect();
 $current_year  = config::$current_year;
 $previous_year = config::$previous_year;
-$sql      = <<<SQL
+
+// After processing files in database (up to config::PROCESS_LIMIT), recreate books_search table (for full-text searching because INNODB does not currently support) and views for current and previous years of usage (in case usage loaded includes new dates)
+$sql = <<<SQL
   DROP TABLE IF EXISTS books_search;
   CREATE TABLE books_search LIKE books;
   ALTER TABLE books_search ENGINE=MYISAM, ADD FULLTEXT (title), ADD FULLTEXT (isbn);

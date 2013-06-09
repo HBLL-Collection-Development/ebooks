@@ -1,15 +1,14 @@
 <?php
 /**
-  * Class to ingest Project COUNTER Book Report 2 files
+  * Class to ingest Project COUNTER Book Reports 1 & 2 files
   *
   * @author Jared Howland <book.usage@jaredhowland.com>
-  * @version 2013-05-14
+  * @version 2013-06-08
   * @since 2013-05-01
   *
   */
 
 class ingest {
-
   /**
    * Parses and ingests plain text CSV files
    *
@@ -30,6 +29,14 @@ class ingest {
     }
   }
   
+  /**
+    * Cleans NULLs before inserting into database
+    *
+    * @access protected
+    * @param string String to clean
+    * @return NULL|string NULL if no value, NULL value, or N/A; trimmed string otherwise
+    *
+    */
   protected function clean_nulls($string) {
     $string = trim($string);
     if(strtoupper($string) == 'NULL' || strtoupper($string) == 'N/A' || $string == '') {
@@ -39,6 +46,14 @@ class ingest {
     }
   }
   
+  /**
+    * Converts weird names for platforms into a consistent name for know inconsistencies
+    *
+    * @access protected
+    * @param string Platform name
+    * @return string Cleaned platform name
+    *
+    */
   protected function clean_platform($platform) {
     $platform = trim($platform);
     switch ($platform) {
@@ -66,6 +81,14 @@ class ingest {
     }
   }
   
+  /**
+    * Checks to see if it is a plain text CSV file that was uploaded
+    *
+    * @access protected
+    * @param array Uploaded file
+    * @return bool TRUE if valid; FALSE otherwise
+    *
+    */
   protected function valid_file($file) {
     if ( $file['uploadedfile']['type'] != "text/csv" ) {
       error::trigger('Only plain text .CSV files may be uploaded');
@@ -75,6 +98,14 @@ class ingest {
     }
   }
   
+  /**
+    * Validates ISBN-10s, ISBN-13s, and ISSNs
+    *
+    * @access protected
+    * @param string ISBN-10, ISBN-13, or ISSN
+    * @return mixed Returns cleaned standard number if valid; bool FALSE otherwise
+    *
+    */
   protected function validate_standard_number($standard_number) {
     // Clean up number to make sure it is formatted correctly
     $standard_number = $this->strip_non_numeric($standard_number);
@@ -101,12 +132,20 @@ class ingest {
    * Converts lowercase 'x' to uppercase 'X'
    * 
    * @param string $string
-   * @return string
+   * @return string Cleaned $string
    */
   protected function strip_non_numeric($string) {
     return preg_replace('{[^0-9X]}', '', strtoupper($string));
   }
   
+  /**
+    * Validates ISSNs
+    *
+    * @access protected
+    * @param string ISSN
+    * @return mixed ISSN string if valid; bool FALSE otherwise
+    *
+    */
   protected function is_issn_valid($issn) {
     $length = strlen($issn);
     // Get checksum
@@ -123,6 +162,14 @@ class ingest {
     return FALSE;
   }
   
+  /**
+    * Validates ISBN-10s and ISBN-13s
+    *
+    * @access protected
+    * @param string ISBN
+    * @return mixed ISBN string if valid; bool FALSE otherwise
+    *
+    */
   protected function is_isbn_valid($isbn) {
     if (!is_string($isbn) && !is_int($isbn)) {
       return false;

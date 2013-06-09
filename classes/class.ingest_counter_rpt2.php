@@ -40,8 +40,8 @@ class ingest_counter_rpt2 extends ingest {
         $title                  = $this->clean_nulls($line[0]);
         $publisher              = $this->clean_nulls($line[1]);
         $platform               = $this->clean_platform($line[2]);
-        $doi                    = NULL;
-        $proprietary_identifier = NULL;
+        $doi                    = NULL; // Is not included in COUNTER BR2 R1
+        $proprietary_identifier = NULL; // Is not included in COUNTER BR2 R1
         $isbn                   = $this->validate_standard_number($line[3]);
         $issn                   = $this->validate_standard_number($line[4]);
         $counter_br2            = $this->clean_nulls($line[5]);

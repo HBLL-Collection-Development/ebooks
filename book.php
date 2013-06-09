@@ -1,6 +1,6 @@
 <?php
 /**
-  * Displays browse results
+  * Displays detailed usage data for an individual book
   *
   * @author Jared Howland <book.usage@jaredhowland.com>
   * @version 2013-05-29

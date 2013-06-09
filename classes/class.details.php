@@ -1,7 +1,6 @@
 <?php
 /**
-  * Class to search OCLC Classify Web Service
-  * http://classify.oclc.org/classify2/api_docs/classify.html
+  * Retrieves all known data for an individual book
   *
   * @author Jared Howland <book.usage@jaredhowland.com>
   * @version 2013-05-29
@@ -13,23 +12,39 @@ class details {
   private $book_id;
   
   /**
-   * Passes the content into the specified Twig template
-   *
-   * @access public
-   * @param string Search type to perform; Valid values: standard_number, title; Default: standard_number
-   * @param string|array String or array of search term(s)
-   * @return array Array of title, author, isbn, call_num for all search terms
-   */
+    * Constructor; sets the $book_id variable
+    *
+    * @access public
+    * @param int book_id
+    * @return NULL
+    *
+    */
   public function __construct($book_id) {
     $this->book_id = $book_id;
   }
   
+  /**
+    * Get the details for a specified book
+    *
+    * @access public
+    * @param NULL
+    * @return array Book metadata and usage data
+    *
+    */
   public function get_details() {
     $usage     = $this->get_usage();
     $book_data = $this->get_book_data();
     return array('book_data' => $book_data, 'usage' => $usage);
   }
   
+  /**
+    * All usage data from database for an individual book
+    *
+    * @access private
+    * @param NULL
+    * @return array All usage data for an individual book
+    *
+    */
   private function get_usage() {
     // Connect to database
     $database = new db;
@@ -44,6 +59,14 @@ class details {
     return $this->sort_usage($results);
   }
   
+  /**
+    * Formats the usage data for easier consumption later
+    *
+    * @access private
+    * @param array Usage data from $this->get_usage()
+    * @return array Formatted array
+    *
+    */
   private function sort_usage($usage) {
     foreach($usage as $platform_id => $platform) {
       $br1_years = array();
@@ -72,6 +95,14 @@ class details {
     return $all_usage;
   }
   
+  /**
+    * Metadata for specified book
+    *
+    * @access private
+    * @param NULL
+    * @return array Book metadata
+    *
+    */
   private function get_book_data() {
     // Connect to database
     $database = new db;
