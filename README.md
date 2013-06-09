@@ -5,13 +5,13 @@ This is a database that can ingest [Project COUNTER][] Book Report #1 and Book R
 ## Installing ##
 
 1. Download [source files][].
-2. Untar files to desired location on your server.
+2. Unzip files to desired location on your server.
 3. Create a MySQL database called `book_usage` and give a user access to this new database.
 4. Run the SQL commands found [here](documentation/schema.sql) to create tables and views needed for this application.
-5. If you are part of an organization with a formal relationship with OCLC, register for the XISBN service and get a [WorldCat Affiliate ID].
+5. If you are part of an organization with a formal relationship with OCLC, register for the [XISBN service][] and get a [WorldCat Affiliate ID].
 5. Change name of `config_example.php` to `config.php`.
 6. Enter your database credentials in `config.php`.
-7. Enter your WorldCat Affiliate ID, if you have one, in `config.php`. Enter `FALSE` otherwise.
+7. Enter your [WorldCat Affiliate ID][], if you have one, in `config.php`. Enter `FALSE` otherwise.
 7. Set up a cron job to regularly run the following command (every other minute is the suggested default):
         ```php -q /path/to/process.php >/dev/null 2>&1```
 8. Adjust the [Twig templates][] in the [templates directory](templates) to your liking.
@@ -83,8 +83,9 @@ There should be no header row(s)—just the data.
 3. Because the database does not show your holdings, the database cannot show you what titles are still active or not. Because of this, when you browse by platform or vendor, it will only show you titles that have received usage in the past two years on the assumption that most of those will still be active titles.
 
 [Project COUNTER]: http://www.projectcounter.org/
-[source files]: https://github.com/jaredhowland/Ebook-Usage-Database/archive/v1.1.tar.gz
+[source files]: https://github.com/jaredhowland/Ebook-Usage-Database/archive/master.zip
 [Twig templates]: http://twig.sensiolabs.org/
 [r1]: http://www.projectcounter.org/cop_books_ref.html
 [r4]: http://www.projectcounter.org/code_practice.html
+[XISBN service]: http://xisbn.worldcat.org/xisbnadmin/doc/api.htm
 [WorldCat Affiliate ID]: http://www.worldcat.org/wcpa/do/AffiliateUserServices?method=initSelfRegister
