@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="eBooks : A database to track eBook usage across platforms" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>eBooks</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/jaredhowland/ebooks">View on GitHub</a>
+
+          <h1 id="project_title">eBooks</h1>
+          <h2 id="project_tagline">A database to track eBook usage across platforms</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/jaredhowland/ebooks/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/jaredhowland/ebooks/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a name="ebook-usage-database" class="anchor" href="#ebook-usage-database"><span class="octicon octicon-link"></span></a>eBook Usage Database</h1>
+
+<p>This is a database that can ingest <a href="http://www.projectcounter.org/">Project COUNTER</a> Book Report #1 and Book Report #2 plain text CSV reports and allow you to search for and browse usage data for all your eBooks.</p>
+
+<h2>
+<a name="installing" class="anchor" href="#installing"><span class="octicon octicon-link"></span></a>Installing</h2>
+
+<ol>
+<li>Download <a href="https://github.com/jaredhowland/Ebook-Usage-Database/archive/master.zip">source files</a>.</li>
+<li>Unzip files to desired location on your server.</li>
+<li>Create a MySQL database called <code>book_usage</code> and give a user access to this new database.</li>
+<li>Run the SQL commands found <a href="documentation/schema.sql">here</a> to create tables and views needed for this application.</li>
+<li>If you are part of an organization with a formal relationship with OCLC, register for the <a href="http://xisbn.worldcat.org/xisbnadmin/doc/api.htm">XISBN service</a> and get a <a href="http://www.worldcat.org/wcpa/do/AffiliateUserServices?method=initSelfRegister">WorldCat Affiliate ID</a>.</li>
+<li>Change name of <code>config_example.php</code> to <code>config.php</code>.</li>
+<li>Enter your database credentials in <code>config.php</code>.</li>
+<li>Enter your <a href="http://www.worldcat.org/wcpa/do/AffiliateUserServices?method=initSelfRegister">WorldCat Affiliate ID</a>, if you have one, in <code>config.php</code>. Enter <code>FALSE</code> otherwise.</li>
+<li>Set up a cron job to regularly run the following command (every other minute is the suggested default):
+    <code>php -q /path/to/process.php &gt;/dev/null 2&gt;&amp;1</code>
+</li>
+<li>Adjust the <a href="http://twig.sensiolabs.org/">Twig templates</a> in the <a href="templates">templates directory</a> to your liking.</li>
+</ol><h2>
+<a name="using" class="anchor" href="#using"><span class="octicon octicon-link"></span></a>Using</h2>
+
+<p>Reports must be plain text CSV files. The only supported reports are COUNTER Book Report #1 (<a href="http://www.projectcounter.org/cop_books_ref.html">r1</a> and <a href="http://www.projectcounter.org/code_practice.html">r4</a>) and COUNTER Book Report #2 (<a href="http://www.projectcounter.org/cop_books_ref.html">r1</a> and <a href="http://www.projectcounter.org/code_practice.html">r4</a>).</p>
+
+<p>The CSV files must be in the following format with columns in the following order:</p>
+
+<h3>
+<a name="book-report-1" class="anchor" href="#book-report-1"><span class="octicon octicon-link"></span></a>Book Report #1</h3>
+
+<h4>
+<a name="revision-1" class="anchor" href="#revision-1"><span class="octicon octicon-link"></span></a>Revision 1</h4>
+
+<ol>
+<li><code>Title</code></li>
+<li><code>Publisher</code></li>
+<li><code>Platform</code></li>
+<li><code>ISBN</code></li>
+<li><code>ISSN</code></li>
+<li><code>Annual Usage</code></li>
+<li><code>Usage Year</code></li>
+<li><code>Vendor Name</code></li>
+</ol><h4>
+<a name="revision-4" class="anchor" href="#revision-4"><span class="octicon octicon-link"></span></a>Revision 4</h4>
+
+<ol>
+<li><code>Title</code></li>
+<li><code>Publisher</code></li>
+<li><code>Platform</code></li>
+<li><code>DOI</code></li>
+<li><code>Proprietary Identifier</code></li>
+<li><code>ISBN</code></li>
+<li><code>ISSN</code></li>
+<li><code>Annual Usage</code></li>
+<li><code>Usage Year</code></li>
+<li><code>Vendor Name</code></li>
+</ol><h3>
+<a name="book-report-2" class="anchor" href="#book-report-2"><span class="octicon octicon-link"></span></a>Book Report #2</h3>
+
+<h4>
+<a name="revision-1-1" class="anchor" href="#revision-1-1"><span class="octicon octicon-link"></span></a>Revision 1</h4>
+
+<ol>
+<li><code>Title</code></li>
+<li><code>Publisher</code></li>
+<li><code>Platform</code></li>
+<li><code>ISBN</code></li>
+<li><code>ISSN</code></li>
+<li><code>Annual Usage</code></li>
+<li><code>Usage Year</code></li>
+<li><code>Vendor Name</code></li>
+</ol><h4>
+<a name="revision-4-1" class="anchor" href="#revision-4-1"><span class="octicon octicon-link"></span></a>Revision 4</h4>
+
+<ol>
+<li><code>Title</code></li>
+<li><code>Publisher</code></li>
+<li><code>Platform</code></li>
+<li><code>DOI</code></li>
+<li><code>Proprietary Identifier</code></li>
+<li><code>ISBN</code></li>
+<li><code>ISSN</code></li>
+<li><code>Annual Usage</code></li>
+<li><code>Usage Year</code></li>
+<li><code>Vendor Name</code></li>
+</ol><p>There should be no header row(s)—just the data.</p>
+
+<h2>
+<a name="known-issues" class="anchor" href="#known-issues"><span class="octicon octicon-link"></span></a>Known Issues</h2>
+
+<ol>
+<li>This program assumes that an individual book is only listed once per platform. If you have usage data where a book is listed multiple times per platform (as can happen with book series such as those found in BioOne), you will need to manually combine usage for that book into a single entry for that platform. Otherwise, the database will only show uses for one of the issues instead of total usage for the entire series.</li>
+<li>Some vendors will show usage for all eBooks that you have access to. However, most only show usage for titles that received use. This means that the database does not show your eBook holdings. It just shows usage for the subset of titles that have received usage.</li>
+<li>Because the database does not show your holdings, the database cannot show you what titles are still active or not. Because of this, when you browse by platform or vendor, it will only show you titles that have received usage in the past two years on the assumption that most of those will still be active titles.</li>
+</ol>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">eBooks maintained by <a href="https://github.com/jaredhowland">jaredhowland</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
