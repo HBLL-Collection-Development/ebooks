@@ -277,6 +277,66 @@ class search {
     $db = NULL;
     return $results;
   }
+  
+  /**
+    * List of all subject librarians in database
+    *
+    * @access public
+    * @param NULL
+    * @return array List of all subject librarians in database
+    *
+    */
+  public function get_libs() {
+    // Connect to database
+    $database = new db;
+    $db    = $database->connect();
+    $sql   = 'SELECT id AS lib_id, first_name, last_name FROM libs ORDER BY last_name ASC';
+    $query = $db->prepare($sql);
+    $query->execute();
+    $results = $query->fetchAll(PDO::FETCH_ASSOC);
+    $db = NULL;
+    return $results;
+  }
+  
+  /**
+    * List of fund codes
+    *
+    * @access public
+    * @param NULL
+    * @return array List of fund codes
+    *
+    */
+  public function get_funds() {
+    // Connect to database
+    $database = new db;
+    $db    = $database->connect();
+    $sql   = 'SELECT id AS fund_id, fund_code, fund_name FROM funds ORDER BY fund_code ASC';
+    $query = $db->prepare($sql);
+    $query->execute();
+    $results = $query->fetchAll(PDO::FETCH_ASSOC);
+    $db = NULL;
+    return $results;
+  }
+
+  /**
+    * List of call number ranges
+    *
+    * @access public
+    * @param NULL
+    * @return array List of call number ranges
+    *
+    */
+  function get_call_nums() {
+    // Connect to database
+    $database = new db;
+    $db    = $database->connect();
+    $sql   = 'SELECT id AS call_num_id, start_range AS call_num_start, end_range AS call_num_end FROM call_nums ORDER BY start_range ASC';
+    $query = $db->prepare($sql);
+    $query->execute();
+    $results = $query->fetchAll(PDO::FETCH_ASSOC);
+    $db = NULL;
+    return $results;
+  }
 
   /**
     * Format vendors array for use in HTML form in Twig template
@@ -315,5 +375,66 @@ class search {
     return $html;
   }
   
+  /**
+    * Format subject librarians for HTML form
+    *
+    * @access public
+    * @param NULL
+    * @return string HTML for drop-down form of all subject librarians
+    *
+    */
+  public function format_libs() {
+    $html = NULL;
+    foreach($this->get_libs() as $lib) {
+      $lib_id     = $lib['lib_id'];
+      $first_name = $lib['first_name'];
+      $last_name  = $lib['last_name'];
+      $html       .= '<option value="' . $lib_id . '">' . $first_name . ' ' . $last_name . '</option>';
+    }
+    return $html;
+  }
+
+  /**
+    * Format fund names for HTML form
+    *
+    * @access public
+    * @param NULL
+    * @return string HTML for drop-down form of all fund codes
+    *
+    */
+  public function format_funds() {
+    $html = NULL;
+    foreach($this->get_funds() as $fund) {
+      $fund_id   = $fund['fund_id'];
+      $fund_code = $fund['fund_code'];
+      $fund_name = $fund['fund_name'];
+      $html       .= '<option value="' . $fund_id . '">' . $fund_code . ' (' . $fund_name . ')</option>';
+    }
+    return $html;
+  }
+
+  /**
+    * Format call number ranges for HTML form
+    *
+    * @access public
+    * @param NULL
+    * @return string HTML for drop-down form of all fund codes
+    *
+    */
+  public function format_call_nums() {
+    $html = NULL;
+    foreach($this->get_call_nums() as $call_num) {
+      $call_num_id    = $call_num['call_num_id'];
+      $call_num_start = $call_num['call_num_start'];
+      $call_num_end   = $call_num['call_num_end'];
+      if($call_num_start === $call_num_end) {
+        $call_number = $call_num_start;
+      } else {
+        $call_number = $call_num_start . '–' . $call_num_end;
+      }
+      $html       .= '<option value="' . $call_num_id . '">' . $call_number . '</option>';
+    }
+    return $html;
+  }
 }
 ?>

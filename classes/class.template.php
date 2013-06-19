@@ -89,5 +89,73 @@ class template {
     return $results[0]['platform'] . ' (' . $results[0]['vendor'] . ')';
   }
   
+  /**
+    * Gets specific subject librarian name
+    *
+    * @access public
+    * @param int lib_id
+    * @return string Librarian name
+    *
+    */
+  public static function get_lib($lib_id) {
+    // Connect to database
+    $database = new db;
+    $db    = $database->connect();
+    $sql   = 'SELECT id, first_name, last_name FROM libs WHERE id = :lib_id LIMIT 1';
+    $query = $db->prepare($sql);
+    $query->bindParam(':lib_id', $lib_id);
+    $query->execute();
+    $results = $query->fetchAll(PDO::FETCH_ASSOC);
+    $db = NULL;
+    return $results[0]['first_name'] . ' ' . $results[0]['last_name'];
+  }
+  
+  /**
+    * Gets specific fund code name
+    *
+    * @access public
+    * @param int fund_id
+    * @return string Fund name
+    *
+    */
+  public static function get_fund($fund_id) {
+    // Connect to database
+    $database = new db;
+    $db    = $database->connect();
+    $sql   = 'SELECT id AS fund_id, fund_code, fund_name FROM funds WHERE id = :fund_id LIMIT 1';
+    $query = $db->prepare($sql);
+    $query->bindParam(':fund_id', $fund_id);
+    $query->execute();
+    $results = $query->fetchAll(PDO::FETCH_ASSOC);
+    $db = NULL;
+    return $results[0]['fund_code'] . ' (' . $results[0]['fund_name'] . ')';
+  }
+  
+  /**
+    * Gets specific call number range name
+    *
+    * @access public
+    * @param int call_num_id
+    * @return string Call number range name
+    *
+    */
+  public static function get_call_num($call_num_id) {
+    // Connect to database
+    $database = new db;
+    $db    = $database->connect();
+    $sql   = 'SELECT id AS call_num_id, start_range, end_range, subject FROM call_nums WHERE id = :call_num_id LIMIT 1';
+    $query = $db->prepare($sql);
+    $query->bindParam(':call_num_id', $call_num_id);
+    $query->execute();
+    $results = $query->fetchAll(PDO::FETCH_ASSOC);
+    $db = NULL;
+    if($results[0]['start_range'] === $results[0]['end_range']) {
+      $call_number = $results[0]['start_range'];
+    } else {
+      $call_number = $results[0]['start_range'] . '–' . $results[0]['end_range'];
+    }
+    return $call_number . ' (' . $results[0]['subject'] . ')';
+  }
+  
 }
 ?>

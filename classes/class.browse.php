@@ -34,6 +34,42 @@ class browse {
   }
   
   /**
+    * Performs the browse by subject librarian
+    *
+    * @access public
+    * @param int lib_id
+    * @return array Usage array for books under fund codes assigned to specified librarian
+    *
+    */
+  public function lib($lib_id) {
+    return $this->get_librarian_usage($lib_id);
+  }
+  
+  /**
+    * Performs the browse by fund code
+    *
+    * @access public
+    * @param int fund_id
+    * @return array Usage array for books under specified fund code
+    *
+    */
+  public function fund($fund_id) {
+    return $this->get_fund_usage($fund_id);
+  }
+  
+  /**
+    * Performs the browse by call number
+    *
+    * @access public
+    * @param call_num_id
+    * @return array Usage array for books in specified call number range
+    *
+    */
+  public function call_num($call_num_id) {
+    return $this->get_call_num_usage($call_num_id);
+  }
+  
+  /**
     * Formats the usage from $this->get_vendor_usage() or $this->get_platform_usage
     *
     * @access private
@@ -118,6 +154,100 @@ class browse {
     $results = $query->fetchAll(PDO::FETCH_GROUP|PDO::FETCH_ASSOC);
     $db = NULL;
     return $this->format_usage($results);
+  }
+  
+  /**
+    * Retrieves usage for books assigned to fund codes of specified librarian for the previous 2 years
+    *
+    * @access private
+    * @param int lib_id
+    * @return array Usage data formatted by $this->format_usage()
+    *
+    */
+  private function get_librarian_usage($lib_id) {
+    $in = $this->get_fund_ids_by_librarian($lib_id);
+    // Connect to database
+    $database = new db;
+    $db       = $database->connect();
+    $sql      = "SELECT b.id, b.title, b.author, b.publisher, b.isbn, b.call_num, CAST(GROUP_CONCAT(DISTINCT o.platforms ORDER BY o.platforms SEPARATOR '|') AS CHAR CHARSET UTF8) AS platforms, (SELECT SUM(cbr2.counter_br2) FROM current_br2 cbr2 WHERE cbr2.book_id = b.id) AS current_br2, (SELECT SUM(pbr2.counter_br2) FROM previous_br2 pbr2 WHERE pbr2.book_id = b.id) AS previous_br2, (SELECT SUM(cbr1.counter_br1) FROM current_br1 cbr1 WHERE cbr1.book_id = b.id) AS current_br1, (SELECT SUM(pbr1.counter_br1) FROM previous_br1 pbr1 WHERE pbr1.book_id = b.id) AS previous_br1 FROM books b LEFT JOIN overlap o ON b.id = o.book_id WHERE b.fund_id IN (" . $in . ") GROUP BY b.id";
+    $query = $db->prepare($sql);
+    $query->execute();
+    $results = $query->fetchAll(PDO::FETCH_GROUP|PDO::FETCH_ASSOC);
+    $db = NULL;
+    return $this->format_usage($results);
+  }
+  
+  /**
+    * Retrieves usage for books assigned to fund code
+    *
+    * @access private
+    * @param int fund_id
+    * @return array Usage data formatted by $this->format_usage()
+    *
+    */
+  private function get_fund_usage($fund_id) {
+    // Connect to database
+    $database = new db;
+    $db       = $database->connect();
+    $sql      = "SELECT b.id, b.title, b.author, b.publisher, b.isbn, b.call_num, CAST(GROUP_CONCAT(DISTINCT o.platforms ORDER BY o.platforms SEPARATOR '|') AS CHAR CHARSET UTF8) AS platforms, (SELECT SUM(cbr2.counter_br2) FROM current_br2 cbr2 WHERE cbr2.book_id = b.id) AS current_br2, (SELECT SUM(pbr2.counter_br2) FROM previous_br2 pbr2 WHERE pbr2.book_id = b.id) AS previous_br2, (SELECT SUM(cbr1.counter_br1) FROM current_br1 cbr1 WHERE cbr1.book_id = b.id) AS current_br1, (SELECT SUM(pbr1.counter_br1) FROM previous_br1 pbr1 WHERE pbr1.book_id = b.id) AS previous_br1 FROM books b LEFT JOIN overlap o ON b.id = o.book_id WHERE b.fund_id = :fund_id GROUP BY b.id";
+    $query = $db->prepare($sql);
+    $query->bindParam(':fund_id', $fund_id);
+    $query->execute();
+    $results = $query->fetchAll(PDO::FETCH_GROUP|PDO::FETCH_ASSOC);
+    $db = NULL;
+    return $this->format_usage($results);
+  }
+  
+  /**
+    * Retrieves usage for books in specified call number range
+    *
+    * @access private
+    * @param int call_num_id
+    * @return array Usage data formatted by $this->format_usage()
+    *
+    */
+  private function get_call_num_usage($call_num_id) {
+    $fund_id = $this->get_fund_ids_by_call_num($call_num_id);
+    // Connect to database
+    $database = new db;
+    $db       = $database->connect();
+    $sql      = "SELECT b.id, b.title, b.author, b.publisher, b.isbn, b.call_num, CAST(GROUP_CONCAT(DISTINCT o.platforms ORDER BY o.platforms SEPARATOR '|') AS CHAR CHARSET UTF8) AS platforms, (SELECT SUM(cbr2.counter_br2) FROM current_br2 cbr2 WHERE cbr2.book_id = b.id) AS current_br2, (SELECT SUM(pbr2.counter_br2) FROM previous_br2 pbr2 WHERE pbr2.book_id = b.id) AS previous_br2, (SELECT SUM(cbr1.counter_br1) FROM current_br1 cbr1 WHERE cbr1.book_id = b.id) AS current_br1, (SELECT SUM(pbr1.counter_br1) FROM previous_br1 pbr1 WHERE pbr1.book_id = b.id) AS previous_br1 FROM books b LEFT JOIN overlap o ON b.id = o.book_id WHERE b.fund_id = :fund_id GROUP BY b.id";
+    $query = $db->prepare($sql);
+    $query->bindParam(':fund_id', $fund_id);
+    $query->execute();
+    $results = $query->fetchAll(PDO::FETCH_GROUP|PDO::FETCH_ASSOC);
+    $db = NULL;
+    return $this->format_usage($results);
+  }
+  
+  private function get_fund_ids_by_librarian($lib_id) {
+    // Connect to database
+    $database = new db;
+    $db       = $database->connect();
+    $sql      = 'SELECT fund_id FROM funds_libs WHERE lib_id = :lib_id';
+    $query = $db->prepare($sql);
+    $query->bindParam(':lib_id', $lib_id);
+    $query->execute();
+    $results = $query->fetchAll(PDO::FETCH_ASSOC);
+    $db = NULL;
+    $fund_ids = NULL;
+    foreach($results as $result) {
+      $fund_ids[] = $result['fund_id'];
+    }
+    return implode(',', $fund_ids);
+  }
+  
+  private function get_fund_ids_by_call_num($call_num_id) {
+    // Connect to database
+    $database = new db;
+    $db       = $database->connect();
+    $sql      = 'SELECT fund_id FROM call_nums WHERE id = :call_num_id LIMIT 1';
+    $query = $db->prepare($sql);
+    $query->bindParam(':call_num_id', $call_num_id);
+    $query->execute();
+    $results = $query->fetchAll(PDO::FETCH_ASSOC);
+    $db = NULL;
+    return $results[0]['fund_id'];
   }
 }
 ?>

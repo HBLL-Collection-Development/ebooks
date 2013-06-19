@@ -1,6 +1,6 @@
 {% autoescape false %}
 <div class="page">
-  <div class="span-16">
+  <div class="span-24">
     <div class="span-7">
       <section>
         <form action="search.php" method="get" accept-charset="utf-8" class="search_form linear">
@@ -28,10 +28,22 @@
 
     <div class="span-7 prepend-1">
       <section>
-        <h2>Vendor Browse</h2>
+        <h2>Platform Browse</h2>
         <form action="browse.php" method="get" accept-charset="utf-8">
-          <select name="vendor" id="vendor">
-            {{ vendors }}
+          <select name="platform" id="platform">
+            {{ platforms }}
+          </select>
+          <input class="button small" type="submit" name="submit" value="Browse" />
+        </form>
+      </section>
+    </div>
+    
+    <div class="span-7 prepend-1">
+      <section>
+        <h2>Fund Code Browse*</h2>
+        <form action="browse.php" method="get" accept-charset="utf-8">
+          <select name="fund" id="fund">
+            {{ funds }}
           </select>
           <input class="button small" type="submit" name="submit" value="Browse" />
         </form>
@@ -39,7 +51,7 @@
     </div>
   </div>
 
-  <div class="span-16">
+  <div class="span-24">
     <div class="span-7">
       <section>
         <form action="search.php" method="get" accept-charset="utf-8" class="search_form linear">
@@ -67,15 +79,28 @@
   
     <div class="span-7 prepend-1">
       <section>
-        <h2>Platform Browse</h2>
+        <h2>Subject Librarian Browse*</h2>
         <form action="browse.php" method="get" accept-charset="utf-8">
-          <select name="platform" id="platform">
-            {{ platforms }}
+          <select name="lib" id="lib">
+            {{ libs }}
           </select>
           <input class="button small" type="submit" name="submit" value="Browse" />
         </form>
       </section>
     </div>
+
+    <div class="span-7 prepend-1">
+      <section>
+        <h2>Call Number Browse*</h2>
+        <form action="browse.php" method="get" accept-charset="utf-8">
+          <select name="call_num" id="call_num">
+            {{ call_nums }}
+          </select>
+          <input class="button small" type="submit" name="submit" value="Browse" />
+        </form>
+      </section>
+    </div>
+    
   </div>
 </div>
 {% endautoescape %}
