@@ -333,7 +333,7 @@ class search {
     $database = new db;
     $db    = $database->connect();
     // Only show call number ranges that actually include books
-    $sql   = 'SELECT id AS call_num_id, start_range AS call_num_start, end_range AS call_num_end FROM call_nums WHERE fund_id IN (SELECT DISTINCT fund_id FROM books WHERE fund_id IS NOT NULL AND fund_id != 0) ORDER BY start_range ASC';
+    $sql   = 'SELECT id AS call_num_id, start_range AS call_num_start, end_range AS call_num_end, subject FROM call_nums WHERE fund_id IN (SELECT DISTINCT fund_id FROM books WHERE fund_id IS NOT NULL AND fund_id != 0) ORDER BY start_range ASC';
     $query = $db->prepare($sql);
     $query->execute();
     $results = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -446,18 +446,28 @@ class search {
       $call_num_id    = $call_num['call_num_id'];
       $call_num_start = $call_num['call_num_start'];
       $call_num_end   = $call_num['call_num_end'];
+      $subject        = $this->limit_text($call_num['subject'], 4);
       if($call_num_start === $call_num_end) {
         $call_number = $call_num_start;
       } else {
         $call_number = $call_num_start . '–' . $call_num_end;
       }
       if($active_call_num_id == $call_num_id) {
-        $html .= '<option value="' . $call_num_id . '" selected="selected">' . $call_number . '</option>';
+        $html .= '<option value="' . $call_num_id . '" selected="selected">' . $call_number . ' (' . $subject . ')</option>';
       } else {
-        $html .= '<option value="' . $call_num_id . '">' . $call_number . '</option>';
+        $html .= '<option value="' . $call_num_id . '">' . $call_number . ' (' . $subject . ')</option>';
       }
     }
     return $html;
+  }
+  
+  private function limit_text($text, $limit) {
+    if(str_word_count($text, 0) > $limit) {
+    $words = str_word_count($text, 2);
+    $pos   = array_keys($words);
+    $text  = trim(substr($text, 0, $pos[$limit])) . '…';
+    }
+    return $text;
   }
 }
 ?>
