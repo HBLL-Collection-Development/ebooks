@@ -132,3 +132,6 @@ table th {
 #details .inline_list {
 	font-size: 1.2em;
 }
+.inline_list {
+	font-size: 1em;
+}

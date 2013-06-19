@@ -346,12 +346,16 @@ class search {
     * @return string HTML for form in Twig template
     *
     */
-  public function format_vendors() {
+  public function format_vendors($active_vendor_id = NULL) {
     $html = NULL;
     foreach($this->get_vendors() as $vendor) {
       $vendor_id = $vendor['id'];
       $vendor    = $vendor['vendor'];
-      $html     .= '<option value="' . $vendor_id . '">' . $vendor . '</option>';
+      if($active_vendor_id == $vendor_id) {
+        $html .= '<option value="' . $vendor_id . '" selected="selected">' . $vendor . '</option>';
+      } else {
+        $html .= '<option value="' . $vendor_id . '">' . $vendor . '</option>';
+      }
     }
     return $html;
   }
@@ -364,13 +368,17 @@ class search {
     * @return string HTML for form in Twig template
     *
     */
-  public function format_platforms() {
+  public function format_platforms($active_platform_id = NULL) {
     $html = NULL;
     foreach($this->get_platforms() as $platform) {
       $platform_id = $platform['platform_id'];
       $vendor      = $platform['vendor'];
       $platform    = $platform['platform'];
-      $html       .= '<option value="' . $platform_id . '">' . $platform . ' (' . $vendor . ')</option>';
+      if($active_platform_id == $platform_id) {
+        $html .= '<option value="' . $platform_id . '" selected="selected">' . $platform . ' (' . $vendor . ')</option>';
+      } else {
+        $html .= '<option value="' . $platform_id . '">' . $platform . ' (' . $vendor . ')</option>';
+      }
     }
     return $html;
   }
@@ -383,13 +391,17 @@ class search {
     * @return string HTML for drop-down form of all subject librarians
     *
     */
-  public function format_libs() {
+  public function format_libs($active_lib_id = NULL) {
     $html = NULL;
     foreach($this->get_libs() as $lib) {
       $lib_id     = $lib['lib_id'];
       $first_name = $lib['first_name'];
       $last_name  = $lib['last_name'];
-      $html       .= '<option value="' . $lib_id . '">' . $first_name . ' ' . $last_name . '</option>';
+      if($active_lib_id == $lib_id) {
+        $html .= '<option value="' . $lib_id . '" selected="selected">' . $first_name . ' ' . $last_name . '</option>';
+      } else {
+        $html .= '<option value="' . $lib_id . '">' . $first_name . ' ' . $last_name . '</option>';
+      }
     }
     return $html;
   }
@@ -402,13 +414,17 @@ class search {
     * @return string HTML for drop-down form of all fund codes
     *
     */
-  public function format_funds() {
+  public function format_funds($active_fund_id = NULL) {
     $html = NULL;
     foreach($this->get_funds() as $fund) {
       $fund_id   = $fund['fund_id'];
       $fund_code = $fund['fund_code'];
       $fund_name = $fund['fund_name'];
-      $html       .= '<option value="' . $fund_id . '">' . $fund_code . ' (' . $fund_name . ')</option>';
+      if($active_fund_id == $fund_id) {
+        $html .= '<option value="' . $fund_id . '" selected="selected">' . $fund_code . ' (' . $fund_name . ')</option>';
+      } else {
+        $html .= '<option value="' . $fund_id . '">' . $fund_code . ' (' . $fund_name . ')</option>';
+      }
     }
     return $html;
   }
@@ -421,7 +437,7 @@ class search {
     * @return string HTML for drop-down form of all fund codes
     *
     */
-  public function format_call_nums() {
+  public function format_call_nums($active_call_num_id = NULL) {
     $html = NULL;
     foreach($this->get_call_nums() as $call_num) {
       $call_num_id    = $call_num['call_num_id'];
@@ -432,7 +448,11 @@ class search {
       } else {
         $call_number = $call_num_start . '–' . $call_num_end;
       }
-      $html       .= '<option value="' . $call_num_id . '">' . $call_number . '</option>';
+      if($active_call_num_id == $call_num_id) {
+        $html .= '<option value="' . $call_num_id . '" selected="selected">' . $call_number . '</option>';
+      } else {
+        $html .= '<option value="' . $call_num_id . '">' . $call_number . '</option>';
+      }
     }
     return $html;
   }

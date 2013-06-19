@@ -10,11 +10,12 @@
   */
 require_once 'config.php';
 
-$vendors   = format_vendors();
-$platforms = format_platforms();
-$libs      = format_libs();
-$funds     = format_funds();
-$call_nums = format_call_nums();
+$search    = new search($query);
+$platforms = $search->format_platforms();
+$vendors   = $search->format_vendors();
+$libs      = $search->format_libs();
+$funds     = $search->format_funds();
+$call_nums = $search->format_call_nums();
 
 $html = <<<HTML
 
@@ -53,17 +54,6 @@ $html = <<<HTML
         </form>
       </section>
     </div>
-    <!-- <div class="span-7 prepend-1">
-          <section>
-            <h2>Vendor Browse</h2>
-            <form action="browse.php" method="get" accept-charset="utf-8">
-              <select name="vendor" id="vendor">
-                $vendors
-              </select>
-              <input class="button small" type="submit" name="submit" value="Browse" />
-            </form>
-          </section>
-        </div> -->
     
     <div class="span-7 prepend-1">
       <section>
@@ -126,196 +116,6 @@ $html = <<<HTML
   </div>
 </div>
 HTML;
-
-/**
-  * List of vendors in database
-  *
-  * @param NULL
-  * @return array List of vendors in database
-  *
-  */
-function get_vendors() {
-  // Connect to database
-  $database = new db;
-  $db    = $database->connect();
-  $sql   = 'SELECT id, vendor FROM vendors ORDER BY vendor ASC';
-  $query = $db->prepare($sql);
-  $query->execute();
-  $results = $query->fetchAll(PDO::FETCH_ASSOC);
-  $db = NULL;
-  return $results;
-}
-
-/**
-  * List of platforms
-  *
-  * @param NULL
-  * @return array List of platforms in database
-  *
-  */
-function get_platforms() {
-  // Connect to database
-  $database = new db;
-  $db    = $database->connect();
-  $sql   = 'SELECT platforms.id AS platform_id, vendors.vendor AS vendor, platforms.platform AS platform FROM platforms, vendors WHERE platforms.vendor_id = vendors.id ORDER BY platform ASC';
-  $query = $db->prepare($sql);
-  $query->execute();
-  $results = $query->fetchAll(PDO::FETCH_ASSOC);
-  $db = NULL;
-  return $results;
-}
-
-/**
-  * List of subject librarians
-  *
-  * @param NULL
-  * @return array List of subject librarians
-  *
-  */
-function get_libs() {
-  // Connect to database
-  $database = new db;
-  $db    = $database->connect();
-  $sql   = 'SELECT id AS lib_id, first_name, last_name FROM libs ORDER BY last_name ASC';
-  $query = $db->prepare($sql);
-  $query->execute();
-  $results = $query->fetchAll(PDO::FETCH_ASSOC);
-  $db = NULL;
-  return $results;
-}
-
-/**
-  * List of fund codes
-  *
-  * @param NULL
-  * @return array List of fund codes
-  *
-  */
-function get_funds() {
-  // Connect to database
-  $database = new db;
-  $db    = $database->connect();
-  $sql   = 'SELECT id AS fund_id, fund_code, fund_name FROM funds ORDER BY fund_code ASC';
-  $query = $db->prepare($sql);
-  $query->execute();
-  $results = $query->fetchAll(PDO::FETCH_ASSOC);
-  $db = NULL;
-  return $results;
-}
-
-/**
-  * List of call number ranges
-  *
-  * @param NULL
-  * @return array List of call number ranges
-  *
-  */
-function get_call_nums() {
-  // Connect to database
-  $database = new db;
-  $db    = $database->connect();
-  $sql   = 'SELECT id AS call_num_id, start_range AS call_num_start, end_range AS call_num_end FROM call_nums ORDER BY start_range ASC';
-  $query = $db->prepare($sql);
-  $query->execute();
-  $results = $query->fetchAll(PDO::FETCH_ASSOC);
-  $db = NULL;
-  return $results;
-}
-
-/**
-  * Format vendors for HTML form
-  *
-  * @param NULL
-  * @return string HTML for drop-down form of all vendors
-  *
-  */
-function format_vendors() {
-  $html = NULL;
-  foreach(get_vendors() as $vendor) {
-    $vendor_id = $vendor['id'];
-    $vendor    = $vendor['vendor'];
-    $html     .= '<option value="' . $vendor_id . '">' . $vendor . '</option>';
-  }
-  return $html;
-}
-
-/**
-  * Format platforms for HTML form
-  *
-  * @param NULL
-  * @return string HTML for drop-down form of all platforms
-  *
-  */
-function format_platforms() {
-  $html = NULL;
-  foreach(get_platforms() as $platform) {
-    $platform_id = $platform['platform_id'];
-    $vendor      = $platform['vendor'];
-    $platform    = $platform['platform'];
-    $html       .= '<option value="' . $platform_id . '">' . $platform . ' (' . $vendor . ')</option>';
-  }
-  return $html;
-}
-
-/**
-  * Format subject librarians for HTML form
-  *
-  * @param NULL
-  * @return string HTML for drop-down form of all subject librarians
-  *
-  */
-function format_libs() {
-  $html = NULL;
-  foreach(get_libs() as $lib) {
-    $lib_id     = $lib['lib_id'];
-    $first_name = $lib['first_name'];
-    $last_name  = $lib['last_name'];
-    $html       .= '<option value="' . $lib_id . '">' . $first_name . ' ' . $last_name . '</option>';
-  }
-  return $html;
-}
-
-/**
-  * Format fund names for HTML form
-  *
-  * @param NULL
-  * @return string HTML for drop-down form of all fund codes
-  *
-  */
-function format_funds() {
-  $html = NULL;
-  foreach(get_funds() as $fund) {
-    $fund_id   = $fund['fund_id'];
-    $fund_code = $fund['fund_code'];
-    $fund_name = $fund['fund_name'];
-    $html       .= '<option value="' . $fund_id . '">' . $fund_code . ' (' . $fund_name . ')</option>';
-  }
-  return $html;
-}
-
-/**
-  * Format call number ranges for HTML form
-  *
-  * @param NULL
-  * @return string HTML for drop-down form of all fund codes
-  *
-  */
-function format_call_nums() {
-  $html = NULL;
-  foreach(get_call_nums() as $call_num) {
-    $call_num_id    = $call_num['call_num_id'];
-    $call_num_start = $call_num['call_num_start'];
-    $call_num_end   = $call_num['call_num_end'];
-    if($call_num_start === $call_num_end) {
-      $call_number = $call_num_start;
-    } else {
-      $call_number = $call_num_start . '–' . $call_num_end;
-    }
-    $html       .= '<option value="' . $call_num_id . '">' . $call_number . '</option>';
-  }
-  return $html;
-}
-
 
 $html = array('title' => 'Home', 'html' => $html);
 

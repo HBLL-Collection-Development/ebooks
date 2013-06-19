@@ -17,11 +17,11 @@ $call_num_id = $_GET['call_num'];
 
 $browse    = new browse;
 $search    = new search(NULL);
-$platforms = $search->format_platforms();
-$vendors   = $search->format_vendors();
-$libs      = $search->format_libs();
-$funds     = $search->format_funds();
-$call_nums = $search->format_call_nums();
+$platforms = $search->format_platforms($platform_id);
+$vendors   = $search->format_vendors($vendor_id);
+$libs      = $search->format_libs($lib_id);
+$funds     = $search->format_funds($fund_id);
+$call_nums = $search->format_call_nums($call_num_id);
 
 if($vendor_id) {
   $results = $browse->vendor($vendor_id);
