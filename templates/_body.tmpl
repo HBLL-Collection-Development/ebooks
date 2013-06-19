@@ -17,7 +17,7 @@
 
 <h1 class="clear">{{ heading }}</h1>
 <h3>{{ num_results_display }}</h3>
-<h3><a href="csv.php?type={{ type }}&amp;term={{ term }}">Download results</a></h3><br/>
+<h3><a href="csv.php?type={{ type }}&amp;term={{ term }}&amp;heading={{ heading | url_encode }}">Download results</a></h3><br/>
 <p>The following list shows <strong>all</strong> usage for a title. If a title is available on multiple platforms, the usage is summed and shown here. If you would like to know usage for a title on a single platform, click on the title to view more detailed usage information.</p>
 <table class="results">
   <thead>

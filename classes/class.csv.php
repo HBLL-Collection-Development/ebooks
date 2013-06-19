@@ -18,9 +18,9 @@ class csv {
     * @return mixed CSV file of results
     *
     */
-  public function download($array) {
+  public function download($array, $heading) {
     $array = $this->format_array($array['results']);
-    $this->download_send_headers("data_export_" . date("Y-m-d") . ".csv");
+    $this->download_send_headers($heading . '_' . date("Y-m-d") . ".csv");
     return $this->array2csv($array);
   }
   

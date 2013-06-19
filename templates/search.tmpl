@@ -22,7 +22,7 @@
 
 <h2 class="clear">Search for: {{ html.search_term }}</h2>
 <h3>{{ num_results_display }}</h3>
-<h3><a href="csv.php?type={{ type }}&amp;term={{ term }}">Download results</a></h3><br/>
+<h3><a href="csv.php?type={{ type }}&amp;term={{ term }}&amp;heading={{ heading | url_encode }}">Download results</a></h3><br/>
 
 <table class="results">
   <thead>

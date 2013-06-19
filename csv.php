@@ -11,6 +11,17 @@ require_once 'config.php';
 
 $term = $_GET['term'];
 $type = $_GET['type'];
+$heading = to_slug($_GET['heading']);
+
+function to_slug($string, $space='-') {
+  if (function_exists('iconv')) {
+    $string = @iconv('UTF-8', 'ASCII//TRANSLIT', $string);
+  }
+  $string = preg_replace("/[^a-zA-Z0-9 -]/", "", $string);
+  $string = strtolower($string);
+  $string = str_replace(" ", $space, $string);
+  return $string;
+}
 
 switch ($type) {
   case 'vendor':
@@ -54,6 +65,6 @@ switch ($type) {
 }
 
 $csv = new csv;
-$csv->download($array);
+$csv->download($array, $heading);
 
 ?>
