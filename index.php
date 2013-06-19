@@ -17,6 +17,11 @@ $libs      = $search->format_libs();
 $funds     = $search->format_funds();
 $call_nums = $search->format_call_nums();
 
+$title_count                = get_title_count();
+$title_count_with_call_nums = get_title_count_with_call_nums();
+$percent = percent($title_count_with_call_nums, $title_count);
+$percent_unbrowsable = 100 - $percent;
+
 $html = <<<HTML
 
 <div class="page">
@@ -57,7 +62,7 @@ $html = <<<HTML
     
     <div class="span-7 prepend-1">
       <section>
-        <h2>Fund Code Browse*</h2>
+        <h2>Fund Code Browse<sup>*</sup></h2>
         <form action="browse.php" method="get" accept-charset="utf-8">
           <select name="fund" id="fund">
             $funds
@@ -92,7 +97,7 @@ $html = <<<HTML
     
     <div class="span-7 prepend-1">
       <section>
-        <h2>Subject Librarian Browse*</h2>
+        <h2>Subject Librarian Browse<sup>*</sup></h2>
         <form action="browse.php" method="get" accept-charset="utf-8">
           <select name="lib" id="lib">
             $libs
@@ -104,7 +109,7 @@ $html = <<<HTML
 
     <div class="span-7 prepend-1">
       <section>
-        <h2>Call Number Browse*</h2>
+        <h2>Call Number Browse<sup>*</sup></h2>
         <form action="browse.php" method="get" accept-charset="utf-8">
           <select name="call_num" id="call_num">
             $call_nums
@@ -115,7 +120,43 @@ $html = <<<HTML
     </div>
   </div>
 </div>
+<div class="footnote">
+  <p>Only books with call numbers can be browsed by librarian, fund code, or call number range.</p>
+  <p>Currently, only $percent% of the titles in the database include call numbers.</p>
+  <p>This means $percent_unbrowsable% of the titles will not show up when browsing in those ways.</p>
+</div>
 HTML;
+
+function get_title_count() {
+  // Connect to database
+  $database = new db;
+  $db       = $database->connect();
+  $sql      = "SELECT COUNT(*) AS count FROM books";
+  $query = $db->query($sql);
+  $f = $query->fetch();
+  $result = $f['count'];
+  $db = NULL;
+  return $result;
+}
+
+function get_title_count_with_call_nums() {
+  // Connect to database
+  $database = new db;
+  $db       = $database->connect();
+  $sql      = "SELECT COUNT(*) AS count FROM books WHERE call_num IS NOT NULL";
+  $query = $db->query($sql);
+  $f = $query->fetch();
+  $result = $f['count'];
+  $db = NULL;
+  return $result;
+}
+
+function percent($num_amount, $num_total) {
+  $count1 = $num_amount / $num_total;
+  $count2 = $count1 * 100;
+  $count  = number_format($count2, 0);
+  return $count;
+}
 
 $html = array('title' => 'Home', 'html' => $html);
 

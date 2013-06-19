@@ -135,3 +135,14 @@ table th {
 .inline_list {
 	font-size: 1em;
 }
+.footnote {
+	clear: both;
+}
+.footnote:before {
+	clear: both;
+	content: "*";
+	position: absolute;
+	left: -1em;
+	font-size: .75em;
+	margin-top: -.5em;
+}
