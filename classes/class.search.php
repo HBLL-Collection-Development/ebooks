@@ -290,7 +290,8 @@ class search {
     // Connect to database
     $database = new db;
     $db    = $database->connect();
-    $sql   = 'SELECT id AS lib_id, first_name, last_name FROM libs ORDER BY last_name ASC';
+    // Only show librarians that actually have books associated with them
+    $sql   = 'SELECT DISTINCT fl.lib_id, l.first_name, l.last_name FROM funds_libs fl, libs l WHERE fl.lib_id = l.id AND fl.fund_id IN (SELECT DISTINCT fund_id FROM books WHERE fund_id IS NOT NULL AND fund_id != 0) ORDER BY l.last_name';
     $query = $db->prepare($sql);
     $query->execute();
     $results = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -310,7 +311,8 @@ class search {
     // Connect to database
     $database = new db;
     $db    = $database->connect();
-    $sql   = 'SELECT id AS fund_id, fund_code, fund_name FROM funds ORDER BY fund_code ASC';
+    // Only show fund codes that actually include books
+    $sql   = 'SELECT id AS fund_id, fund_code, fund_name FROM funds WHERE id IN (SELECT DISTINCT fund_id FROM books WHERE fund_id IS NOT NULL AND fund_id != 0) ORDER BY fund_code ASC';
     $query = $db->prepare($sql);
     $query->execute();
     $results = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -330,7 +332,8 @@ class search {
     // Connect to database
     $database = new db;
     $db    = $database->connect();
-    $sql   = 'SELECT id AS call_num_id, start_range AS call_num_start, end_range AS call_num_end FROM call_nums ORDER BY start_range ASC';
+    // Only show call number ranges that actually include books
+    $sql   = 'SELECT id AS call_num_id, start_range AS call_num_start, end_range AS call_num_end FROM call_nums WHERE fund_id IN (SELECT DISTINCT fund_id FROM books WHERE fund_id IS NOT NULL AND fund_id != 0) ORDER BY start_range ASC';
     $query = $db->prepare($sql);
     $query->execute();
     $results = $query->fetchAll(PDO::FETCH_ASSOC);
