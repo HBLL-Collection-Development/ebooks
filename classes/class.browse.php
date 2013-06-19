@@ -207,7 +207,21 @@ class browse {
     *
     */
   private function get_call_num_usage($call_num_id) {
-    $fund_id = $this->get_fund_ids_by_call_num($call_num_id);
+    $fund_id        = $this->get_fund_ids_by_call_num($call_num_id);
+    $call_num_range = $this->get_call_num_range($call_num_id);
+    $start_range    = $call_num_range['start_range'];
+    $end_range      = $call_num_range['end_range'];
+    $adjust_start_range = $this->normalize_call_num($start_range);
+    if(is_null($adjust_start_range['class_number'])) {
+      $start_range = $start_range . '1';
+    }
+    $end_range   = $call_num_range['end_range'];
+    $adjust_end_range = $this->normalize_call_num($end_range);
+    if(is_null($adjust_end_range['class_number'])) {
+      $end_range = $end_range . '9999.9999';
+    } else if($adjust_end_range['decimal_number'] == '            ') {
+      $end_range = $end_range . '.9999';
+    }
     // Connect to database
     $database = new db;
     $db       = $database->connect();
@@ -217,7 +231,51 @@ class browse {
     $query->execute();
     $results = $query->fetchAll(PDO::FETCH_GROUP|PDO::FETCH_ASSOC);
     $db = NULL;
+    foreach($results as $key => $result) {
+      $call_num    = $result[0]['call_num'];
+      $array       = array($start_range, $end_range, $call_num);
+      $sort        = new sort_lc($array);
+      $sorted      = $sort->call_nums();
+      // If $call_num falls between the start and end range then return the fund_id
+      if($call_num !== $sorted[1]) {
+        unset($results[$key]);
+      }
+    }
+    // print_r($usage);
+    // print_r($results);die();
     return $this->format_usage($results);
+  }
+  
+  private function normalize_call_num($call_num) {
+    //Convert all alpha to uppercase
+    $lc_call_no = strtoupper($call_num);
+
+    // define special trimmings that indicate integer
+    $integer_markers = array("C.","BD.","DISC","DISK","NO.","PT.","V.","VOL.");
+    foreach ($integer_markers as $mark) {
+      $mark = str_replace(".", "\.", $mark);
+      $lc_call_no = preg_replace("/$mark(\d+)/","$mark$1;",$lc_call_no);
+    } // end foreach int marker
+
+    // Remove any inital white space
+    $lc_call_no = preg_replace ("/\s*/","",$lc_call_no);
+
+    if (preg_match("/^([A-Z]{1,3})\s*(\d+)\s*\.*(\d*)\s*\.*\s*([A-Z]*)(\d*)\s*([A-Z]*)(\d*)\s*(.*)$/",$lc_call_no,$m)) {
+      $initial_letters = $m[1];
+      $class_number    = $m[2];
+      $decimal_number  = $m[3];
+      $cutter_1_letter = $m[4];
+      $cutter_1_number = $m[5];
+      $cutter_2_letter = $m[6];
+      $cutter_2_number = $m[7];
+      $the_trimmings   = $m[8];
+    } //end if call number match
+
+    if ($class_number) {
+      $class_number = sprintf("%5s", $class_number);
+    }
+    $decimal_number = sprintf("%-12s", $decimal_number);
+    return array('initial_letters' => $initial_letters, 'class_number' => $class_number, 'decimal_number' => $decimal_number);
   }
   
   private function get_fund_ids_by_librarian($lib_id) {
@@ -248,6 +306,19 @@ class browse {
     $results = $query->fetchAll(PDO::FETCH_ASSOC);
     $db = NULL;
     return $results[0]['fund_id'];
+  }
+  
+  private function get_call_num_range($call_num_id) {
+    // Connect to database
+    $database = new db;
+    $db       = $database->connect();
+    $sql      = 'SELECT start_range, end_range FROM call_nums WHERE id = :call_num_id LIMIT 1';
+    $query = $db->prepare($sql);
+    $query->bindParam(':call_num_id', $call_num_id);
+    $query->execute();
+    $results = $query->fetchAll(PDO::FETCH_ASSOC);
+    $db = NULL;
+    return array('start_range' => $results[0]['start_range'], 'end_range' => $results[0]['end_range']);
   }
 }
 ?>
