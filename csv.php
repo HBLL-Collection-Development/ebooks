@@ -23,6 +23,21 @@ switch ($type) {
     $array = $browse->platform($term);
     break;
     
+  case 'lib':
+    $browse = new browse;
+    $array = $browse->lib($term);
+    break;
+    
+  case 'call_num':
+    $browse = new browse;
+    $array = $browse->call_num($term);
+    break;
+    
+  case 'fund':
+    $browse = new browse;
+    $array = $browse->fund($term);
+    break;
+    
   case 'title':
     $search = new search($term);
     $array = $search->title();
