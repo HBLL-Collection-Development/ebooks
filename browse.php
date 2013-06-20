@@ -52,7 +52,14 @@ if($vendor_id) {
   error::trigger('Only valid browse types are "vendor", "platform", and "lib".');
 }
 
-$html = array('title' => 'Browse Usage', 'heading' => $heading, 'platforms' => $platforms, 'vendors' => $vendors, 'libs' => $libs, 'funds' => $funds, 'call_nums' => $call_nums, 'term' => $term, 'type' => $type, 'html' => $results);
+$dropdown_fix = NULL;
+if(!$vendor_id) { $dropdown_fix .= "\$('#vendor').prop('selectedIndex', -1);"; }
+if(!$platform_id) { $dropdown_fix .= "\$('#platform').prop('selectedIndex', -1);"; }
+if(!$lib_id) { $dropdown_fix .= "\$('#lib').prop('selectedIndex', -1);"; }
+if(!$fund_id) { $dropdown_fix .= "\$('#fund').prop('selectedIndex', -1);"; }
+if(!$call_num_id) { $dropdown_fix .= "\$('#call_num').prop('selectedIndex', -1);"; }
+
+$html = array('title' => 'Browse Usage', 'heading' => $heading, 'dropdown_fix' => $dropdown_fix, 'platforms' => $platforms, 'vendors' => $vendors, 'libs' => $libs, 'funds' => $funds, 'call_nums' => $call_nums, 'term' => $term, 'type' => $type, 'html' => $results);
 
 template::display('results.tmpl', $html);
 ?>

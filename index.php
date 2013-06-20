@@ -127,6 +127,14 @@ $html = <<<HTML
 </div>
 HTML;
 
+$dropdown_fix = <<<HTML
+$('#vendor').prop('selectedIndex', -1);
+$('#platform').prop('selectedIndex', -1);
+$('#lib').prop('selectedIndex', -1);
+$('#fund').prop('selectedIndex', -1);
+$('#call_num').prop('selectedIndex', -1);
+HTML;
+
 function get_title_count() {
   // Connect to database
   $database = new db;
@@ -158,7 +166,7 @@ function percent($num_amount, $num_total) {
   return $count;
 }
 
-$html = array('title' => 'Home', 'html' => $html);
+$html = array('title' => 'Home', 'dropdown_fix' => $dropdown_fix, 'html' => $html);
 
 template::display('generic.tmpl', $html);
 ?>
