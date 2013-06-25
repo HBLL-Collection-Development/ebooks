@@ -137,8 +137,11 @@ table th {
 }
 .footnote {
 	clear: both;
+	padding-top: 2em;
+	color: #888;
 }
 .footnote:before {
+	color: #000;
 	clear: both;
 	content: "*";
 	position: absolute;

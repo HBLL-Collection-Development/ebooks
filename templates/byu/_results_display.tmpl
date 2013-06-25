@@ -1,19 +1,17 @@
 {% set num_results = html.results | length %}
 
 {# Determine pluralization of num_results #}
-{% set num_results_display %}
-{% set num_results_format = num_results|number_format %}
-{% trans %}
-{{ num_results_format }} result
-{% plural num_results %}
-{{ num_results_format }} results
-{% endtrans %}
-{% endset %}
+  {% set num_results_display %}
+  {% set num_results_format = num_results|number_format %}
+    {% trans %}
+      {{ num_results_format }} result
+      {% plural num_results %}
+      {{ num_results_format }} results
+    {% endtrans %}
+  {% endset %}
 
 {% spaceless %}
 {% autoescape false %}
-
-{% include '_search_boxes.tmpl' %}
 
 <h1 class="clear">{{ heading }}</h1>
 <h3>{{ num_results_display }}</h3>

@@ -1,4 +1,6 @@
 {% set app_url = constant('config::URL') %}
+{% set template_directory = constant('config::TEMPLATE_DIR') %}
+
 {% spaceless %}
 {% autoescape false %}
 
@@ -24,7 +26,7 @@
 	<script src='//media.lib.byu.edu/assets/js/jquery.chosen/jquery.chosen-1.0.js' type='text/javascript'></script>
 	<script src='//media.lib.byu.edu/assets/js/jquery.cycle/jquery.cycle-1.0.js' type='text/javascript'></script>
 	
-	<link rel='stylesheet' href='assets/styles/styles.css' type='text/css'/>
+	<link rel='stylesheet' href='{{ app_url }}/{{ template_directory }}/styles.css' type='text/css'/>
 	{% if dropdown_fix %}
 	  <script type="text/javascript" charset="utf-8">
   	  //<![CDATA[

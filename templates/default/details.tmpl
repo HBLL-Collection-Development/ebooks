@@ -1,0 +1,58 @@
+{% spaceless %}
+{% autoescape false %}
+
+{% include '_html_head.tmpl' %}
+<div id="details">
+<h1>{{ html.book_data.title }}</h1>
+<ul class="inline_list">{% if html.book_data.author %}<li>{{ html.book_data.author }}</li>{% endif %}{% if html.book_data.publisher %}<li>{{ html.book_data.publisher }}</li>{% endif %}{% if html.book_data.isbn %}<li>{{ html.book_data.isbn }}</li>{% endif %}{% if html.book_data.call_num %}<li>{{ html.book_data.call_num }}</li>{% endif %}</ul>
+
+{% for usage in html.usage %}
+  <h2>{{ usage.platform }}</h2>
+  {% if usage.br1 %}
+  <table>
+    <thead>
+      <tr>
+        <th></th>
+        {% for year in usage.br1.years %}
+          <th>{{ year }}</th>
+        {% endfor %}
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Title-level Usage</td>
+        {% for usage in usage.br1.usage %}
+          <td>{{ usage|number_format }}</td>
+        {% endfor %}
+      </tr>
+    </tbody>
+  </table>
+  {% endif %}
+  
+  {% if usage.br2 %}
+  <table>
+    <thead>
+      <tr>
+        <th></th>
+        {% for year in usage.br2.years %}
+          <th>{{ year }}</th>
+        {% endfor %}
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Chapter-level Usage</td>
+        {% for usage in usage.br2.usage %}
+          <td>{{ usage|number_format }}</td>
+        {% endfor %}
+      </tr>
+    </tbody>
+  </table>
+  {% endif %}
+{% endfor %}
+</div>
+
+{% include '_html_foot.tmpl' %}
+
+{% endautoescape %}
+{% endspaceless %}

@@ -10,7 +10,7 @@
 require_once 'config.php';
 
 $html = <<<HTML
-<div class="span-14 page append-1">
+<div class="span-14 span7 page append-1">
   <p>Things to know before loading usage data:</p>
   <ol class="link_list large">
     <li>This program assumes that an individual book is only listed once per platform. If you have usage data where a book is listed multiple times per platform (as can happen with book series such as those found in BioOne), you will need to manually combine usage for that book into a single entry for that platform.</li>
@@ -30,18 +30,18 @@ $html = <<<HTML
   </ul>
 </div>
 <div class="span-7 page">
-  <h1>Project COUNTER Book Report #1</h1>
+  <h2>Project COUNTER Book Report #1</h2>
   <form enctype="multipart/form-data" action="ingest.php" method="post">
       <p><input type="file" name="uploadedfile"/></p>
       <input type="hidden" name="report" value="1" id="report"/>
-      <p><input type="submit" value="Upload file"/></p>
+      <p><input type="submit" class="btn btn-primary" value="Upload file"/></p>
   </form>
 
-  <h1 class="h2">Project COUNTER Book Report #2</h1>
+  <h2 class="h2">Project COUNTER Book Report #2</h2>
   <form enctype="multipart/form-data" action="ingest.php" method="post">
       <p><input type="file" name="uploadedfile"/></p>
       <input type="hidden" name="report" value="2" id="report"/>
-      <p><input type="submit" value="Upload file"/></p>
+      <p><input type="submit" class="btn btn-primary" value="Upload file"/></p>
   </form>
 </div>
 HTML;

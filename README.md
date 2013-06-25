@@ -76,6 +76,14 @@ The CSV files must be in the following format with columns in the following orde
 
 There should be no header row(s)—just the data.
 
+## Adjusting templates ##
+
+[Twig](https://github.com/fabpot/Twig) is a PHP templating system with extensive [documentation](http://twig.sensiolabs.org/documentation). The eBook Usage Database comes with two templates:
+1. default: A default template that is based on the [Flatly Bootswatch theme](http://bootswatch.com/flatly/).
+2. byu: A theme made to look like BYU’s library pages. Most would be better off ignoring this theme and modding the default theme.
+
+Templates are found in the templates directory. Templates that begin with an underscore (_) are child templates that are called by parent templates. You must have a CSS file in the templates directory called “styles.css”. Otherwise, you are free to change the templates any way you see fit for your needs.
+
 ## Known Issues ##
 
 1. This program assumes that an individual book is only listed once per platform. If you have usage data where a book is listed multiple times per platform (as can happen with book series such as those found in BioOne), you will need to manually combine usage for that book into a single entry for that platform. Otherwise, the database will only show uses for one of the issues instead of total usage for the entire series.

@@ -20,6 +20,7 @@ class config {
   const URL              = 'http://localhost/books'; // Base URL of your application
   const PROCESS_LIMIT    = 50; // Number of rows to process at one time when parsing from temp table to permanent tables
   const WORLDCAT_ID      = FALSE; // WorldCat Affiliate ID; FALSE if you do not have one
+  const TEMPLATE_DIR     = 'templates/default';
 
   /****************************************************************************/
   /*                       DO NOT EDIT BELOW THIS LINE                        */

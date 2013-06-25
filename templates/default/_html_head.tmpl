@@ -1,0 +1,37 @@
+{% set app_url = constant('config::URL') %}
+{% set template_directory = constant('config::TEMPLATE_DIR') %}
+
+{% spaceless %}
+{% autoescape false %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>{{ title }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+	
+	  <link rel='stylesheet' href='{{ app_url }}/{{ template_directory }}/styles.css' type='text/css'/>
+	  <script src="http://code.jquery.com/jquery-2.0.2.min.js"></script>
+  	{% if dropdown_fix %}
+  	  <script type="text/javascript" charset="utf-8">
+    	  //<![CDATA[
+    	  $(window).load(function(){
+          {{ dropdown_fix }}
+        });//]]>
+  	  </script>
+  	{% endif %}
+</head>
+
+<body>
+    
+{% include '_navigation.tmpl' %}
+
+<div class="page">
+
+{% endautoescape %}
+{% endspaceless %}

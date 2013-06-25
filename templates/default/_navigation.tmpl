@@ -1,0 +1,24 @@
+{% set app_url = constant('config::URL') %}
+
+<h1>eBook Usage Database</h1>
+<header class="jumbotron subhead" id="overview">
+<div class="subnav">
+	<ul class="nav nav-pills">
+	  {% if title == 'Home' %}
+			<li class="active"><a href="{{ app_url }}/">Home</a></li>
+		{% else %}
+		  <li><a href="{{ app_url }}/">Home</a></li>
+		{% endif %}
+		{% if title == 'FAQ' %}
+			<li class="active"><a href="{{ app_url }}/faq.php">FAQ</a></li>
+		{% else %}
+		  <li><a href="{{ app_url }}/faq.php">FAQ</a></li>
+		{% endif %}
+		{% if title == 'Admin' %}
+			<li class="active"><a href="{{ app_url }}/admin.php">Admin</a></li>
+		{% else %}
+		  <li><a href="{{ app_url }}/admin.php">Admin</a></li>
+		{% endif %}
+	</ul>
+</div>
+</header>

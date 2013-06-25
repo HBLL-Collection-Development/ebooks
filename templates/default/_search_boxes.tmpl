@@ -1,0 +1,90 @@
+{% autoescape false %}
+<div class="page">
+  <div class="span-24">
+    <div class="span-7">
+      <section>
+        <form action="search.php" method="get" accept-charset="utf-8" class="search_form linear">
+          <h2>Title Search</h2>
+          <div class="search_wrapper">
+            {% if type == 'title' %}
+              <input type="text" name="q" value="{{ html.search_term }}" id="title" placeholder="Title"/>
+            {% else %}
+              <input type="text" name="q" value="" id="title" placeholder="Title"/>
+            {% endif %}
+            <input type="hidden" name="type" value="title" id="type_title">
+          </div>
+          <input type="submit" class="btn btn-primary" value="Search" />
+        </form>
+      </section>
+    </div>
+
+    <div class="span-7 prepend-1">
+      <section>
+        <h2>Platform Browse</h2>
+        <form action="browse.php" method="get" accept-charset="utf-8">
+          <select name="platform" id="platform">
+            {{ platforms }}
+          </select>
+          <input class="btn btn-primary" type="submit" name="submit" value="Browse" />
+        </form>
+      </section>
+    </div>
+    
+    <div class="span-7 prepend-1">
+      <section>
+        <h2>Fund Code Browse<sup>*</sup></h2>
+        <form action="browse.php" method="get" accept-charset="utf-8">
+          <select name="fund" id="fund">
+            {{ funds }}
+          </select>
+          <input class="btn btn-primary" type="submit" name="submit" value="Browse" />
+        </form>
+      </section>
+    </div>
+  </div>
+
+  <div class="span-24">
+    <div class="span-7">
+      <section>
+        <form action="search.php" method="get" accept-charset="utf-8" class="search_form linear">
+          <h2>ISBN Search</h2>
+          <div class="search_wrapper">
+            {% if type == 'isbn' %}
+              <input type="text" name="q" value="{{ html.search_term }}" id="isbn" placeholder="ISBN (with or without dashes)"/>
+            {% else %}
+              <input type="text" name="q" value="" id="isbn" placeholder="ISBN (with or without dashes)"/>
+            {% endif %}
+            <input type="hidden" name="type" value="isbn" id="type_isbn">
+          </div>
+          <input type="submit" class="btn btn-primary" value="Search" />
+        </form>
+      </section>
+    </div>
+  
+    <div class="span-7 prepend-1">
+      <section>
+        <h2>Subject Librarian Browse<sup>*</sup></h2>
+        <form action="browse.php" method="get" accept-charset="utf-8">
+          <select name="lib" id="lib">
+            {{ libs }}
+          </select>
+          <input class="btn btn-primary" type="submit" name="submit" value="Browse" />
+        </form>
+      </section>
+    </div>
+
+    <div class="span-7 prepend-1">
+      <section>
+        <h2>Call Number Browse<sup>*</sup></h2>
+        <form action="browse.php" method="get" accept-charset="utf-8">
+          <select name="call_num" id="call_num">
+            {{ call_nums }}
+          </select>
+          <input class="btn btn-primary" type="submit" name="submit" value="Browse" />
+        </form>
+      </section>
+    </div>
+    
+  </div>
+</div>
+{% endautoescape %}

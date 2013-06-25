@@ -32,16 +32,18 @@ class template {
     $content = array_merge($format, $content);
     // Call template
     Twig_Autoloader::register();
-    $loader = new Twig_Loader_Filesystem('./templates');
+    $loader = new Twig_Loader_Filesystem('./' . config::TEMPLATE_DIR);
     // Do not cache templates if in development
     if(config::DEVELOPMENT) {
-      $twig = new Twig_Environment($loader);
+      $twig = new Twig_Environment($loader, array('debug' => TRUE));
     // Cache templates in production
     } else {
-      $twig = new Twig_Environment($loader, array('cache' => './tmp/cache'));
+      $twig = new Twig_Environment($loader, array('cache' => './tmp/cache', 'auto_reload' => true));
     }
     // Needed for pluralization of variables
     $twig->addExtension(new Twig_Extensions_Extension_I18n());
+    $twig->addGlobal('percent_browsable', self::get_percent_browsable());
+    $twig->addGlobal('percent_not_browsable', self::get_percent_not_browsable());
     $template = $twig->loadTemplate($template_name);
     return $template->render($content);
   }
@@ -157,5 +159,83 @@ class template {
     return $call_number . ' (' . $results[0]['subject'] . ')';
   }
   
+  /**
+    * Creates jQuery script text to adjust search boxes for less cluttered searching
+    *
+    * @access public
+    * @param int vendor_id
+    * @param int platform_id
+    * @param int lib_id
+    * @param int fund_id
+    * @param int call_num_id
+    * @return string jQuery script text to include on each page
+    *
+    */
+  public static function get_dropdown_fix($vendor_id, $platform_id, $lib_id, $fund_id, $call_num_id) {
+    $dropdown_fix = NULL;
+    if(!$vendor_id) { $dropdown_fix .= "\$('#vendor').prop('selectedIndex', -1);"; }
+    if(!$platform_id) { $dropdown_fix .= "\$('#platform').prop('selectedIndex', -1);"; }
+    if(!$lib_id) { $dropdown_fix .= "\$('#lib').prop('selectedIndex', -1);"; }
+    if(!$fund_id) { $dropdown_fix .= "\$('#fund').prop('selectedIndex', -1);"; }
+    if(!$call_num_id) { $dropdown_fix .= "\$('#call_num').prop('selectedIndex', -1);"; }
+    return $dropdown_fix;
+  }
+  
+  /**
+    * Returns int representing percent of database that is browsable
+    *
+    * @access public
+    * @param NULL
+    * @return int Percent of database that is browsable (must include call number to be browsable)
+    *
+    */
+  public static function get_percent_browsable() {
+    $title_count                = self::get_title_count();
+    $title_count_with_call_nums = self::get_title_count_with_call_nums();
+    return self::percent($title_count_with_call_nums, $title_count);
+  }
+  
+  /**
+    * Returns int representing percent of database that is not browsable
+    *
+    * @access public
+    * @param NULL
+    * @return int Percent of database that is not browsable (must include call number to be browsable)
+    *
+    */
+  public static function get_percent_not_browsable() {
+    return 100 - self::get_percent_browsable();
+  }
+  
+  private static function get_title_count() {
+    // Connect to database
+    $database = new db;
+    $db       = $database->connect();
+    $sql      = "SELECT COUNT(*) AS count FROM books";
+    $query = $db->query($sql);
+    $f = $query->fetch();
+    $result = $f['count'];
+    $db = NULL;
+    return $result;
+  }
+  
+  private static function get_title_count_with_call_nums() {
+    // Connect to database
+    $database = new db;
+    $db       = $database->connect();
+    $sql      = "SELECT COUNT(*) AS count FROM books WHERE call_num IS NOT NULL";
+    $query = $db->query($sql);
+    $f = $query->fetch();
+    $result = $f['count'];
+    $db = NULL;
+    return $result;
+  }
+  
+  private static function percent($num_amount, $num_total) {
+    $count1 = $num_amount / $num_total;
+    $count2 = $count1 * 100;
+    $count  = number_format($count2, 0);
+    return $count;
+  }
 }
 ?>

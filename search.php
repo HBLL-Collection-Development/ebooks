@@ -39,14 +39,11 @@ switch ($type) {
     break;
 }
 
-$dropdown_fix = NULL;
-if(!$vendor_id) { $dropdown_fix .= "\$('#vendor').prop('selectedIndex', -1);"; }
-if(!$platform_id) { $dropdown_fix .= "\$('#platform').prop('selectedIndex', -1);"; }
-if(!$lib_id) { $dropdown_fix .= "\$('#lib').prop('selectedIndex', -1);"; }
-if(!$fund_id) { $dropdown_fix .= "\$('#fund').prop('selectedIndex', -1);"; }
-if(!$call_num_id) { $dropdown_fix .= "\$('#call_num').prop('selectedIndex', -1);"; }
+$dropdown_fix = template::get_dropdown_fix($vendor_id, $platform_id, $lib_id, $fund_id, $call_num_id);
+
+$heading = 'Search for: ' . $results['search_term'];
 
 $html = array('title' => 'Search Usage', 'heading' => $heading, 'dropdown_fix' => $dropdown_fix, 'type' => $type, 'term' => $term, 'platforms' => $platforms, 'vendors' => $vendors, 'libs' => $libs, 'funds' => $funds, 'call_nums' => $call_nums, 'html' => $results);
 
-template::display('search.tmpl', $html);
+template::display('results.tmpl', $html);
 ?>
