@@ -76,7 +76,7 @@ The CSV files must be in the following format with columns in the following orde
 
 There should be no header row(s)—just the data.
 
-## Adjusting templates ##
+## Adjusting Templates ##
 
 [Twig](https://github.com/fabpot/Twig) is a PHP templating system with extensive [documentation](http://twig.sensiolabs.org/documentation). The eBook Usage Database comes with two templates:
 
