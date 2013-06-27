@@ -24,6 +24,14 @@ class sort_lc {
     $this->array = $array;
   }
   
+  /**
+    * Takes the $array variable and returns an array sorted by LC Call Number
+    *
+    * @access public
+    * @param NULL
+    * @return array Array sorted by LC Call Number
+    *
+    */
   public function call_nums() {
     $array    = $this->array;
     $callback = array('sort_lc', 'SortLC');

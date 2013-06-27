@@ -99,9 +99,11 @@ class process_counter_rpt1 extends process {
     $counter_br1            = $this->result['counter_br1'];
     $usage_year             = $this->result['usage_year'];
     $vendor                 = $this->result['vendor'];
+    // Enhance using OCLC Classify service
     if(!is_null($isbn)) {
-      $classify = new classify;
-      $oclc     = $classify->search('standard_number', $isbn);
+      $classify           = new classify;
+      $oclc               = $classify->search('standard_number', $isbn);
+
       $oclc_title         = $oclc[0]['title'];
       $oclc_author        = $oclc[0]['author'];
       $oclc_num           = $oclc[0]['oclc'];
@@ -115,7 +117,13 @@ class process_counter_rpt1 extends process {
       $oclc_response_code = NULL;
     }
     $classify = NULL;
-    $this->result = array('temp_id' => $temp_id, 'title' => $title, 'publisher' => $publisher, 'platform' => $platform, 'doi' => $doi, 'proprietary_identifier' => $proprietary_identifier, 'isbn' => $isbn, 'issn' => $issn, 'counter_br1' => $counter_br1, 'usage_year' => $usage_year, 'vendor' => $vendor, 'oclc_title' => $oclc_title, 'oclc_author' => $oclc_author, 'oclc_num' => $oclc_num, 'oclc_call_num' => $oclc_call_num, 'oclc_response_code' => $oclc_response_code);
+    // Find fund_id if there is a call number for the book
+    if(!is_null($oclc_call_num)) {
+      $fund_id = $this->get_fund_id($oclc_call_num);
+    } else {
+      $fund_id = NULL;
+    }
+    $this->result = array('temp_id' => $temp_id, 'title' => $title, 'publisher' => $publisher, 'platform' => $platform, 'doi' => $doi, 'proprietary_identifier' => $proprietary_identifier, 'isbn' => $isbn, 'issn' => $issn, 'counter_br1' => $counter_br1, 'usage_year' => $usage_year, 'vendor' => $vendor, 'oclc_title' => $oclc_title, 'oclc_author' => $oclc_author, 'oclc_num' => $oclc_num, 'oclc_call_num' => $oclc_call_num, 'oclc_response_code' => $oclc_response_code, 'fund_id' => $fund_id);
     return NULL;
   }
 
