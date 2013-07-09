@@ -21,6 +21,7 @@ class config {
   const PROCESS_LIMIT    = 50; // Number of rows to process at one time when parsing from temp table to permanent tables
   const WORLDCAT_ID      = FALSE; // WorldCat Affiliate ID; FALSE if you do not have one
   const TEMPLATE_DIR     = 'templates/default';
+  const RESULTS_PER_PAGE = 100; // Default number of results to display
 
   /****************************************************************************/
   /*                       DO NOT EDIT BELOW THIS LINE                        */

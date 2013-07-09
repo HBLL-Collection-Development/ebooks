@@ -10,7 +10,9 @@
 
 class search {
   private $term;
-  
+  private $page;
+  private $rpp;
+
   /**
    * Constructor; Sets $this->term variable for term to search for in database
    *
@@ -18,8 +20,10 @@ class search {
    * @param string Search terms to search for
    * @return null
    */
-  public function __construct($term) {
+  public function __construct($term, $page = 1, $rpp = config::RESULTS_PER_PAGE) {
     $this->term = $term;
+    $this->page = $page;
+    $this->rpp  = $rpp;
   }
   
   /**
@@ -38,8 +42,8 @@ class search {
     $sql      = "SELECT b.id, b.title, b.author, b.publisher, b.isbn, b.call_num, CAST(GROUP_CONCAT(DISTINCT o.platforms ORDER BY o.platforms SEPARATOR '|') AS CHAR CHARSET UTF8) AS platforms, (SELECT SUM(cbr2.counter_br2) FROM current_br2 cbr2 WHERE cbr2.book_id = b.id) AS current_br2, (SELECT SUM(pbr2.counter_br2) FROM previous_br2 pbr2 WHERE pbr2.book_id = b.id) AS previous_br2, (SELECT SUM(cbr1.counter_br1) FROM current_br1 cbr1 WHERE cbr1.book_id = b.id) AS current_br1, (SELECT SUM(pbr1.counter_br1) FROM previous_br1 pbr1 WHERE pbr1.book_id = b.id) AS previous_br1 FROM books AS b LEFT JOIN overlap o ON b.id = o.book_id WHERE id IN (SELECT id FROM books_search WHERE MATCH (title) AGAINST (" . $term . " IN BOOLEAN MODE) ORDER BY title) GROUP BY b.id ORDER BY b.title";
     $query    = $db->prepare($sql);
     $query->execute();
-    $results = $query->fetchAll(PDO::FETCH_GROUP|PDO::FETCH_ASSOC);
-    $db = NULL;
+    $results  = $query->fetchAll(PDO::FETCH_GROUP|PDO::FETCH_ASSOC);
+    $db       = NULL;
     return $this->format_usage($results);
   }
 
@@ -63,8 +67,8 @@ class search {
     $sql      = "SELECT b.id, b.title, b.author, b.publisher, b.isbn, b.call_num, CAST(GROUP_CONCAT(DISTINCT o.platforms ORDER BY o.platforms SEPARATOR '|') AS CHAR CHARSET UTF8) AS platforms, (SELECT SUM(cbr2.counter_br2) FROM current_br2 cbr2 WHERE cbr2.book_id = b.id) AS current_br2, (SELECT SUM(pbr2.counter_br2) FROM previous_br2 pbr2 WHERE pbr2.book_id = b.id) AS previous_br2, (SELECT SUM(cbr1.counter_br1) FROM current_br1 cbr1 WHERE cbr1.book_id = b.id) AS current_br1, (SELECT SUM(pbr1.counter_br1) FROM previous_br1 pbr1 WHERE pbr1.book_id = b.id) AS previous_br1 FROM books AS b LEFT JOIN overlap o ON b.id = o.book_id WHERE b.isbn IN (" . $in . ") GROUP BY b.id ORDER BY b.title";
     $query    = $db->prepare($sql);
     $query->execute();
-    $results = $query->fetchAll(PDO::FETCH_GROUP|PDO::FETCH_ASSOC);
-    $db = NULL;
+    $results  = $query->fetchAll(PDO::FETCH_GROUP|PDO::FETCH_ASSOC);
+    $db       = NULL;
     return $this->format_usage($results);
   }
   
@@ -127,16 +131,24 @@ class search {
         $platform_list .= '<li>' . $platform . '</li>';
       }
       $current_br1   = $result[0]['current_br1'];
-      $previous_br1 = $result[0]['previous_br1'];
+      $previous_br1  = $result[0]['previous_br1'];
       $current_br2   = $result[0]['current_br2'];
-      $previous_br2 = $result[0]['previous_br2'];
+      $previous_br2  = $result[0]['previous_br2'];
       if(is_null($current_br1) AND is_null($current_br2) AND is_null($previous_br1) AND is_null($previous_br2)) {
-        // Do not add to $usages array if there is no usage in the past 2 years
+      // Do not add to $usages array if there is no usage in the past 2 years
       } else {
       $usages[] = array('book_id' => $book_id, 'title' => $title, 'author' => $author, 'publisher' => $publisher, 'isbn' => $isbn, 'call_num' => $call_num, 'platforms' => $platform_list, 'latest_br1' => $current_br1, 'previous_br1' => $previous_br1, 'latest_br2' => $current_br2, 'previous_br2' => $previous_br2);
       }
     }
-    return array('current_year' => config::$current_year, 'previous_year' => config::$previous_year, 'search_term' => htmlspecialchars($this->term), 'results' => $usages);
+    $num_results  = count($usages);
+    $pages        = ceil($num_results/$this->rpp);
+    if($this->page > $pages || $this->page < 1) { $this->page = 1; }
+    $start_from   = ($this->page - 1) * $this->rpp;
+    $start_result = $start_from + 1;
+    $end_result   = ($start_result + $this->rpp) - 1;
+    if($end_result > $num_results) { $end_result = $num_results; }
+    $usages       = array_slice($usages, $start_from, $this->rpp);
+    return array('current_year' => config::$current_year, 'previous_year' => config::$previous_year, 'search_term' => htmlspecialchars($this->term), 'num_results' => $num_results, 'pages' => $pages, 'page' => $this->page, 'rpp' => $this->rpp, 'start_result' => $start_result, 'end_result' => $end_result, 'results' => $usages);
   }
   
   /**

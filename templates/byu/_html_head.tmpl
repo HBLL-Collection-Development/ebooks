@@ -33,6 +33,52 @@
   	  $(window).load(function(){
         {{ dropdown_fix }}
       });//]]>
+      $(document).ready(function(){
+        $("#pagejumperform").submit(function(e){
+          // Get current page from form (remove all commas from number)
+          page = parseInt($("#pagejumperform input#toPage").val().replace(/,/g,''));
+          // Get total pages from form (remove all commas from number)
+          totalPages = parseInt($("#pagejumperform span#totalPages").html().replace(/,/g,''));
+          // Correct page number of it is greater than the total number of pages
+          if (page >= totalPages) {
+            $("input#toPage").val(totalPages);
+            page = totalPages
+          }
+          url = window.location.href;
+          // If we are on a page with a $_GET variable of page already set, replace it with value entered into form
+          if (url.match(/page\=\d+/)){
+            url = url.replace(/page=\d+/,"page=" + page)
+          // Otherwise, just add the desired page number to the URL
+          }else{
+            url += "&page=" + page
+          }
+          window.location.href = url;
+          return false
+          }
+        );
+        // When the form is changed, submit the form
+        $("#pagejumperform input[type=text]").change(function(){$(this).submit()})
+      });
+      // Results per page
+      $(document).ready(function(){
+        $("#resultsperpageform").submit(function(e){
+          // Get current results per pagepage from form (remove all commas from number)
+          rpp = parseInt($("#resultsperpageform input#rpp").val().replace(/,/g,''));
+          url = window.location.href;
+          // If we are on a page with a $_GET variable of rpp already set, replace it with value entered into form
+          if (url.match(/rpp\=\d+/)){
+            url = url.replace(/rpp=\d+/,"rpp=" + rpp)
+          // Otherwise, just add the desired rpp number to the URL
+          }else{
+            url += "&rpp=" + rpp
+          }
+          window.location.href = url;
+          return false
+          }
+        );
+        // When the form is changed, submit the form
+        $("#resultsperpageform input[type=text]").change(function(){$(this).submit()})
+      });
 	  </script>
 	{% endif %}
 </head>

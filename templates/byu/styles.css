@@ -149,3 +149,45 @@ table th {
 	font-size: .75em;
 	margin-top: -.5em;
 }
+
+h1.hitlist {
+	color: #999;
+	font-weight: normal;
+	font-size: 1.5em;
+}
+h1.hitlist span {
+	font-weight: bold;
+}
+h1.hitlist .term {
+	color: #930;
+}
+h1.hitlist .num {
+	color: #000;
+}
+
+.pagination .pagejump {
+	margin: 0 10px;
+	color: #999;
+}
+.pagination .pagejump .pages {
+	font-weight: bold;
+	color: #333;
+}
+.pagination form {
+	display: inline;
+}
+.pagination nav a {
+	display: inline-block;
+	padding: 3px 5px 4px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+}
+.pagination nav a:hover {
+	background: #eee;
+	color: #830;
+}
+.pagination .pagejump input {
+	width: 4em;
+	padding: 1px 2px;
+	font-weight: bold;
+}

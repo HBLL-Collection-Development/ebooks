@@ -14,11 +14,13 @@ class browse {
     *
     * @access public
     * @param int vendor_id
+    * @param int page Page of results to display
+    * @param int rpp Results to show per page
     * @return array Usage array for specified vendor
     *
     */
-  public function vendor($vendor_id) {
-    return $this->get_vendor_usage($vendor_id);
+  public function vendor($vendor_id, $page = 1, $results_per_page = config::RESULTS_PER_PAGE) {
+    return $this->get_vendor_usage($vendor_id, $page, $results_per_page);
   }
 
   /**
@@ -26,11 +28,13 @@ class browse {
     *
     * @access public
     * @param int platform_id
+    * @param int page Page of results to display
+    * @param int rpp Results to show per page
     * @return array Usage array for specified platform
     *
     */
-  public function platform($platform_id) {
-    return $this->get_platform_usage($platform_id);
+  public function platform($platform_id, $page = 1, $results_per_page = config::RESULTS_PER_PAGE) {
+    return $this->get_platform_usage($platform_id, $page, $results_per_page);
   }
   
   /**
@@ -38,11 +42,13 @@ class browse {
     *
     * @access public
     * @param int lib_id
+    * @param int page Page of results to display
+    * @param int rpp Results to show per page
     * @return array Usage array for books under fund codes assigned to specified librarian
     *
     */
-  public function lib($lib_id) {
-    return $this->get_librarian_usage($lib_id);
+  public function lib($lib_id, $page = 1, $results_per_page = config::RESULTS_PER_PAGE) {
+    return $this->get_librarian_usage($lib_id, $page, $results_per_page);
   }
   
   /**
@@ -50,11 +56,13 @@ class browse {
     *
     * @access public
     * @param int fund_id
+    * @param int page Page of results to display
+    * @param int rpp Results to show per page
     * @return array Usage array for books under specified fund code
     *
     */
-  public function fund($fund_id) {
-    return $this->get_fund_usage($fund_id);
+  public function fund($fund_id, $page = 1, $results_per_page = config::RESULTS_PER_PAGE) {
+    return $this->get_fund_usage($fund_id, $page, $results_per_page);
   }
   
   /**
@@ -62,11 +70,13 @@ class browse {
     *
     * @access public
     * @param call_num_id
+    * @param int page Page of results to display
+    * @param int rpp Results to show per page
     * @return array Usage array for books in specified call number range
     *
     */
-  public function call_num($call_num_id) {
-    return $this->get_call_num_usage($call_num_id);
+  public function call_num($call_num_id, $page = 1, $results_per_page = config::RESULTS_PER_PAGE) {
+    return $this->get_call_num_usage($call_num_id, $page, $results_per_page);
   }
   
   /**
@@ -74,10 +84,12 @@ class browse {
     *
     * @access private
     * @param array Usage data from database query
+    * @param int page Page of results to display
+    * @param int rpp Results to show per page
     * @return array Formatted array for input into Twig template
     *
     */
-  private function format_usage($usage) {
+  private function format_usage($usage, $page, $results_per_page) {
     foreach($usage as $key => $result) {
       // Reset variables
       $title         = NULL;
@@ -106,12 +118,20 @@ class browse {
       $current_br2  = $result[0]['current_br2'];
       $previous_br2 = $result[0]['previous_br2'];
       if(is_null($current_br1) AND is_null($current_br2) AND is_null($previous_br1) AND is_null($previous_br2)) {
-        // Do not add to $usages array if there is no usage in the past 2 years
+      // Do not add to $usages array if there is no usage in the past 2 years
       } else {
       $usages[] = array('book_id' => $book_id, 'title' => $title, 'author' => $author, 'publisher' => $publisher, 'isbn' => $isbn, 'call_num' => $call_num, 'platforms' => $platform_list, 'latest_br1' => $current_br1, 'previous_br1' => $previous_br1, 'latest_br2' => $current_br2, 'previous_br2' => $previous_br2);
       }
     }
-    return array('current_year' => config::$current_year, 'previous_year' => config::$previous_year, 'search_term' => htmlspecialchars($this->term), 'results' => $usages);
+    $num_results  = count($usages);
+    $pages        = ceil($num_results/$results_per_page);
+    if($page > $pages || $page < 1) { $page = 1; }
+    $start_from   = ($page - 1) * $results_per_page;
+    $start_result = $start_from + 1;
+    $end_result   = ($start_result + $results_per_page) - 1;
+    if($end_result > $num_results) { $end_result = $num_results; }
+    $usages       = array_slice($usages, $start_from, $results_per_page);
+    return array('current_year' => config::$current_year, 'previous_year' => config::$previous_year, 'search_term' => htmlspecialchars($this->term), 'num_results' => $num_results, 'pages' => $pages, 'page' => $page, 'rpp' => $results_per_page, 'start_result' => $start_result, 'end_result' => $end_result, 'results' => $usages);
   }
   
   /**
@@ -119,10 +139,12 @@ class browse {
     *
     * @access private
     * @param int vendor_id
+    * @param int page Page of results to display
+    * @param int rpp Results to show per page
     * @return array Usage data formatted by $this->format_usage()
     *
     */
-  private function get_vendor_usage($vendor_id) {
+  private function get_vendor_usage($vendor_id, $page, $results_per_page) {
     // Connect to database
     $database = new db;
     $db       = $database->connect();
@@ -132,7 +154,7 @@ class browse {
     $query->execute();
     $results = $query->fetchAll(PDO::FETCH_GROUP|PDO::FETCH_ASSOC);
     $db = NULL;
-    return $this->format_usage($results);
+    return $this->format_usage($results, $page, $results_per_page);
   }
   
   /**
@@ -140,10 +162,12 @@ class browse {
     *
     * @access private
     * @param int platform_id
+    * @param int page Page of results to display
+    * @param int rpp Results to show per page
     * @return array Usage data formatted by $this->format_usage()
     *
     */
-  private function get_platform_usage($platform_id) {
+  private function get_platform_usage($platform_id, $page, $results_per_page) {
     // Connect to database
     $database = new db;
     $db       = $database->connect();
@@ -153,7 +177,7 @@ class browse {
     $query->execute();
     $results = $query->fetchAll(PDO::FETCH_GROUP|PDO::FETCH_ASSOC);
     $db = NULL;
-    return $this->format_usage($results);
+    return $this->format_usage($results, $page, $results_per_page);
   }
   
   /**
@@ -161,10 +185,12 @@ class browse {
     *
     * @access private
     * @param int lib_id
+    * @param int page Page of results to display
+    * @param int rpp Results to show per page
     * @return array Usage data formatted by $this->format_usage()
     *
     */
-  private function get_librarian_usage($lib_id) {
+  private function get_librarian_usage($lib_id, $page, $results_per_page) {
     $in = $this->get_fund_ids_by_librarian($lib_id);
     // Connect to database
     $database = new db;
@@ -174,7 +200,7 @@ class browse {
     $query->execute();
     $results = $query->fetchAll(PDO::FETCH_GROUP|PDO::FETCH_ASSOC);
     $db = NULL;
-    return $this->format_usage($results);
+    return $this->format_usage($results, $page, $results_per_page);
   }
   
   /**
@@ -182,10 +208,12 @@ class browse {
     *
     * @access private
     * @param int fund_id
+    * @param int page Page of results to display
+    * @param int rpp Results to show per page
     * @return array Usage data formatted by $this->format_usage()
     *
     */
-  private function get_fund_usage($fund_id) {
+  private function get_fund_usage($fund_id, $page, $results_per_page) {
     // Connect to database
     $database = new db;
     $db       = $database->connect();
@@ -195,7 +223,7 @@ class browse {
     $query->execute();
     $results = $query->fetchAll(PDO::FETCH_GROUP|PDO::FETCH_ASSOC);
     $db = NULL;
-    return $this->format_usage($results);
+    return $this->format_usage($results, $page, $results_per_page);
   }
   
   /**
@@ -203,10 +231,12 @@ class browse {
     *
     * @access private
     * @param int call_num_id
+    * @param int page Page of results to display
+    * @param int rpp Results to show per page
     * @return array Usage data formatted by $this->format_usage()
     *
     */
-  private function get_call_num_usage($call_num_id) {
+  private function get_call_num_usage($call_num_id, $page, $results_per_page) {
     $fund_id        = $this->get_fund_ids_by_call_num($call_num_id);
     $call_num_range = $this->get_call_num_range($call_num_id);
     $start_range    = $call_num_range['start_range'];
@@ -243,9 +273,17 @@ class browse {
     }
     // print_r($usage);
     // print_r($results);die();
-    return $this->format_usage($results);
+    return $this->format_usage($results, $page, $results_per_page);
   }
   
+  /**
+    * Gets various pieces of a call number for parsing and sorting later
+    *
+    * @access private
+    * @param string Call number
+    * @return array Array of call number parts
+    *
+    */
   private function normalize_call_num($call_num) {
     //Convert all alpha to uppercase
     $lc_call_no = strtoupper($call_num);
@@ -278,6 +316,14 @@ class browse {
     return array('initial_letters' => $initial_letters, 'class_number' => $class_number, 'decimal_number' => $decimal_number);
   }
   
+  /**
+    * Get fund code ids assigned to specified librarian
+    *
+    * @access private
+    * @param int lib_id
+    * @return string Comma delimited list of all fund code ids associated with specified librarian to be used in MySQL query
+    *
+    */
   private function get_fund_ids_by_librarian($lib_id) {
     // Connect to database
     $database = new db;
@@ -295,6 +341,14 @@ class browse {
     return implode(',', $fund_ids);
   }
   
+  /**
+    * List of fund code id associated with a specified call number
+    *
+    * @access private
+    * @param int Call number id
+    * @return int Fund code id
+    *
+    */
   private function get_fund_ids_by_call_num($call_num_id) {
     // Connect to database
     $database = new db;
@@ -308,6 +362,14 @@ class browse {
     return $results[0]['fund_id'];
   }
   
+  /**
+    * Call number range for a specified call number id
+    *
+    * @access private
+    * @param int Call number id
+    * @return array Start and end range for call number id
+    *
+    */
   private function get_call_num_range($call_num_id) {
     // Connect to database
     $database = new db;
