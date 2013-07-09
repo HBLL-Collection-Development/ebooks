@@ -1,40 +1,44 @@
 {% spaceless %}
 {% autoescape false %}
 
-<h1 class="clear hitlist">
-  Results <span class="num">{{ html.start_result|number_format }}&ndash;{{ html.end_result|number_format }}</span> of <span class="num">{{ html.num_results|number_format }}</span> for: <span class="term">{{ heading }}</span>
-</h1>
-
-<div class="pagination">
-  <nav>
-    {% if html.page > 1 %}
-      <a class="prevlink" title="Previous page" href="?{{ type }}={{ term }}&amp;rpp={{ html.rpp }}&amp;page={{ html.page - 1 }}">←  Previous</a>
-    {% endif %}
-    <form id="pagejumperform">
-      <span class="pagejump">Page <input type="text" id="toPage" value="{{ html.page|number_format }}"> of <span id="totalPages" class="pages">{{ html.pages|number_format }}</span></span>
+{% if html.num_results == 0 %}
+  <h1 class="clear hitlist">
+    Please go back and try again.<br/><span class="num">No results for your search: </span> <span class="term">{{ heading }}</span>
+  </h1>
+{% else %}
+  <h1 class="clear hitlist">
+    Results <span class="num">{{ html.start_result|number_format }}&ndash;{{ html.end_result|number_format }}</span> of <span class="num">{{ html.num_results|number_format }}</span> for: <span class="term">{{ heading }}</span>
+  </h1>
+  <div class="pagination">
+    <nav>
+      {% if html.page > 1 %}
+        <a class="prevlink" title="Previous page" href="?{{ type }}={{ term }}&amp;rpp={{ html.rpp }}&amp;page={{ html.page - 1 }}">←  Previous</a>
+      {% endif %}
+      <form id="pagejumperform">
+        <span class="pagejump">Page <input type="text" id="toPage" value="{{ html.page|number_format }}"> of <span id="totalPages" class="pages">{{ html.pages|number_format }}</span></span>
+      </form>
+      {% if html.page < html.pages %}
+        <a class="nextlink" title="Next page" href="?{{ type }}={{ term }}&amp;rpp={{ html.rpp }}&amp;page={{ html.page + 1 }}">Next →</a>
+      {% endif %}
+    </nav>
+    <form id="resultsperpageform">
+      <span class="pagejump">Results per page: <input type="text" id="rpp" value="{{ html.rpp }}"></span>
     </form>
-    {% if html.page < html.pages %}
-      <a class="nextlink" title="Next page" href="?{{ type }}={{ term }}&amp;rpp={{ html.rpp }}&amp;page={{ html.page + 1 }}">Next →</a>
-    {% endif %}
-  </nav>
-  <form id="resultsperpageform">
-    <span class="pagejump">Results per page: <input type="text" id="rpp" value="{{ html.rpp }}"></span>
-  </form>
-</div>
+  </div>
 
-<h3><a href="csv.php?type={{ type }}&amp;term={{ term }}&amp;heading={{ heading | url_encode }}">Download results</a></h3><br/>
-<p>The following list shows <strong>all</strong> usage for a title. If a title is available on multiple platforms, the usage is summed and shown here. If you would like to know usage for a title on a single platform, click on the title to view more detailed usage information.</p>
-<table class="results">
-  <thead>
-    <tr><th class="title">Title<br/><ul class="inline_list"><li>Author</li><li>Publisher</li><li>ISBN</li><li>Call number</li></ul></th><th>Platform(s)</th><th colspan="2" class="usage">Title-level Use</th><th colspan="2" class="usage last">Chapter-level Use</th></tr>
-    <tr><th></th><th></th><th>{{ html.current_year }}</th><th>{{ html.previous_year }}</th><th class="last">{{ html.current_year }}</th><th>{{ html.previous_year }}</th></tr>
-  </thead>
-  <tbody>
-  {% for result in html.results %}
-    <tr><td><strong><a href="book.php?book_id={{ result.book_id|e('html') }}">{{ result.title }}</a></strong><br/><ul class="inline_list">{% if result.author %}<li>{{ result.author }}</li>{% endif %}{% if result.publisher %}<li>{{ result.publisher }}</li>{% endif %}{% if result.isbn %}<li><a href="http://search.lib.byu.edu/byu/{{ result.isbn }}/set:byuall/field:isbn/match:contains">{{ result.isbn }}</a></li>{% endif %}{% if result.call_num %}<li>{{ result.call_num }}</li>{% endif %}</ul></td><td><ol>{{ result.platforms }}</ol></td><td>{% if result.latest_br1 is null %}--{% else %}{{ result.latest_br1|number_format }}{% endif %}</td><td>{% if result.previous_br1 is null %}--{% else %}{{ result.previous_br1|number_format }}{% endif %}</td><td class="last">{% if result.latest_br2 is null %}--{% else %}{{ result.latest_br2|number_format }}{% endif %}</td><td>{% if result.previous_br2 is null %}--{% else %}{{ result.previous_br2|number_format }}{% endif %}</td></tr>
-  {% endfor %}
-  </tbody>
-</table>
-
+  <h3><a href="csv.php?type={{ type }}&amp;term={{ term }}&amp;heading={{ heading | url_encode }}">Download results</a></h3><br/>
+  <p>The following list shows <strong>all</strong> usage for a title. If a title is available on multiple platforms, the usage is summed and shown here. If you would like to know usage for a title on a single platform, click on the title to view more detailed usage information.</p>
+  <table class="results">
+    <thead>
+      <tr><th class="title">Title<br/><ul class="inline_list"><li>Author</li><li>Publisher</li><li>ISBN</li><li>Call number</li></ul></th><th>Platform(s)</th><th colspan="2" class="usage">Title-level Use</th><th colspan="2" class="usage last">Chapter-level Use</th></tr>
+      <tr><th></th><th></th><th>{{ html.current_year }}</th><th>{{ html.previous_year }}</th><th class="last">{{ html.current_year }}</th><th>{{ html.previous_year }}</th></tr>
+    </thead>
+    <tbody>
+    {% for result in html.results %}
+      <tr><td><strong><a href="book.php?book_id={{ result.book_id|e('html') }}">{{ result.title }}</a></strong><br/><ul class="inline_list">{% if result.author %}<li>{{ result.author }}</li>{% endif %}{% if result.publisher %}<li>{{ result.publisher }}</li>{% endif %}{% if result.isbn %}<li><a href="http://search.lib.byu.edu/byu/{{ result.isbn }}/set:byuall/field:isbn/match:contains">{{ result.isbn }}</a></li>{% endif %}{% if result.call_num %}<li>{{ result.call_num }}</li>{% endif %}</ul></td><td><ol>{{ result.platforms }}</ol></td><td>{% if result.latest_br1 is null %}--{% else %}{{ result.latest_br1|number_format }}{% endif %}</td><td>{% if result.previous_br1 is null %}--{% else %}{{ result.previous_br1|number_format }}{% endif %}</td><td class="last">{% if result.latest_br2 is null %}--{% else %}{{ result.latest_br2|number_format }}{% endif %}</td><td>{% if result.previous_br2 is null %}--{% else %}{{ result.previous_br2|number_format }}{% endif %}</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+{% endif %}
 {% endautoescape %}
 {% endspaceless %}

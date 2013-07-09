@@ -124,14 +124,18 @@ class browse {
       }
     }
     $num_results  = count($usages);
-    $pages        = ceil($num_results/$results_per_page);
-    if($page > $pages || $page < 1) { $page = 1; }
-    $start_from   = ($page - 1) * $results_per_page;
-    $start_result = $start_from + 1;
-    $end_result   = ($start_result + $results_per_page) - 1;
-    if($end_result > $num_results) { $end_result = $num_results; }
-    $usages       = array_slice($usages, $start_from, $results_per_page);
-    return array('current_year' => config::$current_year, 'previous_year' => config::$previous_year, 'search_term' => htmlspecialchars($this->term), 'num_results' => $num_results, 'pages' => $pages, 'page' => $page, 'rpp' => $results_per_page, 'start_result' => $start_result, 'end_result' => $end_result, 'results' => $usages);
+    if ($num_results > 0) {
+      $pages        = ceil($num_results/$results_per_page);
+      if($page > $pages || $page < 1) { $page = 1; }
+      $start_from   = ($page - 1) * $results_per_page;
+      $start_result = $start_from + 1;
+      $end_result   = ($start_result + $results_per_page) - 1;
+      if($end_result > $num_results) { $end_result = $num_results; }
+      $usages       = array_slice($usages, $start_from, $results_per_page);
+      return array('current_year' => config::$current_year, 'previous_year' => config::$previous_year, 'search_term' => htmlspecialchars($this->term), 'num_results' => $num_results, 'pages' => $pages, 'page' => $page, 'rpp' => $results_per_page, 'start_result' => $start_result, 'end_result' => $end_result, 'results' => $usages);
+    } else {
+      return array('search_term' => htmlspecialchars($this->term), 'num_results' => $num_results);
+    }
   }
   
   /**
