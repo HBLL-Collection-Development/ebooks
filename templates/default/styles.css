@@ -6959,15 +6959,15 @@ tr:nth-child(even) {
   background: #eee;
 }
 /* Style first column */
-.results tr > td:first-child {
+.results tr > td:nth-child(2) {
   width: 35em;
   text-align:right;
 }
-.results tr > td:nth-child(2) {
+.results tr > td:nth-child(3) {
 	text-align: left;
 	padding-left: 2em;
 }
-table.detail tr > td:first-child {
+table.detail tr > td:nth-child(2) {
   width: inherit;
 }
 table .small_column {

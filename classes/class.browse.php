@@ -139,7 +139,7 @@ class browse {
       if($end_result > $num_results) { $end_result = $num_results; }
       // If $results_per_page is zero, we assume we want everything on one page so do not slice up array for pagination
       if($results_per_page != 0) {
-        $usages     = array_slice($usages, $start_from, $this->rpp);
+        $usages     = array_slice($usages, $start_from, $results_per_page);
       }
       return array('current_year' => config::$current_year, 'previous_year' => config::$previous_year, 'search_term' => htmlspecialchars($this->term), 'num_results' => $num_results, 'pages' => $pages, 'page' => $page, 'rpp' => $results_per_page, 'start_result' => $start_result, 'end_result' => $end_result, 'results' => $usages);
     } else {
