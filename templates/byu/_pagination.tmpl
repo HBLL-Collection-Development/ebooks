@@ -1,0 +1,26 @@
+{% spaceless %}
+{% autoescape false %}
+
+<h1 class="clear hitlist">
+  Results <span class="num">{{ html.start_result|number_format }}&ndash;{{ html.end_result|number_format }}</span> of <span class="num">{{ html.num_results|number_format }}</span> for: <span class="term">{{ heading }}</span>
+</h1>
+
+<div class="pagination">
+  <nav>
+    {% if html.page > 1 %}
+      <a class="prevlink" title="Previous page" href="?{{ type }}={{ term }}&amp;rpp={{ html.rpp }}&amp;page={{ html.page - 1 }}">←  Previous</a>
+    {% endif %}
+    <form id="pagejumperform">
+      <span class="pagejump">Page <input type="text" id="toPage" value="{{ html.page|number_format }}"> of <span id="totalPages" class="pages">{{ html.pages|number_format }}</span></span>
+    </form>
+    {% if html.page < html.pages %}
+      <a class="nextlink" title="Next page" href="?{{ type }}={{ term }}&amp;rpp={{ html.rpp }}&amp;page={{ html.page + 1 }}">Next →</a>
+    {% endif %}
+  </nav>
+  <form id="resultsperpageform">
+    <span class="pagejump">Results per page: <input type="text" id="rpp" value="{{ html.rpp }}"></span>
+  </form>
+</div>
+
+{% endautoescape %}
+{% endspaceless %}

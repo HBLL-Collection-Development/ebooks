@@ -3,7 +3,7 @@
   * Exports data to a CSV file
   *
   * @author Jared Howland <book.usage@jaredhowland.com>
-  * @version 2013-05-31
+  * @version 2013-07-09
   * @since 2013-05-30
   *
   */
@@ -26,36 +26,36 @@ function to_slug($string, $space='-') {
 switch ($type) {
   case 'vendor':
     $browse = new browse;
-    $array = $browse->vendor($term);
+    $array = $browse->vendor($term, NULL, 0);
     break;
     
   case 'platform':
     $browse = new browse;
-    $array = $browse->platform($term);
+    $array = $browse->platform($term, NULL, 0);
     break;
     
   case 'lib':
     $browse = new browse;
-    $array = $browse->lib($term);
+    $array = $browse->lib($term, NULL, 0);
     break;
     
   case 'call_num':
     $browse = new browse;
-    $array = $browse->call_num($term);
+    $array = $browse->call_num($term, NULL, 0);
     break;
     
   case 'fund':
     $browse = new browse;
-    $array = $browse->fund($term);
+    $array = $browse->fund($term, NULL, 0);
     break;
     
   case 'title':
-    $search = new search($term);
+    $search = new search($term, NULL, 0);
     $array = $search->title();
     break;
     
   case 'isbn':
-    $search = new search($term);
+    $search = new search($term, NULL, 0);
     $array = $search->isbn();
     break;
   

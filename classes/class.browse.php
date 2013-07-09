@@ -125,13 +125,22 @@ class browse {
     }
     $num_results  = count($usages);
     if ($num_results > 0) {
-      $pages        = ceil($num_results/$results_per_page);
+      // If results per page is greater than zero, calculate number of total pages
+      if($this->rpp > 0) {
+        $pages      = ceil($num_results/$this->rpp);
+      // Otherwise, just put it all on one page
+      } else {
+        $pages      = 1;
+      }
       if($page > $pages || $page < 1) { $page = 1; }
       $start_from   = ($page - 1) * $results_per_page;
       $start_result = $start_from + 1;
       $end_result   = ($start_result + $results_per_page) - 1;
       if($end_result > $num_results) { $end_result = $num_results; }
-      $usages       = array_slice($usages, $start_from, $results_per_page);
+      // If $rpp is zero, we assume we want everything on one page so do not slice up array for pagination
+      if($this->rpp != 0) {
+        $usages     = array_slice($usages, $start_from, $this->rpp);
+      }
       return array('current_year' => config::$current_year, 'previous_year' => config::$previous_year, 'search_term' => htmlspecialchars($this->term), 'num_results' => $num_results, 'pages' => $pages, 'page' => $page, 'rpp' => $results_per_page, 'start_result' => $start_result, 'end_result' => $end_result, 'results' => $usages);
     } else {
       return array('search_term' => htmlspecialchars($this->term), 'num_results' => $num_results);
