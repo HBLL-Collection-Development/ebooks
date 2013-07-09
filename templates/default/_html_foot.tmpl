@@ -1,15 +1,6 @@
 {% spaceless %}
 {% autoescape false %}
 
-
-{% if not (title == 'FAQ') and not (title == 'Admin') and not (title =='Detailed Usage') %}
-<div class="footnote">
-  <p>Only books with call numbers can be browsed by librarian, fund code, or call number range.</p>
-  <p>Currently, only {{ percent_browsable }}% of the titles in the database include call numbers.</p>
-  <p>This means {{ percent_not_browsable }}% of the titles will not show up when browsing in those ways.</p>
-</div>
-{% endif %}
-
 </div>
 <footer id='site_footer'>
   <p>eBook Usage Database by <a href="http://www.jaredhowland.com">Jared Howland</a></p>

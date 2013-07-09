@@ -6998,18 +6998,6 @@ ul.inline_list li:after{ content: " \2022";
 }
 ul.inline_list li:last-child:after{ content: "";
 }
-.footnote {
-	clear: both;
-	padding: 2em;
-	color: #888;
-}
-.footnote:before {
-	content: "*";
-  position: absolute;
-  left: 2em;
-  font-size: .75em;
-  margin-top: -.5em;
-}
 .clear {
   clear: both;
 }
@@ -7021,4 +7009,134 @@ footer {
   margin-top: 2em;
   padding-top: 1em;
   border-top: 1px solid #888;
+}
+
+h1.hitlist {
+	color: #999;
+	font-weight: normal;
+	font-size: 1.5em;
+}
+h1.hitlist span {
+	font-weight: bold;
+}
+h1.hitlist .term {
+	color: #930;
+}
+h1.hitlist .num {
+	color: #000;
+}
+.pagination .pagejump {
+	margin: 0 10px;
+	color: #999;
+}
+.pagination .pagejump .pages {
+	font-weight: bold;
+	color: #333;
+}
+.pagination form {
+	display: inline;
+}
+.pagination nav a {
+	display: inline-block;
+	padding: 3px 5px 4px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+}
+.pagination nav a:hover {
+	background: #eee;
+	color: #830;
+}
+.pagination .pagejump input {
+	width: 4em;
+	padding: 1px 2px;
+	font-weight: bold;
+}
+/* jTip */
+a.jTip img {
+	margin-bottom: -0.4em;
+}
+#JT_arrow_left{
+	background-image: url(images/arrow_left.gif);
+	background-repeat: no-repeat;
+	background-position: left top;
+	position: absolute;
+	z-index:101;
+	left:-12px;
+	height:23px;
+	width:10px;
+    top:-3px;
+}
+
+#JT_arrow_right{
+	background-image: url(images/arrow_right.gif);
+	background-repeat: no-repeat;
+	background-position: left top;
+	position: absolute;
+	z-index:101;
+	height:23px;
+	width:11px;
+    top:-2px;
+}
+
+#JT {
+	position: absolute;
+	z-index:100;
+	border: 2px solid #ccc;
+	background-color: #fff;
+}
+
+#JT_copy{
+	padding:10px 10px 10px 10px;
+	color:#333;
+}
+
+.JT_loader{
+	background-image: url(images/loader.gif);
+	background-repeat: no-repeat;
+	background-position: center center;
+	width:100%;
+	height:12px;
+}
+
+#JT_close_left{
+	background-color: #ccc;
+	text-align: left;
+	padding-left: 8px;
+	padding-bottom: 5px;
+	padding-top: 2px;
+	font-weight:bold;
+}
+
+#JT_close_right{
+	background-color: #ccc;
+	text-align: left;
+	padding-left: 8px;
+	padding-bottom: 5px;
+	padding-top: 2px;
+	font-weight:bold;
+}
+
+#JT_copy p{
+margin:3px 0;
+}
+
+#JT_copy img{
+	padding: 1px;
+	border: 1px solid #ccc;
+}
+.jTip {
+	cursor:help;
+}
+a.jTip img {
+	border: none;
+	padding: .25em;
+	-webkit-border-radius: 0;
+	-moz-border-radius: 0;
+	border-radius: 0;
+	-webkit-box-shadow: none;
+	-moz-box-shadow: none;
+	box-shadow: none;
+	vertical-align: top;
+	position: relative;
+	top: -0.5em;
 }
