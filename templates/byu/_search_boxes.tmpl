@@ -1,3 +1,6 @@
+{% set app_url = constant('config::URL') %}
+{% set template_directory = constant('config::TEMPLATE_DIR') %}
+
 {% autoescape false %}
 <div class="page">
   <div class="span-24">
@@ -39,7 +42,7 @@
     
     <div class="span-7 prepend-1">
       <section>
-        <h2>Fund Code Browse<sup>*</sup></h2>
+        <h2>Fund Code Browse<sup><a href="footnote.php?width=400" class="jTip" id="one" class="info" name="Information"><img src='{{ app_url }}/{{ template_directory }}/images/information-icon.png' /></a></sup></h2>
         <form action="browse.php" method="get" accept-charset="utf-8">
           <select name="fund" id="fund">
             {{ funds }}
@@ -77,7 +80,7 @@
   
     <div class="span-7 prepend-1">
       <section>
-        <h2>Subject Librarian Browse<sup>*</sup></h2>
+        <h2>Subject Librarian Browse<a href="footnote.php?width=400" class="jTip" id="two" class="info" name="Information"><img src='{{ app_url }}/{{ template_directory }}/images/information-icon.png' /></a></sup></h2>
         <form action="browse.php" method="get" accept-charset="utf-8">
           <select name="lib" id="lib">
             {{ libs }}
@@ -89,7 +92,7 @@
 
     <div class="span-7 prepend-1">
       <section>
-        <h2>Call Number Browse<sup>*</sup></h2>
+        <h2>Call Number Browse<a href="footnote.php?width=400" class="jTip" id="three" class="info" name="Information"><img src='{{ app_url }}/{{ template_directory }}/images/information-icon.png' /></a></sup></h2>
         <form action="browse.php" method="get" accept-charset="utf-8">
           <select name="call_num" id="call_num">
             {{ call_nums }}
