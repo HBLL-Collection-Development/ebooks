@@ -85,7 +85,7 @@ class search {
   private function get_order_by($sort) {
     switch ($sort) {
       case 'title':
-        return 'b.title';
+        return "IF(b.title = '' OR b.title IS NULL, 1, 0), b.title";
         break;
       case 'author':
         // Sort NULL authors to the bottom
