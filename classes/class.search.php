@@ -14,7 +14,7 @@ class search {
   private $rpp;
 
   /**
-   * Constructor; Sets $this->term variable for term to search for in database
+   * Constructor; Sets variables for use later (search term, page number to display, results per page)
    *
    * @access public
    * @param string Search terms to search for
@@ -108,7 +108,7 @@ class search {
         return 'previous_br2 DESC';
         break;
       default:
-        return 'b.title';
+        return "IF(b.title = '' OR b.title IS NULL, 1, 0), b.title";
         break;
     }
   }
