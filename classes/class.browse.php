@@ -9,6 +9,23 @@
   */
 
 class browse {
+  private $term;
+  private $page;
+  private $rpp;
+
+  /**
+   * Constructor; Sets $this->term variable for term to search for in database
+   *
+   * @access public
+   * @param string Search terms to search for
+   * @return null
+   */
+  public function __construct($term, $page = 1, $rpp = config::RESULTS_PER_PAGE) {
+    $this->term = $term;
+    $this->page = $page;
+    $this->rpp  = $rpp;
+  }
+
   /**
     * Performs the browse by vendor
     *
@@ -19,8 +36,8 @@ class browse {
     * @return array Usage array for specified vendor
     *
     */
-  public function vendor($vendor_id, $page = 1, $results_per_page = config::RESULTS_PER_PAGE) {
-    return $this->get_vendor_usage($vendor_id, $page, $results_per_page);
+  public function vendor($sort) {
+    return $this->get_vendor_usage($this->term, $this->page, $this->rpp, $sort);
   }
 
   /**
@@ -33,8 +50,8 @@ class browse {
     * @return array Usage array for specified platform
     *
     */
-  public function platform($platform_id, $page = 1, $results_per_page = config::RESULTS_PER_PAGE) {
-    return $this->get_platform_usage($platform_id, $page, $results_per_page);
+  public function platform($sort) {
+    return $this->get_platform_usage($this->term, $this->page, $this->rpp, $sort);
   }
   
   /**
@@ -47,8 +64,8 @@ class browse {
     * @return array Usage array for books under fund codes assigned to specified librarian
     *
     */
-  public function lib($lib_id, $page = 1, $results_per_page = config::RESULTS_PER_PAGE) {
-    return $this->get_librarian_usage($lib_id, $page, $results_per_page);
+  public function lib($sort) {
+    return $this->get_librarian_usage($this->term, $this->page, $this->rpp, $sort);
   }
   
   /**
@@ -61,8 +78,8 @@ class browse {
     * @return array Usage array for books under specified fund code
     *
     */
-  public function fund($fund_id, $page = 1, $results_per_page = config::RESULTS_PER_PAGE) {
-    return $this->get_fund_usage($fund_id, $page, $results_per_page);
+  public function fund($sort) {
+    return $this->get_fund_usage($this->term, $this->page, $this->rpp, $sort);
   }
   
   /**
@@ -75,8 +92,8 @@ class browse {
     * @return array Usage array for books in specified call number range
     *
     */
-  public function call_num($call_num_id, $page = 1, $results_per_page = config::RESULTS_PER_PAGE) {
-    return $this->get_call_num_usage($call_num_id, $page, $results_per_page);
+  public function call_num($sort) {
+    return $this->get_call_num_usage($this->term, $this->page, $this->rpp, $sort);
   }
   
   /**
@@ -113,10 +130,10 @@ class browse {
       foreach($platforms as $platform) {
         $platform_list .= '<li>' . $platform . '</li>';
       }
-      $current_br1  = $result[0]['current_br1'];
-      $previous_br1 = $result[0]['previous_br1'];
-      $current_br2  = $result[0]['current_br2'];
-      $previous_br2 = $result[0]['previous_br2'];
+      $current_br1   = $result[0]['current_br1'];
+      $previous_br1  = $result[0]['previous_br1'];
+      $current_br2   = $result[0]['current_br2'];
+      $previous_br2  = $result[0]['previous_br2'];
       if(is_null($current_br1) AND is_null($current_br2) AND is_null($previous_br1) AND is_null($previous_br2)) {
       // Do not add to $usages array if there is no usage in the past 2 years
       } else {
@@ -124,7 +141,7 @@ class browse {
       }
     }
     $num_results  = count($usages);
-    if ($num_results > 0) {
+    if($num_results > 0) {
       // If results per page is greater than zero, calculate number of total pages
       if($results_per_page > 0) {
         $pages      = ceil($num_results/$results_per_page);
@@ -157,11 +174,12 @@ class browse {
     * @return array Usage data formatted by $this->format_usage()
     *
     */
-  private function get_vendor_usage($vendor_id, $page, $results_per_page) {
+  private function get_vendor_usage($vendor_id, $page, $results_per_page, $sort) {
+    $order_by = $this->get_order_by($sort);
     // Connect to database
     $database = new db;
     $db       = $database->connect();
-    $sql      = "SELECT bv.book_id, b.title, b.author, b.publisher, b.isbn, b.call_num, CAST(GROUP_CONCAT(DISTINCT o.platforms ORDER BY o.platforms SEPARATOR '|') AS CHAR CHARSET UTF8) AS platforms, (SELECT SUM(cbr2.counter_br2) FROM current_br2 cbr2 WHERE cbr2.book_id = b.id) AS current_br2, (SELECT SUM(pbr2.counter_br2) FROM previous_br2 pbr2 WHERE pbr2.book_id = b.id) AS previous_br2, (SELECT SUM(cbr1.counter_br1) FROM current_br1 cbr1 WHERE cbr1.book_id = b.id) AS current_br1, (SELECT SUM(pbr1.counter_br1) FROM previous_br1 pbr1 WHERE pbr1.book_id = b.id) AS previous_br1 FROM books_vendors bv LEFT JOIN books b ON bv.book_id = b.id LEFT JOIN overlap o ON bv.book_id = o.book_id WHERE bv.vendor_id = :vendor_id GROUP BY bv.book_id";
+    $sql      = "SELECT bv.book_id, b.title, b.author, b.publisher, b.isbn, b.call_num, CAST(GROUP_CONCAT(DISTINCT o.platforms ORDER BY o.platforms SEPARATOR '|') AS CHAR CHARSET UTF8) AS platforms, (SELECT SUM(cbr2.counter_br2) FROM current_br2 cbr2 WHERE cbr2.book_id = b.id) AS current_br2, (SELECT SUM(pbr2.counter_br2) FROM previous_br2 pbr2 WHERE pbr2.book_id = b.id) AS previous_br2, (SELECT SUM(cbr1.counter_br1) FROM current_br1 cbr1 WHERE cbr1.book_id = b.id) AS current_br1, (SELECT SUM(pbr1.counter_br1) FROM previous_br1 pbr1 WHERE pbr1.book_id = b.id) AS previous_br1 FROM books_vendors bv LEFT JOIN books b ON bv.book_id = b.id LEFT JOIN overlap o ON bv.book_id = o.book_id WHERE bv.vendor_id = :vendor_id GROUP BY bv.book_id ORDER BY " . $order_by;
     $query = $db->prepare($sql);
     $query->bindParam(':vendor_id', $vendor_id);
     $query->execute();
@@ -180,11 +198,12 @@ class browse {
     * @return array Usage data formatted by $this->format_usage()
     *
     */
-  private function get_platform_usage($platform_id, $page, $results_per_page) {
+  private function get_platform_usage($platform_id, $page, $results_per_page, $sort) {
+    $order_by = $this->get_order_by($sort);
     // Connect to database
     $database = new db;
     $db       = $database->connect();
-    $sql      = "SELECT bp.book_id, b.title, b.author, b.publisher, b.isbn, b.call_num, CAST(GROUP_CONCAT(DISTINCT o.platforms ORDER BY o.platforms SEPARATOR '|') AS CHAR CHARSET UTF8) AS platforms, (SELECT SUM(cbr2.counter_br2) FROM current_br2 cbr2 WHERE cbr2.book_id = b.id) AS current_br2, (SELECT SUM(pbr2.counter_br2) FROM previous_br2 pbr2 WHERE pbr2.book_id = b.id) AS previous_br2, (SELECT SUM(cbr1.counter_br1) FROM current_br1 cbr1 WHERE cbr1.book_id = b.id) AS current_br1, (SELECT SUM(pbr1.counter_br1) FROM previous_br1 pbr1 WHERE pbr1.book_id = b.id) AS previous_br1 FROM books_platforms bp LEFT JOIN books b ON bp.book_id = b.id LEFT JOIN overlap o ON bp.book_id = o.book_id WHERE bp.platform_id = :platform_id GROUP BY bp.book_id";
+    $sql      = "SELECT bp.book_id, b.title, b.author, b.publisher, b.isbn, b.call_num, CAST(GROUP_CONCAT(DISTINCT o.platforms ORDER BY o.platforms SEPARATOR '|') AS CHAR CHARSET UTF8) AS platforms, (SELECT SUM(cbr2.counter_br2) FROM current_br2 cbr2 WHERE cbr2.book_id = b.id) AS current_br2, (SELECT SUM(pbr2.counter_br2) FROM previous_br2 pbr2 WHERE pbr2.book_id = b.id) AS previous_br2, (SELECT SUM(cbr1.counter_br1) FROM current_br1 cbr1 WHERE cbr1.book_id = b.id) AS current_br1, (SELECT SUM(pbr1.counter_br1) FROM previous_br1 pbr1 WHERE pbr1.book_id = b.id) AS previous_br1 FROM books_platforms bp LEFT JOIN books b ON bp.book_id = b.id LEFT JOIN overlap o ON bp.book_id = o.book_id WHERE bp.platform_id = :platform_id GROUP BY bp.book_id ORDER BY " . $order_by;
     $query = $db->prepare($sql);
     $query->bindParam(':platform_id', $platform_id);
     $query->execute();
@@ -203,12 +222,13 @@ class browse {
     * @return array Usage data formatted by $this->format_usage()
     *
     */
-  private function get_librarian_usage($lib_id, $page, $results_per_page) {
+  private function get_librarian_usage($lib_id, $page, $results_per_page, $sort) {
+    $order_by = $this->get_order_by($sort);
     $in = $this->get_fund_ids_by_librarian($lib_id);
     // Connect to database
     $database = new db;
     $db       = $database->connect();
-    $sql      = "SELECT b.id, b.title, b.author, b.publisher, b.isbn, b.call_num, CAST(GROUP_CONCAT(DISTINCT o.platforms ORDER BY o.platforms SEPARATOR '|') AS CHAR CHARSET UTF8) AS platforms, (SELECT SUM(cbr2.counter_br2) FROM current_br2 cbr2 WHERE cbr2.book_id = b.id) AS current_br2, (SELECT SUM(pbr2.counter_br2) FROM previous_br2 pbr2 WHERE pbr2.book_id = b.id) AS previous_br2, (SELECT SUM(cbr1.counter_br1) FROM current_br1 cbr1 WHERE cbr1.book_id = b.id) AS current_br1, (SELECT SUM(pbr1.counter_br1) FROM previous_br1 pbr1 WHERE pbr1.book_id = b.id) AS previous_br1 FROM books b LEFT JOIN overlap o ON b.id = o.book_id WHERE b.fund_id IN (" . $in . ") GROUP BY b.id";
+    $sql      = "SELECT b.id, b.title, b.author, b.publisher, b.isbn, b.call_num, CAST(GROUP_CONCAT(DISTINCT o.platforms ORDER BY o.platforms SEPARATOR '|') AS CHAR CHARSET UTF8) AS platforms, (SELECT SUM(cbr2.counter_br2) FROM current_br2 cbr2 WHERE cbr2.book_id = b.id) AS current_br2, (SELECT SUM(pbr2.counter_br2) FROM previous_br2 pbr2 WHERE pbr2.book_id = b.id) AS previous_br2, (SELECT SUM(cbr1.counter_br1) FROM current_br1 cbr1 WHERE cbr1.book_id = b.id) AS current_br1, (SELECT SUM(pbr1.counter_br1) FROM previous_br1 pbr1 WHERE pbr1.book_id = b.id) AS previous_br1 FROM books b LEFT JOIN overlap o ON b.id = o.book_id WHERE b.fund_id IN (" . $in . ") GROUP BY b.id ORDER BY " . $order_by;
     $query = $db->prepare($sql);
     $query->execute();
     $results = $query->fetchAll(PDO::FETCH_GROUP|PDO::FETCH_ASSOC);
@@ -226,11 +246,12 @@ class browse {
     * @return array Usage data formatted by $this->format_usage()
     *
     */
-  private function get_fund_usage($fund_id, $page, $results_per_page) {
+  private function get_fund_usage($fund_id, $page, $results_per_page, $sort) {
+    $order_by = $this->get_order_by($sort);
     // Connect to database
     $database = new db;
     $db       = $database->connect();
-    $sql      = "SELECT b.id, b.title, b.author, b.publisher, b.isbn, b.call_num, CAST(GROUP_CONCAT(DISTINCT o.platforms ORDER BY o.platforms SEPARATOR '|') AS CHAR CHARSET UTF8) AS platforms, (SELECT SUM(cbr2.counter_br2) FROM current_br2 cbr2 WHERE cbr2.book_id = b.id) AS current_br2, (SELECT SUM(pbr2.counter_br2) FROM previous_br2 pbr2 WHERE pbr2.book_id = b.id) AS previous_br2, (SELECT SUM(cbr1.counter_br1) FROM current_br1 cbr1 WHERE cbr1.book_id = b.id) AS current_br1, (SELECT SUM(pbr1.counter_br1) FROM previous_br1 pbr1 WHERE pbr1.book_id = b.id) AS previous_br1 FROM books b LEFT JOIN overlap o ON b.id = o.book_id WHERE b.fund_id = :fund_id GROUP BY b.id";
+    $sql      = "SELECT b.id, b.title, b.author, b.publisher, b.isbn, b.call_num, CAST(GROUP_CONCAT(DISTINCT o.platforms ORDER BY o.platforms SEPARATOR '|') AS CHAR CHARSET UTF8) AS platforms, (SELECT SUM(cbr2.counter_br2) FROM current_br2 cbr2 WHERE cbr2.book_id = b.id) AS current_br2, (SELECT SUM(pbr2.counter_br2) FROM previous_br2 pbr2 WHERE pbr2.book_id = b.id) AS previous_br2, (SELECT SUM(cbr1.counter_br1) FROM current_br1 cbr1 WHERE cbr1.book_id = b.id) AS current_br1, (SELECT SUM(pbr1.counter_br1) FROM previous_br1 pbr1 WHERE pbr1.book_id = b.id) AS previous_br1 FROM books b LEFT JOIN overlap o ON b.id = o.book_id WHERE b.fund_id = :fund_id GROUP BY b.id ORDER BY " . $order_by;
     $query = $db->prepare($sql);
     $query->bindParam(':fund_id', $fund_id);
     $query->execute();
@@ -249,7 +270,8 @@ class browse {
     * @return array Usage data formatted by $this->format_usage()
     *
     */
-  private function get_call_num_usage($call_num_id, $page, $results_per_page) {
+  private function get_call_num_usage($call_num_id, $page, $results_per_page, $sort) {
+    $order_by = $this->get_order_by($sort);
     $fund_id        = $this->get_fund_ids_by_call_num($call_num_id);
     $call_num_range = $this->get_call_num_range($call_num_id);
     $start_range    = $call_num_range['start_range'];
@@ -268,7 +290,7 @@ class browse {
     // Connect to database
     $database = new db;
     $db       = $database->connect();
-    $sql      = "SELECT b.id, b.title, b.author, b.publisher, b.isbn, b.call_num, CAST(GROUP_CONCAT(DISTINCT o.platforms ORDER BY o.platforms SEPARATOR '|') AS CHAR CHARSET UTF8) AS platforms, (SELECT SUM(cbr2.counter_br2) FROM current_br2 cbr2 WHERE cbr2.book_id = b.id) AS current_br2, (SELECT SUM(pbr2.counter_br2) FROM previous_br2 pbr2 WHERE pbr2.book_id = b.id) AS previous_br2, (SELECT SUM(cbr1.counter_br1) FROM current_br1 cbr1 WHERE cbr1.book_id = b.id) AS current_br1, (SELECT SUM(pbr1.counter_br1) FROM previous_br1 pbr1 WHERE pbr1.book_id = b.id) AS previous_br1 FROM books b LEFT JOIN overlap o ON b.id = o.book_id WHERE b.fund_id = :fund_id GROUP BY b.id";
+    $sql      = "SELECT b.id, b.title, b.author, b.publisher, b.isbn, b.call_num, CAST(GROUP_CONCAT(DISTINCT o.platforms ORDER BY o.platforms SEPARATOR '|') AS CHAR CHARSET UTF8) AS platforms, (SELECT SUM(cbr2.counter_br2) FROM current_br2 cbr2 WHERE cbr2.book_id = b.id) AS current_br2, (SELECT SUM(pbr2.counter_br2) FROM previous_br2 pbr2 WHERE pbr2.book_id = b.id) AS previous_br2, (SELECT SUM(cbr1.counter_br1) FROM current_br1 cbr1 WHERE cbr1.book_id = b.id) AS current_br1, (SELECT SUM(pbr1.counter_br1) FROM previous_br1 pbr1 WHERE pbr1.book_id = b.id) AS previous_br1 FROM books b LEFT JOIN overlap o ON b.id = o.book_id WHERE b.fund_id = :fund_id GROUP BY b.id ORDER BY " . $order_by;
     $query = $db->prepare($sql);
     $query->bindParam(':fund_id', $fund_id);
     $query->execute();
@@ -284,9 +306,46 @@ class browse {
         unset($results[$key]);
       }
     }
-    // print_r($usage);
-    // print_r($results);die();
     return $this->format_usage($results, $page, $results_per_page);
+  }
+  
+  /**
+    * Translate URL sort request into correct field to search in MySQL
+    *
+    * @access private
+    * @param string Requested field to sort by
+    * @return string Correct field to sort by
+    *
+    */
+  private function get_order_by($sort) {
+    switch ($sort) {
+      case 'title':
+        return 'b.title';
+        break;
+      case 'author':
+        // Sort NULL authors to the bottom
+        return "IF(b.author = '' OR b.author IS NULL, 1, 0), b.author";
+        break;
+      case 'callnum':
+        // Sort NULL call numbers to the bottom
+        return "IF(b.call_num = '' OR b.call_num IS NULL, 1, 0), b.call_num";
+        break;
+      case 'currentbr1':
+        return 'current_br1 DESC';
+        break;
+      case 'currentbr2':
+        return 'current_br2 DESC';
+        break;
+      case 'previousbr1':
+        return 'previous_br1 DESC';
+        break;
+      case 'previousbr2':
+        return 'previous_br2 DESC';
+        break;
+      default:
+        return 'b.title';
+        break;
+    }
   }
   
   /**

@@ -34,12 +34,13 @@ class search {
     * @return array Formatted usage data for results
     *
     */
-  public function title() {
+  public function title($sort = 'title') {
+    $order_by = $this->get_order_by($sort);
     // Connect to database
     $database = new db;
     $db       = $database->connect();
     $term     = $db->quote($this->term);
-    $sql      = "SELECT b.id, b.title, b.author, b.publisher, b.isbn, b.call_num, CAST(GROUP_CONCAT(DISTINCT o.platforms ORDER BY o.platforms SEPARATOR '|') AS CHAR CHARSET UTF8) AS platforms, (SELECT SUM(cbr2.counter_br2) FROM current_br2 cbr2 WHERE cbr2.book_id = b.id) AS current_br2, (SELECT SUM(pbr2.counter_br2) FROM previous_br2 pbr2 WHERE pbr2.book_id = b.id) AS previous_br2, (SELECT SUM(cbr1.counter_br1) FROM current_br1 cbr1 WHERE cbr1.book_id = b.id) AS current_br1, (SELECT SUM(pbr1.counter_br1) FROM previous_br1 pbr1 WHERE pbr1.book_id = b.id) AS previous_br1 FROM books AS b LEFT JOIN overlap o ON b.id = o.book_id WHERE id IN (SELECT id FROM books_search WHERE MATCH (title) AGAINST (" . $term . " IN BOOLEAN MODE) ORDER BY title) GROUP BY b.id ORDER BY b.title";
+    $sql      = "SELECT b.id, b.title, b.author, b.publisher, b.isbn, b.call_num, CAST(GROUP_CONCAT(DISTINCT o.platforms ORDER BY o.platforms SEPARATOR '|') AS CHAR CHARSET UTF8) AS platforms, (SELECT SUM(cbr2.counter_br2) FROM current_br2 cbr2 WHERE cbr2.book_id = b.id) AS current_br2, (SELECT SUM(pbr2.counter_br2) FROM previous_br2 pbr2 WHERE pbr2.book_id = b.id) AS previous_br2, (SELECT SUM(cbr1.counter_br1) FROM current_br1 cbr1 WHERE cbr1.book_id = b.id) AS current_br1, (SELECT SUM(pbr1.counter_br1) FROM previous_br1 pbr1 WHERE pbr1.book_id = b.id) AS previous_br1 FROM books AS b LEFT JOIN overlap o ON b.id = o.book_id WHERE id IN (SELECT id FROM books_search WHERE MATCH (title) AGAINST (" . $term . " IN BOOLEAN MODE) ORDER BY title) GROUP BY b.id ORDER BY " . $order_by;
     $query    = $db->prepare($sql);
     $query->execute();
     $results  = $query->fetchAll(PDO::FETCH_GROUP|PDO::FETCH_ASSOC);
@@ -55,21 +56,61 @@ class search {
     * @return array Formatted usage data for results
     *
     */
-  public function isbn() {
-    $isbn          = $this->validate_standard_number($this->term);
-    $in            = $this->get_related($isbn);
+  public function isbn($sort = 'title') {
+    $order_by = $this->get_order_by($sort);
+    $isbn     = $this->validate_standard_number($this->term);
+    $in       = $this->get_related($isbn);
     if($in == 'invalidId') {
       $in = '0000000000';
     }
     // Connect to database
     $database = new db;
     $db       = $database->connect();
-    $sql      = "SELECT b.id, b.title, b.author, b.publisher, b.isbn, b.call_num, CAST(GROUP_CONCAT(DISTINCT o.platforms ORDER BY o.platforms SEPARATOR '|') AS CHAR CHARSET UTF8) AS platforms, (SELECT SUM(cbr2.counter_br2) FROM current_br2 cbr2 WHERE cbr2.book_id = b.id) AS current_br2, (SELECT SUM(pbr2.counter_br2) FROM previous_br2 pbr2 WHERE pbr2.book_id = b.id) AS previous_br2, (SELECT SUM(cbr1.counter_br1) FROM current_br1 cbr1 WHERE cbr1.book_id = b.id) AS current_br1, (SELECT SUM(pbr1.counter_br1) FROM previous_br1 pbr1 WHERE pbr1.book_id = b.id) AS previous_br1 FROM books AS b LEFT JOIN overlap o ON b.id = o.book_id WHERE b.isbn IN (" . $in . ") GROUP BY b.id ORDER BY b.title";
+    $sql      = "SELECT b.id, b.title, b.author, b.publisher, b.isbn, b.call_num, CAST(GROUP_CONCAT(DISTINCT o.platforms ORDER BY o.platforms SEPARATOR '|') AS CHAR CHARSET UTF8) AS platforms, (SELECT SUM(cbr2.counter_br2) FROM current_br2 cbr2 WHERE cbr2.book_id = b.id) AS current_br2, (SELECT SUM(pbr2.counter_br2) FROM previous_br2 pbr2 WHERE pbr2.book_id = b.id) AS previous_br2, (SELECT SUM(cbr1.counter_br1) FROM current_br1 cbr1 WHERE cbr1.book_id = b.id) AS current_br1, (SELECT SUM(pbr1.counter_br1) FROM previous_br1 pbr1 WHERE pbr1.book_id = b.id) AS previous_br1 FROM books AS b LEFT JOIN overlap o ON b.id = o.book_id WHERE b.isbn IN (" . $in . ") GROUP BY b.id ORDER BY " . $order_by;
     $query    = $db->prepare($sql);
     $query->execute();
     $results  = $query->fetchAll(PDO::FETCH_GROUP|PDO::FETCH_ASSOC);
     $db       = NULL;
     return $this->format_usage($results);
+  }
+  
+  /**
+    * Translate URL sort request into correct field to search in MySQL
+    *
+    * @access private
+    * @param string Requested field to sort by
+    * @return string Correct field to sort by
+    *
+    */
+  private function get_order_by($sort) {
+    switch ($sort) {
+      case 'title':
+        return 'b.title';
+        break;
+      case 'author':
+        // Sort NULL authors to the bottom
+        return "IF(b.author = '' OR b.author IS NULL, 1, 0), b.author";
+        break;
+      case 'callnum':
+        // Sort NULL call numbers to the bottom
+        return "IF(b.call_num = '' OR b.call_num IS NULL, 1, 0), b.call_num";
+        break;
+      case 'currentbr1':
+        return 'current_br1 DESC';
+        break;
+      case 'currentbr2':
+        return 'current_br2 DESC';
+        break;
+      case 'previousbr1':
+        return 'previous_br1 DESC';
+        break;
+      case 'previousbr2':
+        return 'previous_br2 DESC';
+        break;
+      default:
+        return 'b.title';
+        break;
+    }
   }
   
   /**
@@ -486,6 +527,15 @@ class search {
     return $html;
   }
   
+  /**
+    * Restrict a string to $limit words
+    *
+    * @access private
+    * @param string Text you want truncated
+    * @param int Limit—number of words you want a string truncated to
+    * @return 
+    *
+    */
   private function limit_text($text, $limit) {
     if(str_word_count($text, 0) > $limit) {
     $words = str_word_count($text, 2);

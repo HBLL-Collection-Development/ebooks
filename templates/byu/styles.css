@@ -264,3 +264,7 @@ a.jTip img {
 	position: relative;
 	top: -0.5em;
 }
+.sort:after{
+	content: url('images/sort.png');
+	padding-left: 0.25em;
+}
