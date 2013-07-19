@@ -32,9 +32,7 @@ class browse {
     * Performs the browse by vendor
     *
     * @access public
-    * @param int vendor_id
-    * @param int page Page of results to display
-    * @param int rpp Results to show per page
+    * @param string Sort type
     * @return array Usage array for specified vendor
     *
     */
@@ -46,9 +44,7 @@ class browse {
     * Performs the browse by platform
     *
     * @access public
-    * @param int platform_id
-    * @param int page Page of results to display
-    * @param int rpp Results to show per page
+    * @param string Sort type
     * @return array Usage array for specified platform
     *
     */
@@ -60,9 +56,7 @@ class browse {
     * Performs the browse by subject librarian
     *
     * @access public
-    * @param int lib_id
-    * @param int page Page of results to display
-    * @param int rpp Results to show per page
+    * @param string Sort type
     * @return array Usage array for books under fund codes assigned to specified librarian
     *
     */
@@ -74,9 +68,7 @@ class browse {
     * Performs the browse by fund code
     *
     * @access public
-    * @param int fund_id
-    * @param int page Page of results to display
-    * @param int rpp Results to show per page
+    * @param string Sort type
     * @return array Usage array for books under specified fund code
     *
     */
@@ -88,9 +80,7 @@ class browse {
     * Performs the browse by call number
     *
     * @access public
-    * @param call_num_id
-    * @param int page Page of results to display
-    * @param int rpp Results to show per page
+    * @param string Sort type
     * @return array Usage array for books in specified call number range
     *
     */
@@ -226,6 +216,7 @@ class browse {
     */
   private function get_librarian_usage($sort) {
     $order_by = $this->get_order_by($sort);
+    $lib_id = $this->term;
     $in = $this->get_fund_ids_by_librarian($lib_id);
     // Connect to database
     $database = new db;
@@ -255,7 +246,7 @@ class browse {
     $db       = $database->connect();
     $sql      = "SELECT b.id, b.title, b.author, b.publisher, b.isbn, b.call_num, CAST(GROUP_CONCAT(DISTINCT o.platforms ORDER BY o.platforms SEPARATOR '|') AS CHAR CHARSET UTF8) AS platforms, (SELECT SUM(cbr2.counter_br2) FROM current_br2 cbr2 WHERE cbr2.book_id = b.id) AS current_br2, (SELECT SUM(pbr2.counter_br2) FROM previous_br2 pbr2 WHERE pbr2.book_id = b.id) AS previous_br2, (SELECT SUM(cbr1.counter_br1) FROM current_br1 cbr1 WHERE cbr1.book_id = b.id) AS current_br1, (SELECT SUM(pbr1.counter_br1) FROM previous_br1 pbr1 WHERE pbr1.book_id = b.id) AS previous_br1 FROM books b LEFT JOIN overlap o ON b.id = o.book_id WHERE b.fund_id = :fund_id GROUP BY b.id ORDER BY " . $order_by;
     $query = $db->prepare($sql);
-    $query->bindParam(':fund_id', $fund_id);
+    $query->bindParam(':fund_id', $this->term);
     $query->execute();
     $results = $query->fetchAll(PDO::FETCH_GROUP|PDO::FETCH_ASSOC);
     $db = NULL;
@@ -274,8 +265,8 @@ class browse {
     */
   private function get_call_num_usage($sort) {
     $order_by       = $this->get_order_by($sort);
-    $fund_id        = $this->get_fund_ids_by_call_num($call_num_id);
-    $call_num_range = $this->get_call_num_range($call_num_id);
+    $fund_id        = $this->get_fund_ids_by_call_num($this->term);
+    $call_num_range = $this->get_call_num_range($this->term);
     $start_range    = $call_num_range['start_range'];
     $end_range      = $call_num_range['end_range'];
     $adjust_start_range = $this->normalize_call_num($start_range);
