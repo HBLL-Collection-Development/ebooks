@@ -160,9 +160,7 @@ class browse {
     * Retrieves vendor usage from the database for the previous 2 years
     *
     * @access private
-    * @param int vendor_id
-    * @param int page Page of results to display
-    * @param int rpp Results to show per page
+    * @param string Value to sort by
     * @return array Usage data formatted by $this->format_usage()
     *
     */
@@ -184,9 +182,7 @@ class browse {
     * Retrieves platform usage from the database for the previous 2 years
     *
     * @access private
-    * @param int platform_id
-    * @param int page Page of results to display
-    * @param int rpp Results to show per page
+    * @param string Value to sort by
     * @return array Usage data formatted by $this->format_usage()
     *
     */
@@ -208,9 +204,7 @@ class browse {
     * Retrieves usage for books assigned to fund codes of specified librarian for the previous 2 years
     *
     * @access private
-    * @param int lib_id
-    * @param int page Page of results to display
-    * @param int rpp Results to show per page
+    * @param string Value to sort by
     * @return array Usage data formatted by $this->format_usage()
     *
     */
@@ -233,9 +227,7 @@ class browse {
     * Retrieves usage for books assigned to fund code
     *
     * @access private
-    * @param int fund_id
-    * @param int page Page of results to display
-    * @param int rpp Results to show per page
+    * @param string Value to sort by
     * @return array Usage data formatted by $this->format_usage()
     *
     */
@@ -257,9 +249,7 @@ class browse {
     * Retrieves usage for books in specified call number range
     *
     * @access private
-    * @param int call_num_id
-    * @param int page Page of results to display
-    * @param int rpp Results to show per page
+    * @param string Value to sort by
     * @return array Usage data formatted by $this->format_usage()
     *
     */

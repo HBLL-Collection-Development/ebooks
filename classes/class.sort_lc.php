@@ -3,13 +3,14 @@
   * Class to sort Library of Congress Call Numbers
   *
   * @author Jared Howland <book.usage@jaredhowland.com>
-  * @version 2013-06-14
+  * @version 2013-07-22
   * @since 2013-06-14
   *
   */
 
 class sort_lc {
   private $array;
+
   /**
     * Constructor.
     * Can be either a simple or associative array
@@ -44,7 +45,7 @@ class sort_lc {
         return $array;
       }
     } else {
-      error::trigger('Can only pass arrays to this class. Please go back and try again.');
+      error::trigger('You can only pass arrays to the sort_lc class. Please go back and try again.');
     }
   }
   
