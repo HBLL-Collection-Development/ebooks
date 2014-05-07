@@ -14,7 +14,7 @@
     <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
-	
+
 	  <link rel='stylesheet' href='{{ app_url }}/{{ template_directory }}/styles.css' type='text/css'/>
 	  <script src="http://code.jquery.com/jquery-2.0.2.min.js"></script>
 	  <script src="{{ app_url }}/{{ template_directory }}/js/jtip.js"></script>
@@ -72,10 +72,21 @@
         });
   	  </script>
   	{% endif %}
+
+    <script src="libs/jeditable.min.js"></script>
+    <script type="text/javascript">
+      $(document).ready(function() {
+        $('.edit').editable('save.php', {
+          data   : "{'Y':'Y','N':'N','Unknown':'Unknown', 'selected':'Y'}",
+          type   : 'select',
+          submit : 'OK'
+        });
+      });
+    </script>
 </head>
 
 <body>
-    
+
 {% include '_navigation.tmpl' %}
 
 <div class="page">
