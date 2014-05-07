@@ -13,7 +13,7 @@ This is a database that can ingest [Project COUNTER][] Book Report #1 and Book R
 6. Enter your database credentials in `config.php`.
 7. Enter your [WorldCat Affiliate ID][], if you have one, in `config.php`. Enter `FALSE` otherwise.
 7. Set up a cron job to regularly run the following command (every other minute is the suggested default):
-        ```php -q /path/to/process.php >/dev/null 2>&1```
+        ```curl http://url.to.process.php >/dev/null 2>&1```
 8. Adjust the [Twig templates][] in the [templates directory](templates) to your liking.
 
 ## Using ##
