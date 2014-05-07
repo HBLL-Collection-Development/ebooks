@@ -7,7 +7,7 @@
   * TODO: This should probably be cleaned up and a GUI created for correcting incorrectly encoded titles
   *
   * @author Jared Howland <book.usage@jaredhowland.com>
-  * @version 2013-05-20
+  * @version 2014-05-07
   * @since 2013-04-23
   *
   */
@@ -28,16 +28,13 @@ function get_titles() {
 }
 
 function format_titles() {
-  $html = '<table><tr><th>Original Encoding</th><th>ISO-8859-1 to UTF-8</th><th>ISO-8859-15 to UTF-8</th></tr>';
+  $html = '<table><tr><th>book_id</th><th>Original Encoding</th><th>ISO-8859-1 to UTF-8</th><th>ISO-8859-15 to UTF-8</th></tr>';
   foreach(get_titles() as $title) {
     $id    = $title['id'];
     $title = $title['title'];
-    // $title = str_replace('\\', '', $title);
-    $latin1 = mysql_real_escape_string(mb_convert_encoding($title, 'ISO-8859-1', 'UTF-8'));
-    $latin9 = mysql_real_escape_string(mb_convert_encoding($title, 'ISO-8859-15', 'UTF-8'));
-    // Remove escape from single quotes before using SQL
-    // $title = str_replace('\\', '', $title);
-    $html   .= '<tr><td>' . $title . '</td><td>' . $latin1 . '</td><td>' . $latin9 . '</td></tr>';
+    $latin1 = mb_convert_encoding($title, 'ISO-8859-1', 'UTF-8');
+    $latin9 = mb_convert_encoding($title, 'ISO-8859-15', 'UTF-8');
+    $html   .= '<tr><td>' . $id . '</td><td><a href="#" class="edit" id="orig_' . $id . '">' . $title . '</a></td><td><a href="#" class="edit" id="latin1_' . $id . '">' . $latin1 . '</a></td><td><a href="#" class="edit" id="latin9_' . $id . '">' . $latin9 . '</a></td></tr>';
   }
   $html .= '</table>';
   return $html;

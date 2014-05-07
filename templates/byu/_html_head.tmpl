@@ -26,7 +26,7 @@
 	<script src='//media.lib.byu.edu/assets/js/jquery.chosen/jquery.chosen-1.0.js' type='text/javascript'></script>
 	<script src='//media.lib.byu.edu/assets/js/jquery.cycle/jquery.cycle-1.0.js' type='text/javascript'></script>
 	<script src="{{ app_url }}/{{ template_directory }}/js/jtip.js"></script>
-	
+
 	<link rel='stylesheet' href='{{ app_url }}/{{ template_directory }}/styles.css' type='text/css'/>
 	{% if dropdown_fix %}
 	  <script type="text/javascript" charset="utf-8">
@@ -82,6 +82,17 @@
       });
 	  </script>
 	{% endif %}
+
+	<script src="libs/jeditable.min.js"></script>
+  <script type="text/javascript">
+    $(document).ready(function() {
+      $('.edit').editable('save.php', {
+				data   : "{'Y':'Y','N':'N','Unknown':'Unknown', 'selected':'Y'}",
+				type   : 'select',
+				submit : 'OK'
+			});
+    });
+  </script>
 </head>
 
 <body>
@@ -90,7 +101,7 @@
     	    <h1><a id='site_header_link_byu' href='http://www.byu.edu'>BYU</a> <a id='site_header_link_hbll' href='http://lib.byu.edu'>Harold B. Lee Library</a></h1>
     	</div>
     </header>
-    
+
     {% include '_navigation.tmpl' %}
 
     <div class='main'>
