@@ -47,7 +47,7 @@ class template {
     $template = $twig->loadTemplate($template_name);
     return $template->render($content);
   }
-  
+
   /**
     * Gets specific vendor name
     *
@@ -65,11 +65,11 @@ class template {
     $query    = $db->prepare($sql);
     $query->bindParam(':vendor_id', $vendor_id);
     $query->execute();
-    $vendor = $query->fetchAll(PDO::FETCH_ASSOC);
+    $vendor = $query->fetch(PDO::FETCH_ASSOC);
     $db = NULL;
-    return $vendor[0]['vendor'];
+    return $vendor['vendor'];
   }
-  
+
   /**
     * Gets specific platform name
     *
@@ -86,11 +86,11 @@ class template {
     $query = $db->prepare($sql);
     $query->bindParam(':platform_id', $platform_id);
     $query->execute();
-    $results = $query->fetchAll(PDO::FETCH_ASSOC);
+    $results = $query->fetch(PDO::FETCH_ASSOC);
     $db = NULL;
-    return $results[0]['platform'] . ' (' . $results[0]['vendor'] . ')';
+    return $results['platform'] . ' (' . $results['vendor'] . ')';
   }
-  
+
   /**
     * Gets specific subject librarian name
     *
@@ -107,11 +107,11 @@ class template {
     $query = $db->prepare($sql);
     $query->bindParam(':lib_id', $lib_id);
     $query->execute();
-    $results = $query->fetchAll(PDO::FETCH_ASSOC);
+    $results = $query->fetch(PDO::FETCH_ASSOC);
     $db = NULL;
-    return $results[0]['first_name'] . ' ' . $results[0]['last_name'];
+    return $results['first_name'] . ' ' . $results['last_name'];
   }
-  
+
   /**
     * Gets specific fund code name
     *
@@ -128,11 +128,11 @@ class template {
     $query = $db->prepare($sql);
     $query->bindParam(':fund_id', $fund_id);
     $query->execute();
-    $results = $query->fetchAll(PDO::FETCH_ASSOC);
+    $results = $query->fetch(PDO::FETCH_ASSOC);
     $db = NULL;
-    return $results[0]['fund_code'] . ' (' . $results[0]['fund_name'] . ')';
+    return $results['fund_code'] . ' (' . $results['fund_name'] . ')';
   }
-  
+
   /**
     * Gets specific call number range name
     *
@@ -149,38 +149,16 @@ class template {
     $query = $db->prepare($sql);
     $query->bindParam(':call_num_id', $call_num_id);
     $query->execute();
-    $results = $query->fetchAll(PDO::FETCH_ASSOC);
+    $results = $query->fetch(PDO::FETCH_ASSOC);
     $db = NULL;
-    if($results[0]['start_range'] === $results[0]['end_range']) {
-      $call_number = $results[0]['start_range'];
+    if($results['start_range'] === $results['end_range']) {
+      $call_number = $results['start_range'];
     } else {
-      $call_number = $results[0]['start_range'] . '–' . $results[0]['end_range'];
+      $call_number = $results['start_range'] . '–' . $results['end_range'];
     }
-    return $call_number . ' (' . $results[0]['subject'] . ')';
+    return $call_number . ' (' . $results['subject'] . ')';
   }
-  
-  /**
-    * Creates jQuery script text to adjust search boxes for less cluttered searching
-    *
-    * @access public
-    * @param int vendor_id
-    * @param int platform_id
-    * @param int lib_id
-    * @param int fund_id
-    * @param int call_num_id
-    * @return string jQuery script text to include on each page
-    *
-    */
-  public static function get_dropdown_fix($vendor_id, $platform_id, $lib_id, $fund_id, $call_num_id) {
-    $dropdown_fix = NULL;
-    if(!$vendor_id) { $dropdown_fix .= "\$('#vendor').prop('selectedIndex', -1);"; }
-    if(!$platform_id) { $dropdown_fix .= "\$('#platform').prop('selectedIndex', -1);"; }
-    if(!$lib_id) { $dropdown_fix .= "\$('#lib').prop('selectedIndex', -1);"; }
-    if(!$fund_id) { $dropdown_fix .= "\$('#fund').prop('selectedIndex', -1);"; }
-    if(!$call_num_id) { $dropdown_fix .= "\$('#call_num').prop('selectedIndex', -1);"; }
-    return $dropdown_fix;
-  }
-  
+
   /**
     * Returns int representing percent of database that is browsable
     *
@@ -194,7 +172,7 @@ class template {
     $title_count_with_call_nums = self::get_title_count_with_call_nums();
     return self::percent($title_count_with_call_nums, $title_count);
   }
-  
+
   /**
     * Returns int representing percent of database that is not browsable
     *
@@ -206,36 +184,33 @@ class template {
   public static function get_percent_not_browsable() {
     return 100 - self::get_percent_browsable();
   }
-  
+
   private static function get_title_count() {
     // Connect to database
     $database = new db;
     $db       = $database->connect();
-    $sql      = "SELECT COUNT(*) AS count FROM books";
+    $sql      = "SELECT COUNT(id) AS count FROM books";
     $query = $db->query($sql);
     $f = $query->fetch();
-    $result = $f['count'];
     $db = NULL;
-    return $result;
+    return $f['count'];
   }
-  
+
   private static function get_title_count_with_call_nums() {
     // Connect to database
     $database = new db;
     $db       = $database->connect();
-    $sql      = "SELECT COUNT(*) AS count FROM books WHERE call_num IS NOT NULL";
+    $sql      = "SELECT COUNT(id) AS count FROM books WHERE call_num IS NOT NULL";
     $query = $db->query($sql);
     $f = $query->fetch();
-    $result = $f['count'];
     $db = NULL;
-    return $result;
+    return $f['count'];
   }
-  
+
   private static function percent($num_amount, $num_total) {
     $count1 = $num_amount / $num_total;
     $count2 = $count1 * 100;
-    $count  = number_format($count2, 0);
-    return $count;
+    return number_format($count2, 0);
   }
 }
 ?>

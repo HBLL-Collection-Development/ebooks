@@ -38,7 +38,7 @@ class results {
     if(is_null($page) || $page < 1) { $page = 1; }
     // Default to title sort
     if(is_null($sort) || ($sort != 'title' && $sort != 'author' && $sort != 'callnum' && $sort != 'currentbr1' && $sort != 'currentbr2' && $sort != 'previousbr1' && $sort != 'previousbr2')) { $sort = 'title'; }
-    
+
     // Determine search or browse type requested and get content from database
     if($title) {
       $search  = new search($title, $page, $results_per_page);
@@ -103,18 +103,16 @@ class results {
       $type    = 'title';
       $title   = 'Search';
     }
-    
+
     // Create drop-down forms for browse options
     $platforms = $search->format_platforms($platform_id);
     $vendors   = $search->format_vendors($vendor_id);
     $libs      = $search->format_libs($lib_id);
     $funds     = $search->format_funds($fund_id);
     $call_nums = $search->format_call_nums($call_num_id);
-    // Do not show first drop-down option on forms if it is not the current browse
-    $dropdown_fix = template::get_dropdown_fix($vendor_id, $platform_id, $lib_id, $fund_id, $call_num_id);
 
-    return array('title' => $title, 'heading' => $heading, 'dropdown_fix' => $dropdown_fix, 'type' => $type, 'term' => $term, 'sort' => $sort, 'platforms' => $platforms, 'vendors' => $vendors, 'libs' => $libs, 'funds' => $funds, 'call_nums' => $call_nums, 'html' => $results);
-    
+    return array('title' => $title, 'heading' => $heading, 'type' => $type, 'term' => $term, 'sort' => $sort, 'platforms' => $platforms, 'vendors' => $vendors, 'libs' => $libs, 'funds' => $funds, 'call_nums' => $call_nums, 'html' => $results);
+
   }
 
 }

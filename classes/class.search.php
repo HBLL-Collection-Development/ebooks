@@ -25,7 +25,7 @@ class search {
     $this->page = $page;
     $this->rpp  = $rpp;
   }
-  
+
   /**
     * Search by title
     *
@@ -73,7 +73,7 @@ class search {
     $db       = NULL;
     return $this->format_usage($results);
   }
-  
+
   /**
     * Translate URL sort request into correct field to search in MySQL
     *
@@ -112,7 +112,7 @@ class search {
         break;
     }
   }
-  
+
   /**
     * Get all related ISBNs from OCLC’s XISBN service
     *
@@ -124,7 +124,7 @@ class search {
   private function get_related($isbn) {
     return $this->format_xisbn($isbn);
   }
-  
+
   /**
     * Format XISBN search results into an array
     *
@@ -138,7 +138,7 @@ class search {
     $related_isbns = $xisbn->get_isbns($isbn);
     return implode(',',$related_isbns);
   }
-  
+
   /**
     * Format usage data array for consumption in Twig template
     *
@@ -204,7 +204,7 @@ class search {
       return array('search_term' => htmlspecialchars($this->term), 'num_results' => $num_results);
     }
   }
-  
+
   /**
     * Validate ISBN-10s, ISBN-13s, and ISSNs
     *
@@ -237,14 +237,14 @@ class search {
   /**
    * Remove all characters except numbers and checksums (some of which are X)
    * Converts lowercase 'x' to uppercase 'X'
-   * 
+   *
    * @param string $string
    * @return string Cleaned string
    */
   protected function strip_non_numeric($string) {
     return preg_replace('{[^0-9X]}', '', strtoupper($string));
   }
-  
+
   /**
     * Validates ISSNs
     *
@@ -268,7 +268,7 @@ class search {
     }
     return FALSE;
   }
-  
+
   /**
     * Validates ISBN-10s and ISBN-13s
     *
@@ -303,26 +303,6 @@ class search {
       return FALSE;
     }
   }
-  
-  /**
-    * List of all vendors in database
-    *
-    * @access public
-    * @param NULL
-    * @return array List of all vendors in database
-    *
-    */
-  public function get_vendors() {
-    // Connect to database
-    $database = new db;
-    $db    = $database->connect();
-    $sql   = 'SELECT id, vendor FROM vendors ORDER BY vendor ASC';
-    $query = $db->prepare($sql);
-    $query->execute();
-    $results = $query->fetchAll(PDO::FETCH_ASSOC);
-    $db = NULL;
-    return $results;
-  }
 
   /**
     * List of all platforms in database
@@ -332,7 +312,7 @@ class search {
     * @return array List of all platforms in database
     *
     */
-  public function get_platforms() {
+  public function get_platforms($platform_id = null) {
     // Connect to database
     $database = new db;
     $db    = $database->connect();
@@ -341,9 +321,9 @@ class search {
     $query->execute();
     $results = $query->fetchAll(PDO::FETCH_ASSOC);
     $db = NULL;
-    return $results;
+    return array('current_platform_id' => $platform_id, 'platforms' => $results);
   }
-  
+
   /**
     * List of all subject librarians in database
     *
@@ -352,7 +332,7 @@ class search {
     * @return array List of all subject librarians in database
     *
     */
-  public function get_libs() {
+  public function get_libs($lib_id = null) {
     // Connect to database
     $database = new db;
     $db    = $database->connect();
@@ -362,9 +342,9 @@ class search {
     $query->execute();
     $results = $query->fetchAll(PDO::FETCH_ASSOC);
     $db = NULL;
-    return $results;
+    return array('current_lib_id' => $lib_id, 'libs' => $results);
   }
-  
+
   /**
     * List of fund codes
     *
@@ -373,7 +353,7 @@ class search {
     * @return array List of fund codes
     *
     */
-  public function get_funds() {
+  public function get_funds($fund_id = null) {
     // Connect to database
     $database = new db;
     $db    = $database->connect();
@@ -383,7 +363,7 @@ class search {
     $query->execute();
     $results = $query->fetchAll(PDO::FETCH_ASSOC);
     $db = NULL;
-    return $results;
+    return array('current_fund_id' => $fund_id, 'funds' => $results);
   }
 
   /**
@@ -394,7 +374,7 @@ class search {
     * @return array List of call number ranges
     *
     */
-  function get_call_nums() {
+  function get_call_nums($call_num_id = null) {
     // Connect to database
     $database = new db;
     $db    = $database->connect();
@@ -404,145 +384,7 @@ class search {
     $query->execute();
     $results = $query->fetchAll(PDO::FETCH_ASSOC);
     $db = NULL;
-    return $results;
-  }
-
-  /**
-    * Format vendors array for use in HTML form in Twig template
-    *
-    * @access public
-    * @param NULL
-    * @return string HTML for form in Twig template
-    *
-    */
-  public function format_vendors($active_vendor_id = NULL) {
-    $html = NULL;
-    foreach($this->get_vendors() as $vendor) {
-      $vendor_id = $vendor['id'];
-      $vendor    = $vendor['vendor'];
-      if($active_vendor_id == $vendor_id) {
-        $html .= '<option value="' . $vendor_id . '" selected="selected">' . $vendor . '</option>';
-      } else {
-        $html .= '<option value="' . $vendor_id . '">' . $vendor . '</option>';
-      }
-    }
-    return $html;
-  }
-
-  /**
-    * Format platforms for use in HTML form in Twig template
-    *
-    * @access public
-    * @param NULL
-    * @return string HTML for form in Twig template
-    *
-    */
-  public function format_platforms($active_platform_id = NULL) {
-    $html = NULL;
-    foreach($this->get_platforms() as $platform) {
-      $platform_id = $platform['platform_id'];
-      $vendor      = $platform['vendor'];
-      $platform    = $platform['platform'];
-      if($active_platform_id == $platform_id) {
-        $html .= '<option value="' . $platform_id . '" selected="selected">' . $platform . ' (' . $vendor . ')</option>';
-      } else {
-        $html .= '<option value="' . $platform_id . '">' . $platform . ' (' . $vendor . ')</option>';
-      }
-    }
-    return $html;
-  }
-  
-  /**
-    * Format subject librarians for HTML form
-    *
-    * @access public
-    * @param NULL
-    * @return string HTML for drop-down form of all subject librarians
-    *
-    */
-  public function format_libs($active_lib_id = NULL) {
-    $html = NULL;
-    foreach($this->get_libs() as $lib) {
-      $lib_id     = $lib['lib_id'];
-      $first_name = $lib['first_name'];
-      $last_name  = $lib['last_name'];
-      if($active_lib_id == $lib_id) {
-        $html .= '<option value="' . $lib_id . '" selected="selected">' . $first_name . ' ' . $last_name . '</option>';
-      } else {
-        $html .= '<option value="' . $lib_id . '">' . $first_name . ' ' . $last_name . '</option>';
-      }
-    }
-    return $html;
-  }
-
-  /**
-    * Format fund names for HTML form
-    *
-    * @access public
-    * @param NULL
-    * @return string HTML for drop-down form of all fund codes
-    *
-    */
-  public function format_funds($active_fund_id = NULL) {
-    $html = NULL;
-    foreach($this->get_funds() as $fund) {
-      $fund_id   = $fund['fund_id'];
-      $fund_code = $fund['fund_code'];
-      $fund_name = $fund['fund_name'];
-      if($active_fund_id == $fund_id) {
-        $html .= '<option value="' . $fund_id . '" selected="selected">' . $fund_code . ' (' . $fund_name . ')</option>';
-      } else {
-        $html .= '<option value="' . $fund_id . '">' . $fund_code . ' (' . $fund_name . ')</option>';
-      }
-    }
-    return $html;
-  }
-
-  /**
-    * Format call number ranges for HTML form
-    *
-    * @access public
-    * @param NULL
-    * @return string HTML for drop-down form of all fund codes
-    *
-    */
-  public function format_call_nums($active_call_num_id = NULL) {
-    $html = NULL;
-    foreach($this->get_call_nums() as $call_num) {
-      $call_num_id    = $call_num['call_num_id'];
-      $call_num_start = $call_num['call_num_start'];
-      $call_num_end   = $call_num['call_num_end'];
-      $subject        = $this->limit_text($call_num['subject'], 4);
-      if($call_num_start === $call_num_end) {
-        $call_number = $call_num_start;
-      } else {
-        $call_number = $call_num_start . '–' . $call_num_end;
-      }
-      if($active_call_num_id == $call_num_id) {
-        $html .= '<option value="' . $call_num_id . '" selected="selected">' . $call_number . ' (' . $subject . ')</option>';
-      } else {
-        $html .= '<option value="' . $call_num_id . '">' . $call_number . ' (' . $subject . ')</option>';
-      }
-    }
-    return $html;
-  }
-  
-  /**
-    * Restrict a string to $limit words
-    *
-    * @access private
-    * @param string Text you want truncated
-    * @param int Limit—number of words you want a string truncated to
-    * @return 
-    *
-    */
-  private function limit_text($text, $limit) {
-    if(str_word_count($text, 0) > $limit) {
-    $words = str_word_count($text, 2);
-    $pos   = array_keys($words);
-    $text  = trim(substr($text, 0, $pos[$limit])) . '…';
-    }
-    return $text;
+    return array('current_call_num_id' => $call_num_id, 'call_nums' => $results);
   }
 }
 ?>

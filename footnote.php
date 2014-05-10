@@ -10,4 +10,5 @@
 require_once 'config.php';
 
 template::display('footnote.tmpl', NULL);
+
 ?>

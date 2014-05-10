@@ -28,7 +28,7 @@ $html = <<<HTML
     [0] => Array
         (
             [title] => Advanced Android development a Safari guide.
-            [author] => 
+            [author] =>
             [oclc] => 808125880
             [call_num] => QA76.76.A65
             [response_code] => 2
@@ -40,7 +40,7 @@ $html = <<<HTML
     [0] => Array
         (
             [title] => Application development for CICS Web services
-            [author] => 
+            [author] =>
             [oclc] => 123477218
             [call_num] => QA76.76.T45
             [response_code] => 2
@@ -61,7 +61,7 @@ $html = <<<HTML
     [0] => Array
         (
             [title] => Advanced Android development a Safari guide.
-            [author] => 
+            [author] =>
             [oclc] => 808125880
             [call_num] => QA76.76.A65
             [response_code] => 2
@@ -70,7 +70,7 @@ $html = <<<HTML
     [1] => Array
         (
             [title] => Application development for CICS Web services
-            [author] => 
+            [author] =>
             [oclc] => 123477218
             [call_num] => QA76.76.T45
             [response_code] => 2
