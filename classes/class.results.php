@@ -3,7 +3,7 @@
   * Class to generate results for templates from $_GET array
   *
   * @author Jared Howland <book.usage@jaredhowland.com>
-  * @version 2013-07-11
+  * @version 2014-05-09
   * @since 2013-07-11
   *
   */
@@ -54,14 +54,6 @@ class results {
       $term    = $isbn;
       $type    = 'isbn';
       $title   = 'Search ISBN';
-    } elseif($vendor_id) {
-      $browse  = new browse($vendor_id, $page, $results_per_page);
-      $search    = new search(NULL);
-      $results = $browse->vendor($sort);
-      $heading = template::get_vendor($vendor_id);
-      $term    = $vendor_id;
-      $type    = 'vendor';
-      $title   = 'Browse Vendor';
     } else if($platform_id) {
       $browse  = new browse($platform_id, $page, $results_per_page);
       $search    = new search(NULL);
@@ -105,13 +97,12 @@ class results {
     }
 
     // Create drop-down forms for browse options
-    $platforms = $search->format_platforms($platform_id);
-    $vendors   = $search->format_vendors($vendor_id);
-    $libs      = $search->format_libs($lib_id);
-    $funds     = $search->format_funds($fund_id);
-    $call_nums = $search->format_call_nums($call_num_id);
+    $platforms = $search->get_platforms($platform_id);
+    $libs      = $search->get_libs($lib_id);
+    $funds     = $search->get_funds($fund_id);
+    $call_nums = $search->get_call_nums($call_num_id);
 
-    return array('title' => $title, 'heading' => $heading, 'type' => $type, 'term' => $term, 'sort' => $sort, 'platforms' => $platforms, 'vendors' => $vendors, 'libs' => $libs, 'funds' => $funds, 'call_nums' => $call_nums, 'html' => $results);
+    return array('title' => $title, 'heading' => $heading, 'type' => $type, 'term' => $term, 'sort' => $sort, 'platforms' => $platforms, 'libs' => $libs, 'funds' => $funds, 'call_nums' => $call_nums, 'html' => $results);
 
   }
 
