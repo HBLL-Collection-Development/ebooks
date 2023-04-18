@@ -1,3 +1,4 @@
+# THIS CODE IS NOT SECURE AND NOT REALLY FUNCTIONAL. A REPLACEMENT MAY BECOME AVAILABLE AT A FUTURE DATE, BUT YOU SHOULD NOT USE THIS FOR ANY REASON. #
 # eBook Usage Database #
 
 This is a database that can ingest [Project COUNTER][] Book Report #1 and Book Report #2 plain text CSV reports and allow you to search for and browse usage data for all your eBooks.
